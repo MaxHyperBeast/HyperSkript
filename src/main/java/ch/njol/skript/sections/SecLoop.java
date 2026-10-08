@@ -20,6 +20,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 
 @Name("Loop")
@@ -79,10 +80,28 @@ public class SecLoop extends LoopSection {
 
 	protected @UnknownNullability Expression<?> expression;
 
-	private final transient Map<Event, Iterator<?>> iteratorMap = new WeakHashMap<>();
-	private final transient Map<Event, Object> previous = new WeakHashMap<>();
-	private final transient Map<Event, Object> current = new WeakHashMap<>();
-	private final transient Map<Event, Object> next = new WeakHashMap<>();
+	/**
+	 * The state of one running loop. The event is held weakly, like the map keys.
+	 */
+	private static final class LoopState {
+
+		private final WeakReference<Event> event;
+		private @Nullable Iterator<?> iterator;
+		private @Nullable Object previous, current, next;
+		private long counter;
+
+		private LoopState(Event event) {
+			this.event = new WeakReference<>(event);
+		}
+
+	}
+
+	private final transient Map<Event, LoopState> states = new WeakHashMap<>();
+	/**
+	 * The state that was used last. Loops run many iterations for the same event in a row,
+	 * so this skips the map lookup for nearly every iteration.
+	 */
+	private transient @Nullable LoopState lastState;
 
 	protected @Nullable TriggerItem actualNext;
 	private boolean guaranteedToLoop;
@@ -130,9 +149,30 @@ public class SecLoop extends LoopSection {
 		return true;
 	}
 
+	private @Nullable LoopState getState(Event event) {
+		LoopState state = lastState;
+		if (state != null && state.event.get() == event)
+			return state;
+		state = states.get(event);
+		if (state != null)
+			lastState = state;
+		return state;
+	}
+
+	private LoopState getOrCreateState(Event event) {
+		LoopState state = getState(event);
+		if (state == null) {
+			state = new LoopState(event);
+			states.put(event, state);
+			lastState = state;
+		}
+		return state;
+	}
+
 	@Override
 	protected @Nullable TriggerItem walk(Event event) {
-		Iterator<?> iter = iteratorMap.get(event);
+		LoopState state = getState(event);
+		Iterator<?> iter = state == null ? null : state.iterator;
 		if (iter == null) {
 			if (iterableSingle) {
 				Object value = expression.getSingle(event);
@@ -149,23 +189,27 @@ public class SecLoop extends LoopSection {
 					? ((KeyedIterableExpression<?>) expression).keyedIterator(event)
 					: expression.iterator(event);
 				if (iter != null && iter.hasNext()) {
-					iteratorMap.put(event, iter);
+					if (state == null)
+						state = getOrCreateState(event);
+					state.iterator = iter;
 				} else {
 					iter = null;
 				}
 			}
 		}
 
-		Object nextValue = next.get(event);
+		Object nextValue = state == null ? null : state.next;
 		if (iter == null || (!iter.hasNext() && nextValue == null)) {
 			exit(event);
 			debug(event, false);
 			return actualNext;
 		} else {
-			previous.put(event, current.get(event));
+			if (state == null)
+				state = getOrCreateState(event);
+			state.previous = state.current;
 			if (nextValue != null) {
 				this.store(event, nextValue);
-				next.remove(event);
+				state.next = null;
 			} else if (iter.hasNext()) {
 				this.store(event, iter.next());
 			}
@@ -174,8 +218,15 @@ public class SecLoop extends LoopSection {
 	}
 
 	protected void store(Event event, Object next) {
-		this.current.put(event, next);
-		this.currentLoopCounter.put(event, (currentLoopCounter.getOrDefault(event, 0L)) + 1);
+		LoopState state = getOrCreateState(event);
+		state.current = next;
+		state.counter++;
+	}
+
+	@Override
+	public long getLoopCounter(Event event) {
+		LoopState state = getState(event);
+		return state == null || state.counter == 0 ? 1L : state.counter;
 	}
 
 	@Override
@@ -189,28 +240,33 @@ public class SecLoop extends LoopSection {
 	}
 
 	public @Nullable Object getCurrent(Event event) {
-		return current.get(event);
+		LoopState state = getState(event);
+		return state == null ? null : state.current;
 	}
 
 	public @Nullable Object getNext(Event event) {
 		if (!loopPeeking)
 			return null;
-		Object nextValue = next.get(event);
+		LoopState state = getState(event);
+		if (state == null)
+			return null;
+		Object nextValue = state.next;
 		if (nextValue != null) {
 			return nextValue;
 		}
-		Iterator<?> iter = iteratorMap.get(event);
+		Iterator<?> iter = state.iterator;
 		if (iter == null || !iter.hasNext())
 			return null;
 		if (iter instanceof PeekingIterator<?> peekingIterator)
 			return peekingIterator.peek();
 		nextValue = iter.next();
-		next.put(event, nextValue);
+		state.next = nextValue;
 		return nextValue;
 	}
 
 	public @Nullable Object getPrevious(Event event) {
-		return previous.get(event);
+		LoopState state = getState(event);
+		return state == null ? null : state.previous;
 	}
 
 	public Expression<?> getLoopedExpression() {
@@ -242,10 +298,10 @@ public class SecLoop extends LoopSection {
 
 	@Override
 	public void exit(Event event) {
-		iteratorMap.remove(event);
-		previous.remove(event);
-		current.remove(event);
-		next.remove(event);
+		states.remove(event);
+		LoopState state = lastState;
+		if (state != null && state.event.get() == event)
+			lastState = null;
 		super.exit(event);
 	}
 

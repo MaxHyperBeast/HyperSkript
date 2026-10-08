@@ -12,9 +12,9 @@ import ch.njol.util.Kleenean;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
+import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.WeakHashMap;
 
 @Name("While Loop")
@@ -51,7 +51,26 @@ public class SecWhile extends LoopSection {
 	private TriggerItem actualNext;
 
 	private boolean doWhile;
-	private final Set<Event> ranDoWhile = Collections.newSetFromMap(new WeakHashMap<>());
+	/**
+	 * The state of one running while loop. The event is held weakly, like the map keys.
+	 */
+	private static final class WhileState {
+
+		private final WeakReference<Event> event;
+		private boolean ranDoWhile;
+		private long counter;
+
+		private WhileState(Event event) {
+			this.event = new WeakReference<>(event);
+		}
+
+	}
+
+	private final transient Map<Event, WhileState> states = new WeakHashMap<>();
+	/**
+	 * The state that was used last, to skip the map lookup for most iterations.
+	 */
+	private transient @Nullable WhileState lastState;
 
 	@Override
 	public boolean init(Expression<?>[] exprs,
@@ -75,14 +94,37 @@ public class SecWhile extends LoopSection {
 	@Nullable
 	@Override
 	protected TriggerItem walk(Event event) {
-		if ((doWhile && ranDoWhile.add(event)) || condition.check(event)) {
-			currentLoopCounter.put(event, (currentLoopCounter.getOrDefault(event, 0L)) + 1);
+		WhileState state = getState(event);
+		if ((doWhile && (state == null || !state.ranDoWhile)) || condition.check(event)) {
+			if (state == null) {
+				state = new WhileState(event);
+				states.put(event, state);
+				lastState = state;
+			}
+			state.ranDoWhile = true;
+			state.counter++;
 			return walk(event, true);
 		} else {
 			exit(event);
 			debug(event, false);
 			return actualNext;
 		}
+	}
+
+	private @Nullable WhileState getState(Event event) {
+		WhileState state = lastState;
+		if (state != null && state.event.get() == event)
+			return state;
+		state = states.get(event);
+		if (state != null)
+			lastState = state;
+		return state;
+	}
+
+	@Override
+	public long getLoopCounter(Event event) {
+		WhileState state = getState(event);
+		return state == null || state.counter == 0 ? 1L : state.counter;
 	}
 
 	@Override
@@ -108,7 +150,10 @@ public class SecWhile extends LoopSection {
 
 	@Override
 	public void exit(Event event) {
-		ranDoWhile.remove(event);
+		states.remove(event);
+		WhileState state = lastState;
+		if (state != null && state.event.get() == event)
+			lastState = null;
 		super.exit(event);
 	}
 
