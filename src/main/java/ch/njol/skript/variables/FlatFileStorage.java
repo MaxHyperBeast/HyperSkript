@@ -505,12 +505,14 @@ public class FlatFileStorage extends VariablesStorage {
 		char[] encoded = new char[data.length * 2];
 
 		for (int i = 0; i < data.length; i++) {
-			encoded[2 * i] = Character.toUpperCase(Character.forDigit((data[i] & 0xF0) >>> 4, 16));
-			encoded[2 * i + 1] = Character.toUpperCase(Character.forDigit(data[i] & 0xF, 16));
+			encoded[2 * i] = HEX_DIGITS[(data[i] & 0xF0) >>> 4];
+			encoded[2 * i + 1] = HEX_DIGITS[data[i] & 0xF];
 		}
 
 		return new String(encoded);
 	}
+
+	private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
 
 	/**
 	 * Decodes the given hexadecimal string to a byte array.

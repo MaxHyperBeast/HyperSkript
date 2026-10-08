@@ -46,12 +46,36 @@ public abstract class SimpleExpression<T> implements Expression<T>, SyntaxRuntim
 
 	@Override
 	public final @Nullable T getSingle(Event event) {
-		T[] values = getArray(event);
-		if (values.length == 0)
+		// same result as getArray(event), without copying the values into a new array
+		T[] values = get(event);
+		if (values == null || values.length == 0)
 			return null;
-		if (values.length > 1)
+		if (values.length == 1)
+			return values[0];
+
+		int numNonNull = 0;
+		T single = null;
+		for (T value : values) {
+			if (value != null) {
+				if (numNonNull == 0)
+					single = value;
+				numNonNull++;
+			}
+		}
+		if (numNonNull <= 1)
+			return single;
+		if (getAnd())
 			throw new SkriptAPIException("Call to getSingle() on a non-single expression");
-		return values[0];
+		int rand = Utils.random(0, numNonNull);
+		for (T value : values) {
+			if (value != null) {
+				if (rand == 0)
+					return value;
+				rand--;
+			}
+		}
+		assert false;
+		return null;
 	}
 
 	@Override

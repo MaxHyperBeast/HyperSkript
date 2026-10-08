@@ -476,14 +476,8 @@ public class Variables {
 				variablesLock.readLock().lock();
 				// Prevent race conditions from returning variables with incorrect values
 				if (!changeQueue.isEmpty()) {
-					// Gets the last VariableChange made
-					VariableChange variableChange = changeQueue.stream()
-							.filter(change -> change.name.equals(n))
-							.reduce((first, second) -> second)
-									// Gets last value, as iteration is from head to tail,
-									//  and adding occurs at the tail (and we want the most recently added)
-							.orElse(null);
-
+					// Gets the last VariableChange made for this name, without scanning the whole queue
+					VariableChange variableChange = latestQueuedChanges.get(n);
 					if (variableChange != null) {
 						return variableChange.value;
 					}
@@ -603,7 +597,9 @@ public class Variables {
 			assert event != null : name;
 
 			// Get the variables map and set the variable in it
-			VariablesMap map = localVariables.computeIfAbsent(event, e -> new VariablesMap());
+			VariablesMap map = localVariables.get(event); // lock-free, unlike computeIfAbsent
+			if (map == null)
+				map = localVariables.computeIfAbsent(event, e -> new VariablesMap());
 			map.setVariable(name, value);
 		} else {
 			setVariable(name, value);
@@ -638,6 +634,12 @@ public class Variables {
 	 * Changes to variables that have not yet been performed.
 	 */
 	static final Queue<VariableChange> changeQueue = new ConcurrentLinkedQueue<>();
+
+	/**
+	 * The most recent change in {@link #changeQueue} for each variable name, so reads don't have to scan the queue.
+	 * An entry is removed when its change is processed, unless a newer change replaced it.
+	 */
+	private static final Map<String, VariableChange> latestQueuedChanges = new ConcurrentHashMap<>();
 
 	/**
 	 * A variable change name-value pair.
@@ -676,7 +678,9 @@ public class Variables {
 	 * @param value the new value.
 	 */
 	private static void queueVariableChange(String name, @Nullable Object value) {
-		changeQueue.add(new VariableChange(name, value));
+		VariableChange change = new VariableChange(name, value);
+		latestQueuedChanges.put(name, change);
+		changeQueue.add(change);
 	}
 
 	/**
@@ -694,6 +698,7 @@ public class Variables {
 			// Set and save variable
 			variables.setVariable(change.name, change.value);
 			saveVariableChange(change.name, change.value);
+			latestQueuedChanges.remove(change.name, change);
 		}
 	}
 

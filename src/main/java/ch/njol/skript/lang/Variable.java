@@ -338,11 +338,22 @@ public class Variable<T> implements Expression<T>, KeyReceiverExpression<T>, Key
 	}
 
 	/**
+	 * @return The default variables of this variable's script, or null if it has none.
+	 */
+	private @Nullable DefaultVariables getDefaultVariables() {
+		if (script == null)
+			return null;
+		DefaultVariables data = script.getData(DefaultVariables.class);
+		return data != null && data.hasDefaultVariables() ? data : null;
+	}
+
+	/**
 	 * Gets the value of this variable as stored in the variables map.
 	 * This method also checks against default variables.
 	 */
 	public @Nullable Object getRaw(Event event) {
-		DefaultVariables data = script == null ? null : script.getData(DefaultVariables.class);
+		// type hints are only read back when the script has default variables, so skip the scope otherwise
+		DefaultVariables data = getDefaultVariables();
 		if (data != null)
 			data.enterScope();
 		try {
@@ -435,6 +446,8 @@ public class Variable<T> implements Expression<T>, KeyReceiverExpression<T>, Key
 
 	private T[] getConvertedArray(Event event) {
 		assert list;
+		if (listProvider.getClass() == ShallowListProvider.class && getDefaultVariables() == null)
+			return getConvertedArrayShallow(event);
 		//noinspection unchecked
 		KeyedValue<Object>[] values = (KeyedValue<Object>[]) listProvider.getValues(event);
 		KeyedValue<T>[] mappedValues = KeyedValue.map(values, value -> Converters.convert(value, types));
@@ -445,6 +458,55 @@ public class Variable<T> implements Expression<T>, KeyReceiverExpression<T>, Key
 		cache.put(event, unzipped.keys().toArray(new String[0]));
 		//noinspection unchecked
 		return unzipped.values().toArray((T[]) Array.newInstance(superType, 0));
+	}
+
+	/**
+	 * Single-pass version of {@link #getConvertedArray(Event)} for {@link ShallowListProvider}:
+	 * evaluates the name once and builds the key and value arrays directly.
+	 */
+	@SuppressWarnings("unchecked")
+	private T[] getConvertedArrayShallow(Event event) {
+		String name = this.name.toString(event);
+		// same as getRaw(event) for a list variable in a script without default variables
+		Object rawValue = name.endsWith(SEPARATOR + "*") ? Variables.getVariable(name, event, local) : null;
+		if (!(rawValue instanceof Map<?, ?> map) || map.isEmpty()) {
+			cache.put(event, new String[0]);
+			return (T[]) Array.newInstance(superType, 0);
+		}
+
+		String prefix = null;
+		int size = map.size();
+		String[] keys = new String[size];
+		T[] values = (T[]) Array.newInstance(superType, size);
+		int count = 0;
+		for (Entry<String, ?> variable : ((Map<String, ?>) map).entrySet()) {
+			String key = variable.getKey();
+			Object value = variable.getValue();
+			if (key == null || value == null)
+				continue;
+			if (value instanceof Map<?, ?> sublist)
+				value = sublist.get(null);
+			if (value instanceof Player) {
+				if (prefix == null)
+					prefix = StringUtils.substring(name, 0, -1);
+				value = convertIfOldPlayer(prefix + key, local, event, value);
+			}
+			if (value == null)
+				continue;
+			T converted = Converters.convert(value, types);
+			if (converted == null)
+				continue;
+			keys[count] = key;
+			values[count] = converted;
+			count++;
+		}
+
+		if (count != size) {
+			keys = Arrays.copyOf(keys, count);
+			values = Arrays.copyOf(values, count);
+		}
+		cache.put(event, keys);
+		return values;
 	}
 
 	private void set(Event event, @Nullable Object value) {
@@ -831,7 +893,7 @@ public class Variable<T> implements Expression<T>, KeyReceiverExpression<T>, Key
 			if (rawValue == null)
 				return new KeyedValue[0];
 
-			List<KeyedValue<?>> keyedValues = new ArrayList<>();
+			List<KeyedValue<?>> keyedValues = new ArrayList<>(((Map<?, ?>) rawValue).size());
 			String name = StringUtils.substring(Variable.this.name.toString(event), 0, -1);
 			//noinspection unchecked
 			for (Entry<String, ?> variable : ((Map<String, ?>) rawValue).entrySet()) {
@@ -845,7 +907,8 @@ public class Variable<T> implements Expression<T>, KeyReceiverExpression<T>, Key
 					value = variable.getValue();
 				}
 
-				value = convertIfOldPlayer(name + variable.getKey(), local, event, value);
+				if (value instanceof Player) // only build the full name when it can be needed
+					value = convertIfOldPlayer(name + variable.getKey(), local, event, value);
 				if (value != null)
 					keyedValues.add(new KeyedValue<>(variable.getKey(), value));
 			}

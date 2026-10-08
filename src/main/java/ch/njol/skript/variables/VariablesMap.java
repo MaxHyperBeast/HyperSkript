@@ -231,6 +231,23 @@ final class VariablesMap {
 				hashMap.remove(name);
 			else
 				hashMap.put(name, value);
+
+			// Fast path for names without a separator: the same as the loop below with a single part
+			if (name.indexOf(Variable.SEPARATOR) == -1) {
+				Object childNode = treeMap.get(name);
+				if (childNode instanceof TreeMap<?, ?>) {
+					TreeMap<String, Object> childNodeMap = (TreeMap<String, Object>) childNode;
+					if (value == null)
+						childNodeMap.remove(null);
+					else
+						childNodeMap.put(null, value);
+				} else if (value != null) {
+					treeMap.put(name, value);
+				} else if (childNode != null) {
+					treeMap.remove(name);
+				}
+				return;
+			}
 		}
 
 		// Then update the tree map by going down the branches
