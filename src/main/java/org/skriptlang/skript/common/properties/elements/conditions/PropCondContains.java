@@ -99,6 +99,27 @@ public class PropCondContains extends Condition implements PropertyBaseSyntax<Co
 	private Expression<?> needles;
 	private PropertyMap<ContainsHandler<?, ?>> properties;
 
+	/**
+	 * The classes in {@link #properties} with a handler. The map only grows (it caches lookups),
+	 * so this is recomputed whenever its size changes.
+	 */
+	private Class<?> @Nullable [] targetTypes;
+	private int targetTypesMapSize = -1;
+
+	private Class<?>[] getTargetTypes() {
+		Class<?>[] targetTypes = this.targetTypes;
+		int size = properties.size();
+		if (targetTypes == null || targetTypesMapSize != size) {
+			targetTypes = properties.entrySet().stream()
+				.filter(entry -> entry.getValue() != null)
+				.map(Map.Entry::getKey)
+				.toArray(Class[]::new);
+			this.targetTypes = targetTypes;
+			targetTypesMapSize = size;
+		}
+		return targetTypes;
+	}
+
 	boolean allowContainmentCheck = false;
 	boolean allowDirectCheck = false;
 
@@ -255,10 +276,7 @@ public class PropCondContains extends Condition implements PropertyBaseSyntax<Co
 	private boolean checkContainment(Object[] haystacks, boolean haystackAnd, Object[] needles, boolean needlesAnd) {
 		// Attempt to convert all the types into property-having types
 		boolean allHaveProperty = true;
-		Class<?>[] targetTypes = properties.entrySet().stream()
-				.filter(entry -> entry.getValue() != null)
-				.map(Map.Entry::getKey)
-				.toArray(Class[]::new);
+		Class<?>[] targetTypes = getTargetTypes();
 		var convertedHaystacks = new Object[haystacks.length];
 		for (int i = 0; i < haystacks.length; i++) {
 			convertedHaystacks[i] = convert(haystacks[i], targetTypes);

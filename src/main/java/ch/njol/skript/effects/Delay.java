@@ -120,7 +120,8 @@ public class Delay extends EffectSection {
 
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.getInstance(), () -> {
 				addDelayedEvent(event);
-				Skript.debug(getIndentation() + "... continuing after " + (System.nanoTime() - start) / 1_000_000_000. + "s");
+				if (Skript.debug()) // don't build the message when it isn't logged
+					Skript.debug(getIndentation() + "... continuing after " + (System.nanoTime() - start) / 1_000_000_000. + "s");
 
 				if (localVars != null)
 					Variables.setLocalVariables(event, localVars);

@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.bukkit.tags.TagModule;
 import org.skriptlang.skript.registration.SyntaxRegistry;
+import org.skriptlang.skript.util.ClassCache;
 
 @Name("Is Tagged")
 @Description({
@@ -43,6 +44,13 @@ public class CondIsTagged extends Condition {
 			);
 	}
 
+	/**
+	 * Tag classes whose {@link Tag#isTagged(Keyed)} throws a {@link ClassCastException} for values of the wrong type
+	 * (the CraftBukkit implementations, verified in their bytecode).
+	 */
+	private static final ClassCache<Boolean> CAST_CHECKED_TAGS =
+		new ClassCache<>(type -> type.getName().startsWith("org.bukkit.craftbukkit."));
+
 	private Expression<Tag<Keyed>> tags;
 	private Expression<?> elements;
 
@@ -70,10 +78,22 @@ public class CondIsTagged extends Condition {
 			Class<? extends Keyed> valueClass = values[0].getClass();
 
 			for (Tag<Keyed> tag : tags) {
-				// cursed check to ensure the tag is the same type as the values
-				if (!tag.getValues().iterator().next().getClass().isAssignableFrom(valueClass))
-					return false;
-				 if (isTagged(tag, values, !isAny)) {
+				boolean tagged;
+				if (CAST_CHECKED_TAGS.get(tag.getClass())) {
+					// CraftBukkit tags cast the value to their own type in the bridge method, so a value of the
+					// wrong type throws instead of needing the check below, which builds the tag's full value set
+					try {
+						tagged = isTagged(tag, values, !isAny);
+					} catch (ClassCastException e) {
+						return false;
+					}
+				} else {
+					// cursed check to ensure the tag is the same type as the values
+					if (!tag.getValues().iterator().next().getClass().isAssignableFrom(valueClass))
+						return false;
+					tagged = isTagged(tag, values, !isAny);
+				}
+				 if (tagged) {
 					 if (!and)
 						 return true;
 				 } else if (and) {

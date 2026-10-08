@@ -37,6 +37,11 @@ public final class FunctionReference<T> implements Debuggable {
 	private boolean printedInvalidSignatureWarning;
 	private Function<T> cachedFunction;
 	private LinkedHashMap<String, ArgInfo> cachedArguments;
+	/**
+	 * The signature this reference was last added to with {@link Signature#addCall(FunctionReference)}.
+	 * The calls of a signature are never removed, so adding again on every call is not needed.
+	 */
+	private @Nullable Signature<T> registeredCallSignature;
 
 	private record ArgInfo(Expression<?> expression, Class<?> type, Set<Modifier> modifiers) {
 
@@ -62,6 +67,10 @@ public final class FunctionReference<T> implements Debuggable {
 	 * @return True if this is a valid function reference, false if not.
 	 */
 	public boolean validate() {
+		// fast path for the common case, nothing to do
+		if (validSignature && cachedArguments != null && registeredCallSignature == cachedSignature)
+			return true;
+
 		if (!validSignature) {
 			Class<?>[] parameters = Arrays.stream(cachedSignature.parameters().all())
 				.map(Parameter::type)
@@ -116,6 +125,7 @@ public final class FunctionReference<T> implements Debuggable {
 		}
 
 		cachedSignature.addCall(this);
+		registeredCallSignature = cachedSignature;
 
 		return true;
 	}
@@ -166,11 +176,13 @@ public final class FunctionReference<T> implements Debuggable {
 			return null;
 		}
 
-		SequencedMap<String, Object> args = new LinkedHashMap<>();
-		cachedArguments.forEach((k, v) -> {
+		SequencedMap<String, Object> args = new LinkedHashMap<>(cachedArguments.size() * 2);
+		for (Map.Entry<String, ArgInfo> entry : cachedArguments.entrySet()) {
+			String k = entry.getKey();
+			ArgInfo v = entry.getValue();
 			if (v.modifiers().contains(Modifier.KEYED)) {
 				args.put(k, Classes.clone(evaluateKeyed(v.expression(), event)));
-				return;
+				continue;
 			}
 
 			if (!v.type().isArray()) {
@@ -178,7 +190,7 @@ public final class FunctionReference<T> implements Debuggable {
 			} else {
 				args.put(k, Classes.clone(v.expression().getArray(event)));
 			}
-		});
+		}
 
 		Function<T> function = function();
 		if (function == null) { // probably shouldn't be possible?

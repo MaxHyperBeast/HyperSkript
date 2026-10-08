@@ -32,7 +32,8 @@ public class IndeterminateDelay extends Delay {
 			
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Skript.getInstance(), () -> {
 				Delay.addDelayedEvent(event);
-				Skript.debug(getIndentation() + "... continuing after " + (System.nanoTime() - start) / 1_000_000_000. + "s");
+				if (Skript.debug()) // don't build the message when it isn't logged
+					Skript.debug(getIndentation() + "... continuing after " + (System.nanoTime() - start) / 1_000_000_000. + "s");
 
 				// Re-set local variables
 				if (localVars != null)

@@ -89,21 +89,30 @@ public abstract class PropertyBaseExpression<Handler extends ExpressionPropertyH
 
 	@Override
 	protected Object @Nullable [] get(Event event) {
-		return expr.stream(event)
-			.flatMap(source -> {
-				var handler = properties.getHandler(source.getClass());
-				if (handler == null) {
-					return null; // no property info found, skip
+		// the same as streaming expr.stream(event), without the stream overhead
+		Iterator<?> sources = expr.iterator(event);
+		if (sources == null)
+			return (Object[]) Array.newInstance(getReturnType(), 0);
+		List<Object> values = new ArrayList<>(4);
+		while (sources.hasNext()) {
+			Object source = sources.next();
+			var handler = properties.getHandler(source.getClass());
+			if (handler == null)
+				continue; // no property info found, skip
+			var value = convert(event, handler, source);
+			if (value == null)
+				continue;
+			// flatten arrays
+			if (value.getClass().isArray()) {
+				for (Object element : (Object[]) value) {
+					if (element != null)
+						values.add(element);
 				}
-				var value = convert(event, handler, source);
-				// flatten arrays
-				if (value != null && value.getClass().isArray()) {
-					return Arrays.stream(((Object[]) value));
-				}
-				return Stream.of(value);
-			})
-			.filter(Objects::nonNull)
-			.toArray(size -> (Object[]) Array.newInstance(getReturnType(), size));
+			} else {
+				values.add(value);
+			}
+		}
+		return values.toArray((Object[]) Array.newInstance(getReturnType(), values.size()));
 	}
 
 	/**
