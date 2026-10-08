@@ -207,6 +207,17 @@ public final class SkriptParser {
 				int matchedPattern = -1; // will increment at the start of each iteration
 				patternsLoop: for (String pattern : info.patterns()) {
 					matchedPattern++;
+
+					// most patterns can't match, skip them before any of the work below (parse_i would return null)
+					SkriptPattern compiled;
+					try {
+						compiled = getCompiledPattern(pattern);
+					} catch (MalformedPatternException e) {
+						throw malformedPattern(info, e);
+					}
+					if (!compiled.canMatch(expr))
+						continue;
+
 					log.clear();
 					ParseResult parseResult;
 
@@ -214,12 +225,7 @@ public final class SkriptParser {
 						parsingStack.push(new ParsingStack.Element(info, matchedPattern));
 						parseResult = parse_i(pattern);
 					} catch (MalformedPatternException e) {
-						String message = "pattern compiling exception, element class: " + info.type().getName();
-						try {
-							JavaPlugin providingPlugin = JavaPlugin.getProvidingPlugin(info.type());
-							message += " (provided by " + providingPlugin.getName() + ")";
-						} catch (IllegalArgumentException | IllegalStateException ignored) { }
-						throw new RuntimeException(message, e);
+						throw malformedPattern(info, e);
 					} catch (StackOverflowError e) {
 						// Parsing caused a stack overflow, possibly due to too long lines
 						throw new ParseStackOverflowException(e, new ParsingStack(parsingStack));
@@ -1548,8 +1554,25 @@ public final class SkriptParser {
 
 	private static final Map<String, SkriptPattern> patterns = new ConcurrentHashMap<>();
 
+	private static RuntimeException malformedPattern(SyntaxInfo<?> info, MalformedPatternException e) {
+		String message = "pattern compiling exception, element class: " + info.type().getName();
+		try {
+			JavaPlugin providingPlugin = JavaPlugin.getProvidingPlugin(info.type());
+			message += " (provided by " + providingPlugin.getName() + ")";
+		} catch (IllegalArgumentException | IllegalStateException ignored) { }
+		return new RuntimeException(message, e);
+	}
+
+	private static SkriptPattern getCompiledPattern(String pattern) {
+		// get() is lock-free, computeIfAbsent() may lock even when the pattern is already compiled
+		SkriptPattern skriptPattern = patterns.get(pattern);
+		if (skriptPattern == null)
+			skriptPattern = patterns.computeIfAbsent(pattern, PatternCompiler::compile);
+		return skriptPattern;
+	}
+
 	private @Nullable ParseResult parse_i(String pattern) {
-		SkriptPattern skriptPattern = patterns.computeIfAbsent(pattern, PatternCompiler::compile);
+		SkriptPattern skriptPattern = getCompiledPattern(pattern);
 		ch.njol.skript.patterns.MatchResult matchResult = skriptPattern.match(expr, flags, context);
 		if (matchResult == null)
 			return null;

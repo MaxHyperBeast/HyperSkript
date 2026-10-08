@@ -180,14 +180,30 @@ abstract class Keyword {
 	private static final class ChoiceKeyword extends Keyword {
 
 		private final Set<Set<Keyword>> choices;
+		/**
+		 * {@link #choices} as arrays, so checking doesn't need streams (this is called for every pattern while parsing).
+		 */
+		private final Keyword[][] choiceArrays;
 
 		ChoiceKeyword(Set<Set<Keyword>> choices) {
 			this.choices = choices;
+			this.choiceArrays = choices.stream()
+				.map(keywords -> keywords.toArray(new Keyword[0]))
+				.toArray(Keyword[][]::new);
 		}
 
 		@Override
 		public boolean isPresent(String expr) {
-			return choices.stream().anyMatch(keywords -> keywords.stream().allMatch(keyword -> keyword.isPresent(expr)));
+			// any choice whose keywords are all present
+			choices:
+			for (Keyword[] keywords : choiceArrays) {
+				for (Keyword keyword : keywords) {
+					if (!keyword.isPresent(expr))
+						continue choices;
+				}
+				return true;
+			}
+			return false;
 		}
 
 		@Override

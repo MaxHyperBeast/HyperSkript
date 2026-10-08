@@ -30,13 +30,8 @@ public class SkriptPattern {
 	@Nullable
 	public MatchResult match(String expr, int flags, ParseContext parseContext) {
 		// Matching shortcut
-		String lowerExpr = expr.toLowerCase(Locale.ENGLISH);
-		if (lowerExpr.length() < minLength)
+		if (!canMatch(expr))
 			return null;
-		for (Keyword keyword : keywords) {
-			if (!keyword.isPresent(lowerExpr))
-				return null;
-		}
 
 		expr = expr.trim();
 
@@ -47,6 +42,38 @@ public class SkriptPattern {
 		matchResult.parseContext = parseContext;
 		matchResult.flags = flags;
 		return first.match(expr, matchResult);
+	}
+
+	/**
+	 * A quick check that rejects most expressions this pattern can't match, without matching.
+	 * @return False if the expression can't match this pattern, true if it might.
+	 */
+	public boolean canMatch(String expr) {
+		String lowerExpr = toLowerCase(expr);
+		if (lowerExpr.length() < minLength)
+			return false;
+		for (Keyword keyword : keywords) {
+			if (!keyword.isPresent(lowerExpr))
+				return false;
+		}
+		return true;
+	}
+
+	/**
+	 * The same expression is matched against many patterns in a row while parsing,
+	 * so the last lowercase conversion is remembered. Immutable, so it's safe to share between threads.
+	 */
+	private record LowerCase(String expr, String lowerCase) { }
+
+	private static volatile @Nullable LowerCase lastLowerCase;
+
+	private static String toLowerCase(String expr) {
+		LowerCase last = lastLowerCase;
+		if (last != null && last.expr == expr)
+			return last.lowerCase;
+		String lowerCase = expr.toLowerCase(Locale.ENGLISH);
+		lastLowerCase = new LowerCase(expr, lowerCase);
+		return lowerCase;
 	}
 
 	@Nullable
