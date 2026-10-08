@@ -18,6 +18,7 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public final class SkriptEventHandler {
@@ -60,6 +61,43 @@ public final class SkriptEventHandler {
 	 */
 	private static final Multimap<Class<? extends Event>, Trigger> triggers = ArrayListMultimap.create();
 
+	private static final Trigger[] NO_TRIGGERS = new Trigger[0];
+
+	/**
+	 * The triggers to run for an event class, per {@link EventPriority#ordinal()}, in the order {@link #getTriggers(Class)} returns them.
+	 * Resolving them scans every registered trigger, so it's cached until the registered triggers change.
+	 */
+	private static final Map<Class<? extends Event>, Trigger[][]> triggerCache = new ConcurrentHashMap<>();
+
+	/**
+	 * Incremented whenever the registered triggers change, so a lookup that raced with the change isn't cached.
+	 */
+	private static volatile int triggerVersion;
+
+	private static void triggersChanged() {
+		triggerVersion++;
+		triggerCache.clear();
+	}
+
+	private static Trigger[] getTriggers(Class<? extends Event> event, EventPriority priority) {
+		Trigger[][] byPriority = triggerCache.get(event);
+		if (byPriority == null) {
+			int version = triggerVersion;
+			List<Trigger> all = getTriggers(event);
+			EventPriority[] priorities = EventPriority.values();
+			byPriority = new Trigger[priorities.length][];
+			for (EventPriority eventPriority : priorities) {
+				Trigger[] matching = all.stream()
+					.filter(trigger -> trigger.getEvent().getEventPriority() == eventPriority)
+					.toArray(Trigger[]::new);
+				byPriority[eventPriority.ordinal()] = matching.length == 0 ? NO_TRIGGERS : matching;
+			}
+			if (version == triggerVersion)
+				triggerCache.put(event, byPriority);
+		}
+		return byPriority[priority.ordinal()];
+	}
+
 	/**
 	 * A utility method to get all Triggers registered under the provided Event class.
 	 * @param event The event to find pairs from.
@@ -83,9 +121,9 @@ public final class SkriptEventHandler {
 	 * @param priority The priority of the Event.
 	 */
 	private static void check(Event event, EventPriority priority) {
-		// get all triggers for this event, return if none
-		List<Trigger> triggers = getTriggers(event.getClass());
-		if (triggers.isEmpty())
+		// get all triggers for this event at this priority, return if none
+		Trigger[] triggers = getTriggers(event.getClass(), priority);
+		if (triggers.length == 0)
 			return;
 
 		// Check if this event should be treated as cancelled
@@ -98,10 +136,6 @@ public final class SkriptEventHandler {
 
 		for (Trigger trigger : triggers) {
 			SkriptEvent triggerEvent = trigger.getEvent();
-
-			// check if the trigger is at the right priority
-			if (triggerEvent.getEventPriority() != priority)
-				continue;
 
 			// check if the cancel state of the event is correct
 			if (!triggerEvent.getListeningBehavior().matches(isCancelled))
@@ -162,25 +196,33 @@ public final class SkriptEventHandler {
 	 * @param event The Event to execute the Trigger with.
 	 */
 	private static void execute(Trigger trigger, Event event) {
-		// these methods need to be run on whatever thread the trigger is
-		Runnable execute = () -> {
-			logTriggerStart(trigger);
-			Object timing = SkriptTimings.start(trigger.getDebugLabel());
-			trigger.execute(event);
-			SkriptTimings.stop(timing);
-			logTriggerEnd(trigger);
-		};
-
-		if (trigger.getEvent().canExecuteAsynchronously()) {
-			if (trigger.getEvent().check(event))
-				execute.run();
+		SkriptEvent triggerEvent = trigger.getEvent();
+		if (triggerEvent.canExecuteAsynchronously()) {
+			if (triggerEvent.check(event))
+				run(trigger, event);
+		} else if (Bukkit.isPrimaryThread()) { // already on the main thread, no task needed
+			try {
+				if (triggerEvent.check(event))
+					run(trigger, event);
+			} catch (Exception e) {
+				Skript.exception(e);
+			}
 		} else { // Ensure main thread
 			Task.callSync(() -> {
-				if (trigger.getEvent().check(event))
-					execute.run();
+				if (triggerEvent.check(event))
+					run(trigger, event);
 				return null; // we don't care about a return value
 			});
 		}
+	}
+
+	// needs to be run on whatever thread the trigger is
+	private static void run(Trigger trigger, Event event) {
+		logTriggerStart(trigger);
+		Object timing = SkriptTimings.start(trigger.getDebugLabel());
+		trigger.execute(event);
+		SkriptTimings.stop(timing);
+		logTriggerEnd(trigger);
 	}
 
 
@@ -288,6 +330,7 @@ public final class SkriptEventHandler {
 			return;
 
 		triggers.put(event, trigger);
+		triggersChanged();
 
 		EventPriority priority = trigger.getEvent().getEventPriority();
 
@@ -311,6 +354,7 @@ public final class SkriptEventHandler {
 
 			// Remove the trigger from the map
 			entryIterator.remove();
+			triggersChanged();
 
 			// check if we can unregister the listener
 			EventPriority priority = trigger.getEvent().getEventPriority();
