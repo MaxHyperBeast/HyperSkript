@@ -35,11 +35,13 @@ import org.skriptlang.skript.lang.converter.Converter;
 import org.skriptlang.skript.lang.converter.ConverterInfo;
 import org.skriptlang.skript.lang.converter.Converters;
 import org.skriptlang.skript.lang.properties.Property;
+import org.skriptlang.skript.util.ClassCache;
 
 import java.io.*;
 import java.lang.reflect.Array;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
@@ -53,7 +55,10 @@ public abstract class Classes {
 	private static ClassInfo<?>[] classInfos = null;
 	private final static List<ClassInfo<?>> tempClassInfos = new ArrayList<>();
 	private final static HashMap<Class<?>, ClassInfo<?>> exactClassInfos = new HashMap<>();
-	private final static HashMap<Class<?>, ClassInfo<?>> superClassInfos = new HashMap<>();
+	/**
+	 * Caches {@link #getSuperClassInfo(Class)} once registration is over and the class infos are sorted.
+	 */
+	private static final ClassCache<ClassInfo<?>> superClassInfos = new ClassCache<>(Classes::findSuperClassInfo);
 	private final static HashMap<String, ClassInfo<?>> classInfosByCodeName = new HashMap<>();
 	private final static Map<String, List<ClassInfo<?>>> registeredLiteralPatterns = new HashMap<>();
 
@@ -283,18 +288,18 @@ public abstract class Classes {
 	@Contract(pure = true, value = "!null -> !null")
 	public static <T> ClassInfo<? super T> getSuperClassInfo(final Class<T> c) {
 		assert c != null;
-		ClassInfo<? super T> info = getExactClassInfo(c);
-		if (info != null)
-			return info;
-		info = (ClassInfo<? super T>) superClassInfos.get(c);
+		if (classInfos == null || !Skript.hasFinishedRegistrations()) // not final yet, don't cache
+			return (ClassInfo<? super T>) findSuperClassInfo(c);
+		return (ClassInfo<? super T>) superClassInfos.get(c);
+	}
+
+	private static @Nullable ClassInfo<?> findSuperClassInfo(Class<?> c) {
+		ClassInfo<?> info = getExactClassInfo(c);
 		if (info != null)
 			return info;
 		for (final ClassInfo<?> ci : getClassInfos()) {
-			if (ci.getC().isAssignableFrom(c)) {
-				if (!Skript.isAcceptRegistrations())
-					superClassInfos.put(c, ci);
-				return (ClassInfo<? super T>) ci;
-			}
+			if (ci.getC().isAssignableFrom(c))
+				return ci;
 		}
 		assert false;
 		return null;
@@ -377,6 +382,21 @@ public abstract class Classes {
 	public static ClassInfo<?> getClassInfoFromUserInput(String name) {
 		checkAllowClassInfoInteraction();
 		name = "" + name.toLowerCase(Locale.ENGLISH);
+		Optional<ClassInfo<?>> cached = classInfosFromUserInput.get(name);
+		if (cached == null) {
+			cached = Optional.ofNullable(findClassInfoFromUserInput(name));
+			if (classInfosFromUserInput.size() < 10_000) // bound the cache, user input names are only from scripts
+				classInfosFromUserInput.put(name, cached);
+		}
+		return cached.orElse(null);
+	}
+
+	/**
+	 * Caches {@link #getClassInfoFromUserInput(String)} by lowercase name. Only used once registration is over.
+	 */
+	private static final Map<String, Optional<ClassInfo<?>>> classInfosFromUserInput = new ConcurrentHashMap<>();
+
+	private static @Nullable ClassInfo<?> findClassInfoFromUserInput(String name) {
 		for (final ClassInfo<?> ci : getClassInfos()) {
 			final Pattern[] uip = ci.getUserInputPatterns();
 			if (uip == null)
@@ -437,7 +457,12 @@ public abstract class Classes {
 	public static Object clone(Object obj) {
 		if (obj == null)
 			return null;
-		if (obj.getClass().isArray()) {
+		if (obj instanceof Object[] array) { // same as below, without reflective element access
+			Object[] clone = (Object[]) Array.newInstance(array.getClass().getComponentType(), array.length);
+			for (int i = 0; i < array.length; i++)
+				clone[i] = clone(array[i]);
+			return clone;
+		} else if (obj.getClass().isArray()) {
 			int length = Array.getLength(obj);
 			Object clone = Array.newInstance(obj.getClass().getComponentType(), length);
 			for (int i = 0; i < length; i++) {
@@ -476,9 +501,9 @@ public abstract class Classes {
 	public static <T> T parseSimple(final String s, final Class<T> c, final ParseContext context) {
 		final ParseLogHandler log = SkriptLogger.startParseLogHandler();
 		try {
-			for (final ClassInfo<?> info : getClassInfos()) {
+			for (final ClassInfo<?> info : getParsingClassInfos(c)) {
 				final Parser<?> parser = info.getParser();
-				if (parser == null || !parser.canParse(context) || !c.isAssignableFrom(info.getC()))
+				if (!parser.canParse(context))
 					continue;
 				log.clear();
 				@SuppressWarnings("unchecked")
@@ -493,6 +518,29 @@ public abstract class Classes {
 			log.stop();
 		}
 		return null;
+	}
+
+	/**
+	 * Caches {@link #findParsingClassInfos(Class)}, filled once registration is over.
+	 */
+	private static final ClassCache<ClassInfo<?>[]> parsingClassInfos = new ClassCache<>(Classes::findParsingClassInfos);
+
+	/**
+	 * @return The class infos with a parser whose class is a subtype of the given class, in sorted order.
+	 */
+	private static ClassInfo<?>[] getParsingClassInfos(Class<?> type) {
+		if (classInfos == null || !Skript.hasFinishedRegistrations()) // not final yet, don't cache
+			return findParsingClassInfos(type);
+		return parsingClassInfos.get(type);
+	}
+
+	private static ClassInfo<?>[] findParsingClassInfos(Class<?> type) {
+		List<ClassInfo<?>> infos = new ArrayList<>();
+		for (final ClassInfo<?> info : getClassInfos()) {
+			if (info.getParser() != null && type.isAssignableFrom(info.getC()))
+				infos.add(info);
+		}
+		return infos.toArray(new ClassInfo<?>[0]);
 	}
 
 	/**
@@ -653,17 +701,39 @@ public abstract class Classes {
 			}
 			return "[" + b.toString() + "]";
 		}
-		for (final ClassInfo<?> ci : getClassInfos()) {
+		final ClassInfo<?> ci = getStringifyingClassInfo(o.getClass());
+		if (ci != null) {
 			final Parser<?> parser = ci.getParser();
-			if (parser != null && ci.getC().isInstance(o)) {
-				@SuppressWarnings("unchecked")
-				final String s = mode == StringMode.MESSAGE ? ((Parser<T>) parser).toString(o, flags)
-						: mode == StringMode.DEBUG ? "[" + ci.getCodeName() + ":" + ((Parser<T>) parser).toString(o, mode) + "]"
-								: ((Parser<T>) parser).toString(o, mode);
-				return s;
-			}
+			@SuppressWarnings("unchecked")
+			final String s = mode == StringMode.MESSAGE ? ((Parser<T>) parser).toString(o, flags)
+					: mode == StringMode.DEBUG ? "[" + ci.getCodeName() + ":" + ((Parser<T>) parser).toString(o, mode) + "]"
+							: ((Parser<T>) parser).toString(o, mode);
+			return s;
 		}
 		return mode == StringMode.VARIABLE_NAME ? "object:" + o : "" + o;
+	}
+
+	/**
+	 * Caches {@link #findStringifyingClassInfo(Class)}, filled once registration is over.
+	 */
+	private static final ClassCache<ClassInfo<?>> stringifyingClassInfos = new ClassCache<>(Classes::findStringifyingClassInfo);
+
+	/**
+	 * @return The first class info (in sorted order) with a parser whose class is a supertype of the given class.
+	 *  This is the class info that converts instances of the class to strings.
+	 */
+	private static @Nullable ClassInfo<?> getStringifyingClassInfo(Class<?> type) {
+		if (classInfos == null || !Skript.hasFinishedRegistrations()) // not final yet, don't cache
+			return findStringifyingClassInfo(type);
+		return stringifyingClassInfos.get(type);
+	}
+
+	private static @Nullable ClassInfo<?> findStringifyingClassInfo(Class<?> type) {
+		for (final ClassInfo<?> ci : getClassInfos()) {
+			if (ci.getParser() != null && ci.getC().isAssignableFrom(type))
+				return ci;
+		}
+		return null;
 	}
 
 	public static String toString(final Object[] os, final int flags, final boolean and) {

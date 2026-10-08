@@ -2,7 +2,7 @@ package org.skriptlang.skript.lang.converter;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAPIException;
-import ch.njol.util.Pair;
+import org.skriptlang.skript.util.ClassPairCache;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -39,7 +39,7 @@ public final class Converters {
 	 * Some pairs may point to a null value, indicating that no converter exists between the two types.
 	 * This is useful for skipping complex lookups that may require chaining.
 	 */
-	private static final Map<Pair<Class<?>, Class<?>>, ConverterInfo<?, ?>> QUICK_ACCESS_CONVERTERS = new HashMap<>(50);
+	private static final ClassPairCache<ConverterInfo<?, ?>> QUICK_ACCESS_CONVERTERS = new ClassPairCache<>();
 
 	/**
 	 * Registers a new Converter with Skript's collection of Converters.
@@ -221,19 +221,7 @@ public final class Converters {
 	public static <F, T> ConverterInfo<F, T> getConverterInfo(Class<F> fromType, Class<T> toType) {
 		assertIsDoneLoading();
 
-		Pair<Class<?>, Class<?>> pair = new Pair<>(fromType, toType);
-		ConverterInfo<F, T> converter;
-
-		synchronized (QUICK_ACCESS_CONVERTERS) {
-			if (QUICK_ACCESS_CONVERTERS.containsKey(pair)) {
-				converter = (ConverterInfo<F, T>) QUICK_ACCESS_CONVERTERS.get(pair);
-			} else { // Compute QUICK_ACCESS for provided types
-				converter = getConverterInfo_i(fromType, toType);
-				QUICK_ACCESS_CONVERTERS.put(pair, converter);
-			}
-		}
-
-		return converter;
+		return (ConverterInfo<F, T>) QUICK_ACCESS_CONVERTERS.get(fromType, toType, Converters::getConverterInfo_i);
 	}
 
 	/**
@@ -597,7 +585,7 @@ public final class Converters {
 	}
 
 	private static void assertIsDoneLoading() {
-		if (Skript.isAcceptRegistrations()) {
+		if (!Skript.hasFinishedRegistrations() && Skript.isAcceptRegistrations()) {
 			throw new SkriptAPIException("Converters cannot be retrieved until Skript has finished registrations.");
 		}
 	}

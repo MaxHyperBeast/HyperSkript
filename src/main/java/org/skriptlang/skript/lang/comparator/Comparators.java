@@ -4,18 +4,16 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAPIException;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.Utils;
-import ch.njol.util.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.skriptlang.skript.lang.converter.Converter;
 import org.skriptlang.skript.lang.converter.ConverterInfo;
 import org.skriptlang.skript.lang.converter.Converters;
+import org.skriptlang.skript.util.ClassPairCache;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Comparators are used to provide Skript with specific instructions for comparing two objects.
@@ -58,7 +56,7 @@ public final class Comparators {
 	 * Some pairs may point to a null value, indicating that no comparator exists between the two types.
 	 * This is useful for skipping complex lookups that may require conversion and inversion.
 	 */
-	private static final Map<Pair<Class<?>, Class<?>>, ComparatorInfo<?, ?>> QUICK_ACCESS_COMPARATORS = new HashMap<>(50);
+	private static final ClassPairCache<ComparatorInfo<?, ?>> QUICK_ACCESS_COMPARATORS = new ClassPairCache<>();
 
 	/**
 	 * Registers a new Comparator with Skript's collection of Comparators.
@@ -182,19 +180,7 @@ public final class Comparators {
 	public static <T1, T2> ComparatorInfo<T1, T2> getComparatorInfo(Class<T1> firstType, Class<T2> secondType) {
 		assertIsDoneLoading();
 
-		Pair<Class<?>, Class<?>> pair = new Pair<>(firstType, secondType);
-		ComparatorInfo<T1, T2> comparator;
-
-		synchronized (QUICK_ACCESS_COMPARATORS) {
-			if (QUICK_ACCESS_COMPARATORS.containsKey(pair)) {
-				comparator = (ComparatorInfo<T1, T2>) QUICK_ACCESS_COMPARATORS.get(pair);
-			} else { // Compute QUICK_ACCESS for provided types
-				comparator = getComparatorInfo_i(firstType, secondType);
-				QUICK_ACCESS_COMPARATORS.put(pair, comparator);
-			}
-		}
-
-		return comparator;
+		return (ComparatorInfo<T1, T2>) QUICK_ACCESS_COMPARATORS.get(firstType, secondType, Comparators::getComparatorInfo_i);
 	}
 
 	/**
@@ -370,7 +356,7 @@ public final class Comparators {
 	}
 
 	private static void assertIsDoneLoading() {
-		if (Skript.isAcceptRegistrations()) {
+		if (!Skript.hasFinishedRegistrations() && Skript.isAcceptRegistrations()) {
 			throw new SkriptAPIException("Comparators cannot be retrieved until Skript has finished registrations.");
 		}
 	}

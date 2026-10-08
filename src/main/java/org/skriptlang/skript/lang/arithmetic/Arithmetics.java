@@ -5,6 +5,8 @@ import ch.njol.skript.SkriptAPIException;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.skriptlang.skript.util.ClassCache;
+import org.skriptlang.skript.util.ClassPairCache;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -17,10 +19,54 @@ public final class Arithmetics {
 
 	private static final Map<Operator, List<OperationInfo<?, ?, ?>>> OPERATIONS
 		= Collections.synchronizedMap(new HashMap<>());
-	private static final Map<Operator, Map<OperandTypes, OperationInfo<?, ?, ?>>> CACHED_OPERATIONS
-		= Collections.synchronizedMap(new HashMap<>());
-	private static final Map<Operator, Map<OperandTypes, OperationInfo<?, ?, ?>>> CACHED_CONVERTED_OPERATIONS
-		= Collections.synchronizedMap(new HashMap<>());
+	/**
+	 * Lock-free lookup caches of one operator, filled once registration is over.
+	 */
+	private record OperatorCaches(
+		Operator operator,
+		ClassPairCache<OperationInfo<?, ?, ?>> operations,
+		ClassPairCache<OperationInfo<?, ?, ?>> convertedOperations,
+		ClassCache<List<OperationInfo<?, ?, ?>>> leftOperations
+	) {
+
+		private OperatorCaches(Operator operator) {
+			//noinspection unchecked,rawtypes
+			this(operator, new ClassPairCache<>(), new ClassPairCache<>(),
+				new ClassCache<>(type -> Collections.unmodifiableList((List) findOperations(operator, type))));
+		}
+
+	}
+
+	/**
+	 * Caches per operator, searched by identity first, as {@link Operator} is a record with a costly hash code.
+	 * Copy-on-write, only grows.
+	 */
+	private static volatile OperatorCaches[] operatorCaches = new OperatorCaches[0];
+
+	private static OperatorCaches getCaches(Operator operator) {
+		OperatorCaches[] caches = operatorCaches;
+		for (OperatorCaches cache : caches) {
+			if (cache.operator == operator)
+				return cache;
+		}
+		synchronized (Arithmetics.class) {
+			caches = operatorCaches;
+			OperatorCaches found = null;
+			for (OperatorCaches cache : caches) {
+				if (cache.operator == operator)
+					return cache;
+				if (found == null && cache.operator.equals(operator))
+					found = cache;
+			}
+			// an equal operator shares the caches, but is stored as well so the next lookup finds it by identity
+			OperatorCaches created = found == null ? new OperatorCaches(operator)
+				: new OperatorCaches(operator, found.operations, found.convertedOperations, found.leftOperations);
+			OperatorCaches[] grown = Arrays.copyOf(caches, caches.length + 1);
+			grown[caches.length] = created;
+			operatorCaches = grown;
+			return created;
+		}
+	}
 
 	private static final Map<Class<?>, DifferenceInfo<?, ?>> DIFFERENCES
 		= Collections.synchronizedMap(new HashMap<>());
@@ -176,6 +222,13 @@ public final class Arithmetics {
 	 */
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public static <T> @Unmodifiable List<OperationInfo<T, ?, ?>> getOperations(Operator operator, Class<T> type) {
+		if (!Skript.hasFinishedRegistrations()) // operations may still be added, don't cache
+			return (List) findOperations(operator, type);
+		return (List) getCaches(operator).leftOperations.get(type);
+	}
+
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	private static <T> List<OperationInfo<T, ?, ?>> findOperations(Operator operator, Class<T> type) {
 		return (List) getOperations(operator).stream()
 			.filter(info -> info.left().isAssignableFrom(type))
 			.collect(Collectors.toList());
@@ -264,15 +317,15 @@ public final class Arithmetics {
 	public static <L, R> @Nullable OperationInfo<L, R, ?> getOperationInfo(Operator operator,
 			Class<L> leftClass, Class<R> rightClass) {
 		assertIsOperationsDoneLoading();
-		OperandTypes operandTypes = new OperandTypes(leftClass, rightClass);
-		Map<OperandTypes, OperationInfo<?, ?, ?>> operations = CACHED_OPERATIONS
-			.computeIfAbsent(operator, o -> Collections.synchronizedMap(new HashMap<>()));
-		OperationInfo<L, R, ?> operationInfo = (OperationInfo<L, R, ?>) operations.get(operandTypes);
 		// we also cache null values for non-existing operations
-		if (operations.containsKey(operandTypes))
-			return operationInfo;
+		return (OperationInfo<L, R, ?>) getCaches(operator).operations.get(leftClass, rightClass,
+			(left, right) -> findOperationInfo(operator, left, right));
+	}
 
-		operationInfo = (OperationInfo<L, R, ?>) getOperations(operator).stream()
+	@SuppressWarnings("unchecked")
+	private static <L, R> @Nullable OperationInfo<L, R, ?> findOperationInfo(Operator operator,
+			Class<L> leftClass, Class<R> rightClass) {
+		return (OperationInfo<L, R, ?>) getOperations(operator).stream()
 			.filter(info ->
 				info.left().isAssignableFrom(leftClass) && info.right().isAssignableFrom(rightClass))
 			.reduce((info, info2) -> {
@@ -281,8 +334,6 @@ public final class Arithmetics {
 				return info;
 			})
 			.orElse(null);
-		operations.put(operandTypes, operationInfo);
-		return operationInfo;
 	}
 
 	/**
@@ -358,25 +409,16 @@ public final class Arithmetics {
 		if (operationInfo != null)
 			return operationInfo;
 
-		OperandTypes operandTypes = new OperandTypes(leftClass, rightClass);
-		Map<OperandTypes, OperationInfo<?, ?, ?>> operations = CACHED_CONVERTED_OPERATIONS
-			.computeIfAbsent(operator, o -> Collections.synchronizedMap(new HashMap<>()));
-		operationInfo = (OperationInfo<L, R, ?>) operations.get(operandTypes);
 		// we also cache null values for non-existing operations
-		if (operations.containsKey(operandTypes))
-			return operationInfo;
-
-		for (OperationInfo<?, ?, ?> info : getOperations(operator)) {
-			OperationInfo<L, R, ?> convertedInfo = info.getConverted(
-				leftClass, rightClass, info.returnType());
-			if (convertedInfo == null)
-				continue;
-			operations.put(operandTypes, convertedInfo);
-			return convertedInfo;
-		}
-
-		operations.put(operandTypes, null);
-		return null;
+		return (OperationInfo<L, R, ?>) getCaches(operator).convertedOperations.get(leftClass, rightClass,
+			(left, right) -> {
+				for (OperationInfo<?, ?, ?> info : getOperations(operator)) {
+					OperationInfo<L, R, ?> convertedInfo = info.getConverted(left, right, info.returnType());
+					if (convertedInfo != null)
+						return convertedInfo;
+				}
+				return null;
+			});
 	}
 
 	/**
@@ -636,7 +678,7 @@ public final class Arithmetics {
 	}
 
 	private static void assertIsOperationsDoneLoading() {
-		if (Skript.isAcceptRegistrations())
+		if (!Skript.hasFinishedRegistrations() && Skript.isAcceptRegistrations())
 			throw new SkriptAPIException("Operations cannot be retrieved until Skript has " +
 				"finished registrations.");
 	}
@@ -674,7 +716,5 @@ public final class Arithmetics {
 	private Arithmetics() {
 		throw new UnsupportedOperationException();
 	}
-
-	private record OperandTypes(Class<?> left, Class<?> right) {}
 
 }

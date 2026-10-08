@@ -1362,6 +1362,15 @@ public final class Skript extends JavaPlugin implements Listener {
 		return acceptRegistrations && instance.isEnabled();
 	}
 
+	/**
+	 * A cheap check for hot paths: once registrations are over, they never start again.
+	 * @return Whether Skript has stopped accepting registrations.
+	 */
+	@ApiStatus.Internal
+	public static boolean hasFinishedRegistrations() {
+		return !acceptRegistrations;
+	}
+
 	public static void checkAcceptRegistrations() {
 		if (!isAcceptRegistrations() && !Skript.testing())
 			throw new SkriptAPIException("Registration can only be done during plugin initialization");
