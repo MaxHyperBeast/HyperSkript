@@ -7,8 +7,13 @@ import ch.njol.skript.doc.Since;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.skript.lang.Expression;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
+import ch.njol.skript.lang.VariableString;
+import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
 import net.kyori.adventure.text.Component;
+import org.bukkit.event.Event;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.bukkit.text.ComponentTemplate;
 import org.skriptlang.skript.bukkit.text.TextComponentParser;
 import org.skriptlang.skript.registration.SyntaxInfo;
 import org.skriptlang.skript.registration.SyntaxRegistry;
@@ -46,12 +51,69 @@ public class ExprColored extends SimplePropertyExpression<String, Object> {
 
 	private boolean isColor;
 	private boolean isFormat;
+	private @Nullable ComponentTemplate template;
 
 	@Override
 	public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
 		isColor = !parseResult.hasTag("negated");
 		isFormat = matchedPattern == 1;
-		return super.init(expressions, matchedPattern, isDelayed, parseResult);
+		if (!super.init(expressions, matchedPattern, isDelayed, parseResult))
+			return false;
+		// a string with expressions is formatted with a template, which only parses its static parts once
+		if (isColor && getExpr() instanceof VariableString string && !string.isSimple()) {
+			Object[] parts = string.getParts();
+			template = parts == null ? null : ComponentTemplate.create(parts, string.getMode(), !isFormat);
+			if (template != null)
+				setExpr(new TemplateSource(string));
+		}
+		return true;
+	}
+
+	@Override
+	protected Object[] get(Event event, String[] source) {
+		ComponentTemplate template = this.template;
+		if (template != null) // source is TemplateSource's placeholder, the template evaluates the string itself
+			return new Component[] {template.format(event)};
+		return super.get(event, source);
+	}
+
+	/**
+	 * Stands in for the string when a {@link ComponentTemplate} formats it, so the complete string isn't built for nothing.
+	 * Everything else is the same as the string.
+	 */
+	private static final class TemplateSource extends SimpleExpression<String> {
+
+		private final VariableString string;
+
+		private TemplateSource(VariableString string) {
+			this.string = string;
+		}
+
+		@Override
+		protected String[] get(Event event) {
+			return new String[] {""};
+		}
+
+		@Override
+		public boolean isSingle() {
+			return true;
+		}
+
+		@Override
+		public Class<? extends String> getReturnType() {
+			return String.class;
+		}
+
+		@Override
+		public boolean init(Expression<?>[] expressions, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public String toString(@Nullable Event event, boolean debug) {
+			return string.toString(event, debug);
+		}
+
 	}
 
 	@Override

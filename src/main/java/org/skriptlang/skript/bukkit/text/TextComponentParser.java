@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -191,6 +192,69 @@ public final class TextComponentParser {
 
 	TextComponentParser() {
 		registerCompatibilityTags();
+		initialized = true;
+	}
+
+	/**
+	 * Strings longer than this are not cached.
+	 */
+	private static final int MAX_CACHED_LENGTH = 512;
+
+	/**
+	 * Once a cache holds this many entries, it is cleared.
+	 */
+	private static final int MAX_CACHE_SIZE = 4096;
+
+	/**
+	 * Parse results by input string, separately for both parsers.
+	 * Components are immutable and parsing only depends on the input and this parser's configuration,
+	 * so results can be reused. The caches are replaced when the configuration changes,
+	 * so a parse that was running during the change can't store an outdated result in the new cache.
+	 */
+	private volatile Map<String, Component> parseCache = new ConcurrentHashMap<>();
+	private volatile Map<String, Component> safeParseCache = new ConcurrentHashMap<>();
+
+	/**
+	 * Whether the constructor finished registering Skript's own tags.
+	 */
+	private boolean initialized;
+
+	/**
+	 * Disabled once a resolver is registered from outside Skript, as its output may change between calls.
+	 */
+	private volatile boolean cacheEnabled = true;
+
+	/**
+	 * Incremented whenever the configuration changes, see {@link ComponentTemplate}.
+	 */
+	private volatile int configGeneration;
+
+	private void configurationChanged() {
+		configGeneration++;
+		parseCache = new ConcurrentHashMap<>();
+		safeParseCache = new ConcurrentHashMap<>();
+	}
+
+	/**
+	 * @return A number that changes whenever the configuration of this parser changes.
+	 */
+	int configGeneration() {
+		return configGeneration;
+	}
+
+	/**
+	 * Parses a string like {@link #parse(Object)} or {@link #parseSafe(Object)}, without link replacement or caching.
+	 * @return The component, or null if the string couldn't be parsed (nothing is logged).
+	 */
+	@Nullable Component parseOrNull(String message, boolean safe) {
+		if (message.isEmpty())
+			return Component.empty();
+		try {
+			String reformatted = reformatText(message);
+			return safe ? safeParser.deserialize(reformatted) : parser.deserialize(reformatted);
+		} catch (ParsingException e) {
+			return null;
+		}
 	}
 
 	// The normal parser will process any proper tags
@@ -297,6 +361,7 @@ public final class TextComponentParser {
 				resolvers.add((TagResolver) handle.invoke());
 			} catch (Throwable ignored) { }
 		}
+		configurationChanged();
 		// create new resolver
 		safeTagResolver = new TagResolver() {
 			@Override
@@ -312,6 +377,7 @@ public final class TextComponentParser {
 				return resolvers.stream().anyMatch(resolver -> resolver.has(name)) || CollectionUtils.contains(safeTags, name);
 			}
 		};
+		configurationChanged();
 	}
 
 	/**
@@ -360,6 +426,7 @@ public final class TextComponentParser {
 
 	private void registerPlaceholder(String name, Tag result, @Nullable String parent, boolean reset) {
 		simplePlaceholders.put(name, new SkriptTag(result, parent, reset));
+		configurationChanged();
 	}
 
 	/**
@@ -368,6 +435,7 @@ public final class TextComponentParser {
 	 */
 	public void unregisterPlaceholder(String tag) {
 		simplePlaceholders.remove(tag);
+		configurationChanged();
 	}
 
 	/**
@@ -386,6 +454,9 @@ public final class TextComponentParser {
 	 */
 	public void registerResolver(TagResolver resolver, String parent) {
 		resolvers.add(new SkriptTagResolver(resolver, parent));
+		if (initialized) // resolvers from addons may be dynamic, so caching isn't safe anymore
+			cacheEnabled = false;
+		configurationChanged();
 	}
 
 	/**
@@ -395,6 +466,7 @@ public final class TextComponentParser {
 	public void unregisterResolver(TagResolver resolver) {
 		// safe parameter is irrelevant as only resolver is considered in equality
 		resolvers.remove(new SkriptTagResolver(resolver, null));
+		configurationChanged();
 	}
 
 	/**
@@ -410,6 +482,7 @@ public final class TextComponentParser {
 	 */
 	public void linkParseMode(LinkParseMode linkParseMode) {
 		this.linkParseMode = linkParseMode;
+		configurationChanged();
 	}
 
 	/**
@@ -425,6 +498,7 @@ public final class TextComponentParser {
 	 */
 	public void colorsCauseReset(boolean colorsCauseReset) {
 		this.colorsCauseReset = colorsCauseReset;
+		configurationChanged();
 	}
 
 	/**
@@ -453,6 +527,20 @@ public final class TextComponentParser {
 			return Component.empty();
 		}
 
+		// nothing can be formatted, MiniMessage would return exactly this
+		if (linkParseMode == LinkParseMode.DISABLED && isPlainText(realMessage)) {
+			return Component.text(realMessage);
+		}
+
+		Map<String, Component> cache = null;
+		if (cacheEnabled && realMessage.length() <= MAX_CACHED_LENGTH) {
+			cache = safe ? safeParseCache : parseCache;
+			Component cached = cache.get(realMessage);
+			if (cached != null)
+				return cached;
+		}
+		String cacheKey = realMessage;
+
 		// reformat for maximum compatibility
 		realMessage = reformatText(realMessage);
 
@@ -471,7 +559,25 @@ public final class TextComponentParser {
 			component = component.replaceText(linkParseMode.textReplacementConfig());
 		}
 
+		if (cache != null) {
+			if (cache.size() >= MAX_CACHE_SIZE)
+				cache.clear();
+			cache.put(cacheKey, component);
+		}
 		return component;
+	}
+
+	/**
+	 * @return Whether the string has no characters that can start formatting
+	 *  (tags, escapes, or legacy codes), meaning parsing it returns {@code Component.text(string)}.
+	 */
+	private static boolean isPlainText(String string) {
+		for (int i = 0; i < string.length(); i++) {
+			char c = string.charAt(i);
+			if (c == '<' || c == '\\' || c == '&' || c == '§')
+				return false;
+		}
+		return true;
 	}
 
 	/**
@@ -481,28 +587,36 @@ public final class TextComponentParser {
 	 */
 	public String reformatText(String text) {
 		// TODO improve...
-		// replace spaces with underscores for simple tags
-		text = MULTI_WORD_COLOR_PATTERN.matcher(text).replaceAll(result -> {
-			if (result.group(1).length() % 2 == 1) { // tag is escaped
-				return Matcher.quoteReplacement(result.group());
-			}
-			String mappedTag = result.group(2).replace(" ", "_");
-			if (simplePlaceholders.containsKey(mappedTag) || StandardTags.color().has(mappedTag)) { // only replace if it makes a valid tag
-				return Matcher.quoteReplacement(result.group(1) + "<" + mappedTag + ">");
-			}
-			return Matcher.quoteReplacement(result.group());
-		});
+		int tagStart = text.indexOf('<');
+		if (tagStart == -1) // only legacy codes can apply
+			return TextComponentUtils.replaceLegacyFormattingCodes(text);
 
-		text = LEGACY_DOUBLE_HASHTAG_PATTERN.matcher(text).replaceAll(result -> {
-			if (result.group(1).length() % 2 == 1) { // tag is escaped
+		// replace spaces with underscores for simple tags (the pattern needs a space after a '<')
+		if (text.indexOf(' ', tagStart) != -1) {
+			text = MULTI_WORD_COLOR_PATTERN.matcher(text).replaceAll(result -> {
+				if (result.group(1).length() % 2 == 1) { // tag is escaped
+					return Matcher.quoteReplacement(result.group());
+				}
+				String mappedTag = result.group(2).replace(" ", "_");
+				if (simplePlaceholders.containsKey(mappedTag) || StandardTags.color().has(mappedTag)) { // only replace if it makes a valid tag
+					return Matcher.quoteReplacement(result.group(1) + "<" + mappedTag + ">");
+				}
 				return Matcher.quoteReplacement(result.group());
-			}
-			String mappedTag = result.group(2).substring(1);
-			if (StandardTags.color().has(mappedTag)) {
-				return Matcher.quoteReplacement("<" + mappedTag + ">");
-			}
-			return Matcher.quoteReplacement(result.group());
-		});
+			});
+		}
+
+		if (text.contains("<##")) {
+			text = LEGACY_DOUBLE_HASHTAG_PATTERN.matcher(text).replaceAll(result -> {
+				if (result.group(1).length() % 2 == 1) { // tag is escaped
+					return Matcher.quoteReplacement(result.group());
+				}
+				String mappedTag = result.group(2).substring(1);
+				if (StandardTags.color().has(mappedTag)) {
+					return Matcher.quoteReplacement("<" + mappedTag + ">");
+				}
+				return Matcher.quoteReplacement(result.group());
+			});
+		}
 
 		// legacy compatibility, transform color codes into tags
 		text = TextComponentUtils.replaceLegacyFormattingCodes(text);

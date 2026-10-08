@@ -21,8 +21,11 @@ import ch.njol.util.coll.CollectionUtils;
 import ch.njol.util.coll.iterator.SingleItemIterator;
 import com.google.common.collect.Lists;
 import org.bukkit.event.Event;
+import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.bukkit.text.ComponentTemplateExpression;
 import org.skriptlang.skript.bukkit.text.elements.expressions.ExprColored;
 import org.skriptlang.skript.lang.script.Script;
 import ch.njol.skript.lang.simplification.SimplifiedLiteral;
@@ -367,12 +370,16 @@ public class VariableString implements Expression<String> {
 
 		Object[] string = this.strings;
 		assert string != null;
-		StringBuilder builder = new StringBuilder();
-		List<Class<?>> types = new ArrayList<>();
+		// type hints are only needed for variable names in scripts with default variables
+		DefaultVariables data = script != null && mode == StringMode.VARIABLE_NAME ? script.getData(DefaultVariables.class) : null;
+		if (data != null && !data.hasDefaultVariables())
+			data = null;
+		StringBuilder builder = new StringBuilder(original.length() + 16);
+		List<Class<?>> types = data == null ? null : new ArrayList<>();
 		for (Object object : string) {
 			if (object instanceof Expression<?>) {
 				Object[] objects = ((Expression<?>) object).getArray(event);
-				if (objects != null && objects.length > 0)
+				if (types != null && objects != null && objects.length > 0)
 					types.add(objects[0].getClass());
 				builder.append(Classes.toString(objects, true, mode));
 			} else {
@@ -380,11 +387,8 @@ public class VariableString implements Expression<String> {
 			}
 		}
 		String complete = builder.toString();
-		if (script != null && mode == StringMode.VARIABLE_NAME && !types.isEmpty()) {
-			DefaultVariables data = script.getData(DefaultVariables.class);
-			if (data != null)
-				data.add(complete, types.toArray(new Class<?>[0]));
-		}
+		if (types != null && !types.isEmpty())
+			data.add(complete, types.toArray(new Class<?>[0]));
 		return complete;
 	}
 
@@ -520,7 +524,23 @@ public class VariableString implements Expression<String> {
 	public <R> @Nullable Expression<? extends R> getConvertedExpression(Class<R>... to) {
 		if (CollectionUtils.containsSuperclass(to, String.class))
 			return (Expression<? extends R>) this;
+		// a string with expressions converted to a component is formatted with a template,
+		// which gives the same component but only parses the static parts once
+		if (!isSimple && to.length == 1 && to[0] == Component.class) {
+			Expression<Component> templated = ComponentTemplateExpression.newInstance(this);
+			if (templated != null)
+				return (Expression<? extends R>) templated;
+		}
 		return ConvertedExpression.newInstance(this, to);
+	}
+
+	/**
+	 * @return The parts of this string: {@link String}s and {@link Expression}s, or null if this string is simple.
+	 *  The returned array must not be modified.
+	 */
+	@ApiStatus.Internal
+	public Object @Nullable [] getParts() {
+		return strings;
 	}
 
 	@Override
