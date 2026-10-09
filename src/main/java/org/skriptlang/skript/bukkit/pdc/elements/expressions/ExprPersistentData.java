@@ -87,6 +87,10 @@ public class ExprPersistentData extends PropertyExpression<Object, Object> {
 			.build());
 	}
 
+	/**
+	 * The key of the last tag name; the same name is usually used every time.
+	 */
+	private final NamespacedUtils.LastKey lastKey = new NamespacedUtils.LastKey(true);
 	private @Nullable ClassInfoReference parsedType;
 	private Expression<String> tag;
 	private boolean plural;
@@ -165,7 +169,7 @@ public class ExprPersistentData extends PropertyExpression<Object, Object> {
 		String tagName = tag.getSingle(event);
 		if (tagName == null)
 			return new Object[0];
-		NamespacedKey key = NamespacedUtils.checkValidationAndSend(tagName.toLowerCase(Locale.ENGLISH), this);
+		NamespacedKey key = lastKey.get(tagName, this); // same as checkValidationAndSend on the lowercased name
 		if (key == null)
 			return new Object[0];
 
@@ -275,7 +279,7 @@ public class ExprPersistentData extends PropertyExpression<Object, Object> {
 		String tagName = tag.getSingle(event);
 		if (tagName == null)
 			return;
-		NamespacedKey key = NamespacedUtils.checkValidationAndSend(tagName.toLowerCase(Locale.ENGLISH), this);
+		NamespacedKey key = lastKey.get(tagName, this); // same as checkValidationAndSend on the lowercased name
 		if (key == null)
 			return;
 

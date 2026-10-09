@@ -5,7 +5,7 @@ one section at a time for runtime performance. **Status:** ✅ OK = reviewed, no
 ⚡ Optimized = changed (the note says what was slow and what changed); ⏳ = not reviewed yet.
 Every change keeps the exact behaviour; Skript's test suite must pass after each section.
 
-**Progress:** 962 of 1054 reviewed, 46 optimized.
+**Progress:** 1042 of 1054 reviewed, 48 optimized.
 
 | Section | Contents | Reviewed |
 |---|---|---|
@@ -20,7 +20,7 @@ Every change keeps the exact behaviour; Skript's test suite must pass after each
 | [9](#section-9) | expressions | 80/80 |
 | [10](#section-10) | expressions, hooks.chat.expressions, hooks.economy.expressions, ... | 80/80 |
 | [11](#section-11) | bukkit.enchantments.elements.expressions, bukkit.entity.displays.elements.expressions, bukkit.entity.displays.item.elements.expressions, ... | 80/80 |
-| [12](#section-12) | bukkit.itemcomponents.equippable.elements.expressions, bukkit.loottables.elements.conditions, bukkit.loottables.elements.effects, ... | 0/80 |
+| [12](#section-12) | bukkit.itemcomponents.equippable.elements.expressions, bukkit.loottables.elements.conditions, bukkit.loottables.elements.effects, ... | 80/80 |
 | [13](#section-13) | common.properties.elements.expressions | 0/12 |
 
 ## Section 1
@@ -1068,86 +1068,86 @@ bukkit.itemcomponents.equippable.elements.expressions, bukkit.loottables.element
 
 | Syntax | Kind | Class | Status | Notes |
 |---|---|---|---|---|
-| `equipment slot` | Expression | ExprEquipCompSlot | ⏳ |  |
-| `equippable component[s]` | Expression | ExprEquippableComponent | ⏳ |  |
-| `a (blank\|empty) equippable component` | Expression | ExprSecBlankEquipComp | ⏳ |  |
-| `[a] loot[ ]table` | Condition | CondHasLootTable | ⏳ |  |
-| `lootable` | Condition | CondIsLootable | ⏳ |  |
-| `generate [the] loot (of\|using) %loottable% [(with\|using) %-lootco...` | Effect | EffGenerateLoot | ⏳ |  |
-| `[the] loot` | Expression | ExprLoot | ⏳ |  |
-| `loot[ ]context` | Expression | ExprLootContext | ⏳ |  |
-| `looted entity` | Expression | ExprLootContextEntity | ⏳ |  |
-| `loot[ing] [context] location` | Expression | ExprLootContextLocation | ⏳ |  |
-| `(looter\|looting player)` | Expression | ExprLootContextLooter | ⏳ |  |
-| `loot[ing] [context] luck [value\|factor]` | Expression | ExprLootContextLuck | ⏳ |  |
-| `[the] loot of %loottables% [(with\|using) [[loot] context] %-lootco...` | Expression | ExprLootItems | ⏳ |  |
-| `loot[ ]table[s]` | Expression | ExprLootTable | ⏳ |  |
-| `[the] loot[ ]table[s] %strings%` | Expression | ExprLootTableFromString | ⏳ |  |
-| `loot[[ ]table] seed[s]` | Expression | ExprLootTableSeed | ⏳ |  |
-| `[a] loot context %direction% %location%` | Expression | ExprSecCreateLootContext | ⏳ |  |
-| `rotate %vectors/quaternions/displays% around [the] [global] (:x\|:y...` | Effect | EffRotate | ⏳ |  |
-| `[the] broadcast(-\|[ed] )message` | Expression | ExprBroadcastMessage | ⏳ |  |
-| `colo[u]r[s]` | Expression | ExprColorOf | ⏳ |  |
-| `item [inside]` | Expression | ExprItemOfEntity | ⏳ |  |
-| `[the] [1:default\|2:shown\|2:displayed] (MOTD\|message of [the] day)` | Expression | ExprMOTD | ⏳ |  |
-| `org.joml.Quaternionf` | Expression | ExprQuaternionAxisAngle | ⏳ |  |
-| `%quaternions/vectors% rotated around [the] [global] (:x\|:y\|:z)(-\...` | Expression | ExprRotate | ⏳ |  |
-| `(skull\|head) texture` | Expression | ExprSkullTexture | ⏳ |  |
-| `text[s]` | Expression | ExprTextOf | ⏳ |  |
-| `%locations% with [a] (:yaw\|:pitch) [of] %number%` | Expression | ExprWithYawPitch | ⏳ |  |
-| `[:force] (play\|show\|draw) %gameeffects/particles% [%-directions% ...` | Effect | EffPlayEffect | ⏳ |  |
-| `Could not obtain required data for ` | Expression | ExprGameEffectWithData | ⏳ |  |
-| `particle count` | Expression | ExprParticleCount | ⏳ |  |
-| `particle distribution` | Expression | ExprParticleDistribution | ⏳ |  |
-| `particle offset` | Expression | ExprParticleOffset | ⏳ |  |
-| `(particle speed [value]\|extra value)` | Expression | ExprParticleSpeed | ⏳ |  |
-| `[%-*number%\|a[n]] ` | Expression | ExprParticleWithData | ⏳ |  |
-| `unchecked` | Expression | ExprParticleWithOffset | ⏳ |  |
-| `%particles% with ([a] particle speed [value]\|[an] extra value) [of...` | Expression | ExprParticleWithSpeed | ⏳ |  |
-| `[persistent] data tag[s] %strings%` | Condition | CondHasPersistentDataTag | ⏳ |  |
-| `[all [[of] the]] [persistent] data [tag] keys of %objects%` | Expression | ExprAllPersistentDataKeys | ⏳ |  |
-| `[persistent] [%-*classinfo%] [:list] data (value\|tag) %string%` | Expression | ExprPersistentData | ⏳ |  |
-| `([any\|a[n]] [active] potion effect[s]\|[any\|a] potion effect[s] a...` | Condition | CondHasPotion | ⏳ |  |
-| `poisoned` | Condition | CondIsPoisoned | ⏳ |  |
-| `ambient` | Condition | CondIsPotionAmbient | ⏳ |  |
-| `instant` | Condition | CondIsPotionInstant | ⏳ |  |
-| `([an] icon\|icons)` | Condition | CondPotionHasIcon | ⏳ |  |
-| `particles` | Condition | CondPotionHasParticles | ⏳ |  |
-| `apply haste 3 to the player for 5 seconds` | Effect | EffApplyPotionEffect | ⏳ |  |
-| `poison %livingentities% [for %-timespan%]` | Effect | EffPoison | ⏳ |  |
-| `ambient` | Effect | EffPotionAmbient | ⏳ |  |
-| `icon[s]` | Effect | EffPotionIcon | ⏳ |  |
-| `(infinite\|permanent)` | Effect | EffPotionInfinite | ⏳ |  |
-| `particles` | Effect | EffPotionParticles | ⏳ |  |
-| `([potion] amplifier\|potion tier\|potion level)[s]` | Expression | ExprPotionAmplifier | ⏳ |  |
-| `([potion] duration\|potion length)[s]` | Expression | ExprPotionDuration | ⏳ |  |
-| `[:active\|:hidden\|both:(active and hidden\|hidden and active)] %po...` | Expression | ExprPotionEffect | ⏳ |  |
-| `[:active\|:hidden\|both:(active and hidden\|hidden and active)] pot...` | Expression | ExprPotionEffects | ⏳ |  |
-| `org.bukkit.potion.PotionEffectTypeCategory` | Expression | ExprPotionEffectTypeCategory | ⏳ |  |
-| `[a[n]] [:ambient] potion effect of %potioneffecttype% [[of tier] %-...` | Expression | ExprSecPotionEffect | ⏳ |  |
-| `[created] [potion] effect` | Expression | ExprSkriptPotionEffect | ⏳ |  |
-| `register [a[n]] [custom] ` | Effect | EffRegisterTag | ⏳ |  |
-| ` ` | Expression | ExprTag | ⏳ |  |
-| `tag (contents\|values)` | Expression | ExprTagContents | ⏳ |  |
-| `[namespace[d]] key[s]` | Expression | ExprTagKey | ⏳ |  |
-| `[all [[of] the]\|the] ` | Expression | ExprTagsOf | ⏳ |  |
-| `[all [[of] the]\|the] ` | Expression | ExprTagsOfType | ⏳ |  |
-| `(clear\|delete\|:reset) [the] title[s] [of %audiences%]` | Effect | EffResetTitle | ⏳ |  |
-| `%textcomponents% resolved for %commandsender% [bypass:(bypassing\|i...` | Expression | ExprResolvedComponent | ⏳ |  |
-| `[all [[of] the]\|the] string colo[u]r[s] [code:code[s]] of %strings%` | Expression | ExprStringColor | ⏳ |  |
-| `(expand\|grow) [[the] (diameter\|:radius) of] %worldborders% (by\|:...` | Effect | EffWorldBorderExpand | ⏳ |  |
-| `a [virtual] world[ ]border` | Expression | ExprSecCreateWorldBorder | ⏳ |  |
-| `world[ ]border` | Expression | ExprWorldBorder | ⏳ |  |
-| `world[ ]border (center\|middle)` | Expression | ExprWorldBorderCenter | ⏳ |  |
-| `world[ ]border damage amount` | Expression | ExprWorldBorderDamageAmount | ⏳ |  |
-| `world[ ]border damage buffer` | Expression | ExprWorldBorderDamageBuffer | ⏳ |  |
-| `world[ ]border (size\|diameter\|:radius)` | Expression | ExprWorldBorderSize | ⏳ |  |
-| `world[ ]border warning distance` | Expression | ExprWorldBorderWarningDistance | ⏳ |  |
-| `world[ ]border warning time` | Expression | ExprWorldBorderWarningTime | ⏳ |  |
-| `[the] colo[u]r[s] (from\|of) hex[adecimal] code[s] %strings%` | Expression | ExprColorFromHexCode | ⏳ |  |
-| `hex[adecimal] code` | Expression | ExprHexCode | ⏳ |  |
-| `[the] recursive (amount\|number\|size) of %objects%` | Expression | ExprRecursiveSize | ⏳ |  |
-| `empty` | Condition | PropCondIsEmpty | ⏳ |  |
+| `equipment slot` | Expression | ExprEquipCompSlot | ✅ OK | Item component edit, rare. |
+| `equippable component[s]` | Expression | ExprEquippableComponent | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `a (blank\|empty) equippable component` | Expression | ExprSecBlankEquipComp | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[a] loot[ ]table` | Condition | CondHasLootTable | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `lootable` | Condition | CondIsLootable | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `generate [the] loot (of\|using) %loottable% [(with\|using) %-lootco...` | Effect | EffGenerateLoot | ✅ OK | Loot generation dominates. |
+| `[the] loot` | Expression | ExprLoot | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `loot[ ]context` | Expression | ExprLootContext | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `looted entity` | Expression | ExprLootContextEntity | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `loot[ing] [context] location` | Expression | ExprLootContextLocation | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `(looter\|looting player)` | Expression | ExprLootContextLooter | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `loot[ing] [context] luck [value\|factor]` | Expression | ExprLootContextLuck | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[the] loot of %loottables% [(with\|using) [[loot] context] %-lootco...` | Expression | ExprLootItems | ✅ OK | Loot generation dominates. |
+| `loot[ ]table[s]` | Expression | ExprLootTable | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[the] loot[ ]table[s] %strings%` | Expression | ExprLootTableFromString | ✅ OK | Registry lookup. |
+| `loot[[ ]table] seed[s]` | Expression | ExprLootTableSeed | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[a] loot context %direction% %location%` | Expression | ExprSecCreateLootContext | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `rotate %vectors/quaternions/displays% around [the] [global] (:x\|:y...` | Effect | EffRotate | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[the] broadcast(-\|[ed] )message` | Expression | ExprBroadcastMessage | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `colo[u]r[s]` | Expression | ExprColorOf | ✅ OK | Simple getters. |
+| `item [inside]` | Expression | ExprItemOfEntity | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[the] [1:default\|2:shown\|2:displayed] (MOTD\|message of [the] day)` | Expression | ExprMOTD | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `org.joml.Quaternionf` | Expression | ExprQuaternionAxisAngle | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `%quaternions/vectors% rotated around [the] [global] (:x\|:y\|:z)(-\...` | Expression | ExprRotate | ✅ OK | Math per value. |
+| `(skull\|head) texture` | Expression | ExprSkullTexture | ✅ OK | Item meta read is required. |
+| `text[s]` | Expression | ExprTextOf | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `%locations% with [a] (:yaw\|:pitch) [of] %number%` | Expression | ExprWithYawPitch | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[:force] (play\|show\|draw) %gameeffects/particles% [%-directions% ...` | Effect | EffPlayEffect | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `Could not obtain required data for ` | Expression | ExprGameEffectWithData | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `particle count` | Expression | ExprParticleCount | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `particle distribution` | Expression | ExprParticleDistribution | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `particle offset` | Expression | ExprParticleOffset | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `(particle speed [value]\|extra value)` | Expression | ExprParticleSpeed | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[%-*number%\|a[n]] ` | Expression | ExprParticleWithData | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `unchecked` | Expression | ExprParticleWithOffset | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `%particles% with ([a] particle speed [value]\|[an] extra value) [of...` | Expression | ExprParticleWithSpeed | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[persistent] data tag[s] %strings%` | Condition | CondHasPersistentDataTag | ⚡ Optimized | Every use lowercased the tag name and parsed and validated it into a new namespaced key (split, two char array copies, key construction). The key of the last name is now remembered; only keys valid without a warning are remembered, so invalid names still report their error every time. |
+| `[all [[of] the]] [persistent] data [tag] keys of %objects%` | Expression | ExprAllPersistentDataKeys | ✅ OK | Key listing is the required work. |
+| `[persistent] [%-*classinfo%] [:list] data (value\|tag) %string%` | Expression | ExprPersistentData | ⚡ Optimized | Every use lowercased the tag name and parsed and validated it into a new namespaced key (split, two char array copies, key construction). The key of the last name is now remembered; only keys valid without a warning are remembered, so invalid names still report their error every time. |
+| `([any\|a[n]] [active] potion effect[s]\|[any\|a] potion effect[s] a...` | Condition | CondHasPotion | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `poisoned` | Condition | CondIsPoisoned | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `ambient` | Condition | CondIsPotionAmbient | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `instant` | Condition | CondIsPotionInstant | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `([an] icon\|icons)` | Condition | CondPotionHasIcon | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `particles` | Condition | CondPotionHasParticles | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `apply haste 3 to the player for 5 seconds` | Effect | EffApplyPotionEffect | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `poison %livingentities% [for %-timespan%]` | Effect | EffPoison | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `ambient` | Effect | EffPotionAmbient | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `icon[s]` | Effect | EffPotionIcon | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `(infinite\|permanent)` | Effect | EffPotionInfinite | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `particles` | Effect | EffPotionParticles | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `([potion] amplifier\|potion tier\|potion level)[s]` | Expression | ExprPotionAmplifier | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `([potion] duration\|potion length)[s]` | Expression | ExprPotionDuration | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[:active\|:hidden\|both:(active and hidden\|hidden and active)] %po...` | Expression | ExprPotionEffect | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[:active\|:hidden\|both:(active and hidden\|hidden and active)] pot...` | Expression | ExprPotionEffects | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `org.bukkit.potion.PotionEffectTypeCategory` | Expression | ExprPotionEffectTypeCategory | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[a[n]] [:ambient] potion effect of %potioneffecttype% [[of tier] %-...` | Expression | ExprSecPotionEffect | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[created] [potion] effect` | Expression | ExprSkriptPotionEffect | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `register [a[n]] [custom] ` | Effect | EffRegisterTag | ✅ OK | Rare, load time. |
+| ` ` | Expression | ExprTag | ✅ OK | Re-resolves the tag per use; not cached, because tags registered later or missing ones must be found as before. |
+| `tag (contents\|values)` | Expression | ExprTagContents | ✅ OK | Rare. |
+| `[namespace[d]] key[s]` | Expression | ExprTagKey | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[all [[of] the]\|the] ` | Expression | ExprTagsOf | ✅ OK | Tag lookup is the required work. |
+| `[all [[of] the]\|the] ` | Expression | ExprTagsOfType | ✅ OK | Rare. |
+| `(clear\|delete\|:reset) [the] title[s] [of %audiences%]` | Effect | EffResetTitle | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `%textcomponents% resolved for %commandsender% [bypass:(bypassing\|i...` | Expression | ExprResolvedComponent | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[all [[of] the]\|the] string colo[u]r[s] [code:code[s]] of %strings%` | Expression | ExprStringColor | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `(expand\|grow) [[the] (diameter\|:radius) of] %worldborders% (by\|:...` | Effect | EffWorldBorderExpand | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `a [virtual] world[ ]border` | Expression | ExprSecCreateWorldBorder | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `world[ ]border` | Expression | ExprWorldBorder | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `world[ ]border (center\|middle)` | Expression | ExprWorldBorderCenter | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `world[ ]border damage amount` | Expression | ExprWorldBorderDamageAmount | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `world[ ]border damage buffer` | Expression | ExprWorldBorderDamageBuffer | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `world[ ]border (size\|diameter\|:radius)` | Expression | ExprWorldBorderSize | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `world[ ]border warning distance` | Expression | ExprWorldBorderWarningDistance | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `world[ ]border warning time` | Expression | ExprWorldBorderWarningTime | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[the] colo[u]r[s] (from\|of) hex[adecimal] code[s] %strings%` | Expression | ExprColorFromHexCode | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `hex[adecimal] code` | Expression | ExprHexCode | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `[the] recursive (amount\|number\|size) of %objects%` | Expression | ExprRecursiveSize | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
+| `empty` | Condition | PropCondIsEmpty | ✅ OK | Thin wrapper around a server getter/setter, potion/particle/world border call or event value. |
 
 ## Section 13
 

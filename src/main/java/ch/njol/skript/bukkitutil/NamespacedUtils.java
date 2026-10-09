@@ -3,8 +3,11 @@ package ch.njol.skript.bukkitutil;
 import ch.njol.skript.localization.Message;
 import ch.njol.skript.util.ValidationResult;
 import org.bukkit.NamespacedKey;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.log.runtime.RuntimeErrorProducer;
+
+import java.util.Locale;
 
 /**
  * Utility class for {@link NamespacedKey}
@@ -97,6 +100,48 @@ public class NamespacedUtils {
 			producer.warning(validationMessage);
 		}
 		return validationResult.data();
+	}
+
+	/**
+	 * Remembers the key parsed for the last string, for syntax that usually gets the same key every time
+	 * (e.g. persistent data tags). Gives the same result as {@link #checkValidationAndSend(String, RuntimeErrorProducer)};
+	 * only keys that were valid without any warning are remembered, so errors and warnings are still sent every time.
+	 */
+	@ApiStatus.Internal
+	public static final class LastKey {
+
+		private record Entry(String input, NamespacedKey key) { }
+
+		private final boolean lowercase;
+		private volatile @Nullable Entry last;
+
+		/**
+		 * @param lowercase Whether the input is lowercased (with {@link Locale#ENGLISH}) before parsing.
+		 */
+		public LastKey(boolean lowercase) {
+			this.lowercase = lowercase;
+		}
+
+		public @Nullable NamespacedKey get(String input, RuntimeErrorProducer producer) {
+			Entry entry = last;
+			if (entry != null && entry.input.equals(input))
+				return entry.key;
+			String string = lowercase ? input.toLowerCase(Locale.ENGLISH) : input;
+			ValidationResult<NamespacedKey> validationResult = checkValidation(string);
+			String validationMessage = validationResult.message();
+			if (!validationResult.valid()) {
+				producer.error(validationMessage + ". " + NAMEDSPACED_FORMAT_MESSAGE);
+				return null;
+			} else if (validationMessage != null) {
+				producer.warning(validationMessage);
+				return validationResult.data();
+			}
+			NamespacedKey key = validationResult.data();
+			if (key != null)
+				last = new Entry(input, key);
+			return key;
+		}
+
 	}
 
 	/**

@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.bukkit.pdc.PDCUtils;
 import org.skriptlang.skript.registration.SyntaxRegistry;
 
-import java.util.Locale;
 
 @Name("Has Persistent Data Tag")
 @Description("""
@@ -51,6 +50,10 @@ public class CondHasPersistentDataTag extends Condition {
 				.build());
 	}
 
+	/**
+	 * The key of the last tag name; the same name is usually used every time.
+	 */
+	private final NamespacedUtils.LastKey lastKey = new NamespacedUtils.LastKey(true);
 	private Expression<String> keys;
 	private Expression<Object> holders;
 
@@ -67,7 +70,7 @@ public class CondHasPersistentDataTag extends Condition {
 	public boolean check(Event event) {
 		boolean keysAnd = this.keys.getAnd();
 		NamespacedKey[] keys = this.keys.stream(event)
-			.map(key -> NamespacedUtils.checkValidationAndSend(key.toLowerCase(Locale.ENGLISH), this))
+			.map(key -> lastKey.get(key, this)) // same as checkValidationAndSend on the lowercased key
 			.toArray(NamespacedKey[]::new);
 		if (keys.length == 0)
 			return isNegated();
