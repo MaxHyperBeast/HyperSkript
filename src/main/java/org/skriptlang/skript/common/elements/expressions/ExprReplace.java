@@ -17,6 +17,7 @@ import org.skriptlang.skript.registration.DefaultSyntaxInfos;
 import org.skriptlang.skript.registration.SyntaxRegistry;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,6 +79,28 @@ public class ExprReplace extends SimpleExpression<String> {
 		return true;
 	}
 
+	/**
+	 * The patterns compiled for the last needles, as the same needles are usually used again.
+	 */
+	private record CompiledNeedles(String[] needles, List<Pattern> patterns) { }
+
+	private volatile @Nullable CompiledNeedles lastNeedles;
+
+	private List<Pattern> compilePatterns(String[] needles) {
+		CompiledNeedles last = lastNeedles;
+		if (last != null && Arrays.equals(last.needles, needles))
+			return last.patterns;
+		List<Pattern> patterns = new ArrayList<>(needles.length);
+		for (String needle : needles) {
+			try { // Pre compile regex for use with multiple haystacks
+				patterns.add(Pattern.compile(needle));
+			} catch (Exception ignored) {
+			}
+		}
+		lastNeedles = new CompiledNeedles(needles.clone(), patterns);
+		return patterns;
+	}
+
 	@Override
 	protected String @Nullable [] get(Event event) {
 		String replacement = replacementExpr.getSingle(event);
@@ -91,13 +114,7 @@ public class ExprReplace extends SimpleExpression<String> {
 		List<String> result = new ArrayList<>(haystacks.length);
 
 		if (isRegex) {
-			List<Pattern> patterns = new ArrayList<>(needles.length);
-			for (String needle : needles) {
-				try { // Pre compile regex for use with multiple haystacks
-					patterns.add(Pattern.compile(needle));
-				} catch (Exception ignored) {
-				}
-			}
+			List<Pattern> patterns = compilePatterns(needles);
 
 			for (String haystack : haystacks) {
 				for (Pattern pattern : patterns) {

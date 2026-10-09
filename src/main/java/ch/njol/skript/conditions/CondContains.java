@@ -27,7 +27,6 @@ import org.skriptlang.skript.lang.comparator.Comparators;
 import org.skriptlang.skript.lang.comparator.Relation;
 import org.skriptlang.skript.lang.converter.Converters;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -85,6 +84,26 @@ public class CondContains extends Condition implements VerboseAssert {
 		return LiteralUtils.canInitSafely(containers, items);
 	}
 
+	private CheckType findCheckType(Object[] containerValues) {
+		boolean allInventories = true, allContainers = explicitSingle, allStrings = explicitSingle;
+		for (Object object : containerValues) {
+			if (!(object instanceof Inventory))
+				allInventories = false;
+			if (allContainers && !(object instanceof AnyContains<?>)
+					&& !Converters.converterExists(object.getClass(), AnyContains.class))
+				allContainers = false;
+			if (!(object instanceof String))
+				allStrings = false;
+		}
+		if (allInventories)
+			return CheckType.INVENTORY;
+		if (allContainers)
+			return CheckType.CONTAINER;
+		if (allStrings)
+			return CheckType.STRING;
+		return CheckType.OBJECTS;
+	}
+
 	@Override
 	public boolean check(Event event) {
 		CheckType checkType = this.checkType;
@@ -95,23 +114,8 @@ public class CondContains extends Condition implements VerboseAssert {
 			return isNegated();
 
 		// Change checkType according to values
-		if (checkType == CheckType.UNKNOWN) {
-			if (Arrays.stream(containerValues)
-				.allMatch(Inventory.class::isInstance)) {
-				checkType = CheckType.INVENTORY;
-			} else if (explicitSingle
-				&& Arrays.stream(containerValues)
-				.allMatch(object -> object instanceof AnyContains<?>
-					|| Converters.converterExists(object.getClass(), AnyContains.class))) {
-				checkType = CheckType.CONTAINER;
-			} else if (explicitSingle
-				&& Arrays.stream(containerValues)
-				.allMatch(String.class::isInstance)) {
-				checkType = CheckType.STRING;
-			} else {
-				checkType = CheckType.OBJECTS;
-			}
-		}
+		if (checkType == CheckType.UNKNOWN) // same checks as before, as loops instead of streams
+			checkType = findCheckType(containerValues);
 
 		return switch (checkType) {
 			case INVENTORY -> SimpleExpression.check(containerValues, o -> {

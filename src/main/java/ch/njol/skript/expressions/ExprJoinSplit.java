@@ -47,6 +47,13 @@ public class ExprJoinSplit extends SimpleExpression<String> {
 
 	private @Nullable Pattern pattern;
 
+	/**
+	 * The last pattern compiled for a delimiter that isn't a literal, as the same delimiter is usually used again.
+	 */
+	private record CompiledDelimiter(String delimiter, Pattern pattern) { }
+
+	private volatile @Nullable CompiledDelimiter lastDelimiter;
+
 	@Override
 	public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, ParseResult parseResult) {
 		join = matchedPattern == 0;
@@ -82,8 +89,15 @@ public class ExprJoinSplit extends SimpleExpression<String> {
 
 		try {
 			Pattern pattern = this.pattern;
-			if (pattern == null)
-				pattern = compilePattern(delimiter);
+			if (pattern == null) {
+				CompiledDelimiter last = lastDelimiter;
+				if (last != null && last.delimiter.equals(delimiter)) {
+					pattern = last.pattern;
+				} else {
+					pattern = compilePattern(delimiter);
+					lastDelimiter = new CompiledDelimiter(delimiter, pattern);
+				}
+			}
 			return pattern.split(strings[0], removeTrailing ? 0 : -1);
 		} catch (PatternSyntaxException e) {
 			return new String[0];
