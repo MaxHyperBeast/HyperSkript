@@ -2,6 +2,57 @@
 
 ---
 
+# HyperSkript
+
+**HyperSkript** is a performance build of Skript 2.16.2. Your scripts, addons and saved variables work unchanged: the
+plugin is still called `Skript` and reports version `2.16.2`, and every change keeps Skript's exact behaviour.
+Skript's own test suite passes.
+
+- **Faster:** about 6× less tick time for a typical 50-player script workload, 35–85× faster text formatting
+  (`send`, `formatted`, `colored`), 1.9× faster event handling and 1.7× faster `/sk reload`.
+  See [HYPERSKRIPT.md](HYPERSKRIPT.md) for every change and the benchmarks.
+- **HyperTrace, a built-in profiler:** finds exactly which script lines slow your server down. See below.
+- **Works with your addons:** SkBee, skript-reflect, skript-worldguard, oopsk, SkCheese, skript-gui, DiSky,
+  skript-placeholders and SkTrace are verified to give the same results as on official Skript.
+  See [ADDONS.md](ADDONS.md).
+- **Every syntax element reviewed:** all 1054 expressions, conditions, effects, sections, events and functions were
+  checked for performance. See [SYNTAX-AUDIT.md](SYNTAX-AUDIT.md).
+
+To install it, replace your Skript jar with the HyperSkript jar. Build it yourself with `./gradlew build` (Java 25);
+the jar is `build/libs/Skript-2.16.2.jar`.
+
+## HyperTrace
+
+HyperTrace shows what your scripts cost while the server runs, down to the exact line:
+
+```
+/hypertrace start 60s     measure for 60 seconds, then show the results
+/hypertrace lines         the slowest lines (hover one for details)
+/hypertrace blocks        the slowest loops and if-blocks, with everything inside them
+/hypertrace stop          stop and save the full report
+```
+
+- **In chat:** the slowest lines with their time per tick, their share of Skript's time and why each one is slow
+  (runs very often, slow every time, causes lag spikes, or slow because of a function it calls).
+- **Full report:** an HTML page in `plugins/Skript/hypertrace/` with:
+  - plain-language findings;
+  - a tick chart;
+  - tables of lines, loops, triggers, functions and events;
+  - the slowest ticks and what ran in them;
+  - saved variables that are written too often;
+  - every script with its lines colored by cost.
+- **Freezes:** if the server stops ticking during a capture, the console names the line that was running, the loop
+  around it and its trigger.
+- **Safe on a live server:** it never changes your scripts. While no capture runs, it costs nothing measurable.
+  Turn it off completely in `plugins/Skript/hypertrace.yml`.
+
+Full guide: [HYPERTRACE.md](HYPERTRACE.md).
+
+> HyperSkript is an unofficial fork. Please report problems with HyperSkript in this repository, not to SkriptLang.
+> The original Skript README follows.
+
+---
+
 # Skript
 **Skript** is a Minecraft plugin for Paper, which allows server owners and other people
 to modify their servers without learning Java. It can also be useful if you
