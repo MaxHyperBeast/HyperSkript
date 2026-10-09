@@ -5,7 +5,7 @@ one section at a time for runtime performance. **Status:** ✅ OK = reviewed, no
 ⚡ Optimized = changed (the note says what was slow and what changed); ⏳ = not reviewed yet.
 Every change keeps the exact behaviour; Skript's test suite must pass after each section.
 
-**Progress:** 1042 of 1054 reviewed, 48 optimized.
+**Progress:** 1054 of 1054 reviewed, 59 optimized.
 
 | Section | Contents | Reviewed |
 |---|---|---|
@@ -21,7 +21,7 @@ Every change keeps the exact behaviour; Skript's test suite must pass after each
 | [10](#section-10) | expressions, hooks.chat.expressions, hooks.economy.expressions, ... | 80/80 |
 | [11](#section-11) | bukkit.enchantments.elements.expressions, bukkit.entity.displays.elements.expressions, bukkit.entity.displays.item.elements.expressions, ... | 80/80 |
 | [12](#section-12) | bukkit.itemcomponents.equippable.elements.expressions, bukkit.loottables.elements.conditions, bukkit.loottables.elements.effects, ... | 80/80 |
-| [13](#section-13) | common.properties.elements.expressions | 0/12 |
+| [13](#section-13) | common.properties.elements.expressions | 12/12 |
 
 ## Section 1
 
@@ -1155,15 +1155,15 @@ common.properties.elements.expressions
 
 | Syntax | Kind | Class | Status | Notes |
 |---|---|---|---|---|
-| `amount[:s]` | Expression | PropExprAmount | ⏳ |  |
-| `(display\|nick\|chat\|custom)[ ]name[s]` | Expression | PropExprCustomName | ⏳ |  |
-| `name[s]` | Expression | PropExprName | ⏳ |  |
-| `number[:s]` | Expression | PropExprNumber | ⏳ |  |
-| `progress` | Expression | PropExprProgress | ⏳ |  |
-| `scale[s]` | Expression | PropExprScale | ⏳ |  |
-| `size[:s]` | Expression | PropExprSize | ⏳ |  |
-| `style[s]` | Expression | PropExprStyle | ⏳ |  |
-| `title[s]` | Expression | PropExprTitle | ⏳ |  |
-| `[%-*classinfo%] value` | Expression | PropExprValueOf | ⏳ |  |
-| `viewer[s]` | Expression | PropExprViewers | ⏳ |  |
-| `(:x\|:y\|:z\|:w)( \|-)[component[s]\|coord[inate][s]\|dep:(pos[itio...` | Expression | PropExprWXYZ | ⏳ |  |
+| `amount[:s]` | Expression | PropExprAmount | ⚡ Optimized | Built on PropertyBaseExpression, which created a Stream per evaluation; now a plain loop (general change). Nothing else to change. |
+| `(display\|nick\|chat\|custom)[ ]name[s]` | Expression | PropExprCustomName | ⚡ Optimized | Built on PropertyBaseExpression, which created a Stream per evaluation; now a plain loop (general change). Nothing else to change. |
+| `name[s]` | Expression | PropExprName | ⚡ Optimized | Built on PropertyBaseExpression, which created a Stream per evaluation; now a plain loop (general change). Nothing else to change. |
+| `number[:s]` | Expression | PropExprNumber | ⚡ Optimized | Built on PropertyBaseExpression, which created a Stream per evaluation; now a plain loop (general change). Nothing else to change. |
+| `progress` | Expression | PropExprProgress | ⚡ Optimized | Built on PropertyBaseExpression, which created a Stream per evaluation; now a plain loop (general change). Nothing else to change. |
+| `scale[s]` | Expression | PropExprScale | ⚡ Optimized | Built on PropertyBaseExpression, which created a Stream per evaluation; now a plain loop (general change). Nothing else to change. |
+| `size[:s]` | Expression | PropExprSize | ⚡ Optimized | Built on PropertyBaseExpression, which created a Stream per evaluation; now a plain loop (general change). Nothing else to change. |
+| `style[s]` | Expression | PropExprStyle | ⚡ Optimized | Built on PropertyBaseExpression, which created a Stream per evaluation; now a plain loop (general change). Nothing else to change. |
+| `title[s]` | Expression | PropExprTitle | ⚡ Optimized | Built on PropertyBaseExpression, which created a Stream per evaluation; now a plain loop (general change). Nothing else to change. |
+| `[%-*classinfo%] value` | Expression | PropExprValueOf | ✅ OK | The untyped form uses the faster shared property path; the typed form ('value of x as type') still streams but is rarely used. |
+| `viewer[s]` | Expression | PropExprViewers | ⚡ Optimized | Built on PropertyBaseExpression, which created a Stream per evaluation; now a plain loop (general change). Nothing else to change. |
+| `(:x\|:y\|:z\|:w)( \|-)[component[s]\|coord[inate][s]\|dep:(pos[itio...` | Expression | PropExprWXYZ | ⚡ Optimized | Built on PropertyBaseExpression, which created a Stream per evaluation; now a plain loop (general change). Nothing else to change. |

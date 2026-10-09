@@ -54,6 +54,29 @@ byte-identical to the official build's.
 | Keyword checks | Nested streams | Plain loops; the lowercase input is computed once per line instead of once per pattern |
 | Type names / literal parsing | Regex or scan over every registered type per lookup | Cached |
 
+### Syntax audit
+
+After the general changes above, every one of the 1054 syntax elements (expressions, conditions, effects, sections,
+events, structures, literals and default functions) was reviewed for its own runtime cost. The full list, with what
+was found and changed for each element, is in [SYNTAX-AUDIT.md](SYNTAX-AUDIT.md). Highlights:
+
+| Syntax | Before | After |
+|---|---|---|
+| `... matches "regex"` | Compiled every regex for every string, on a parallel stream (shared thread pool) per check | Patterns compiled once and reused; plain loops |
+| `replace all regex ...`, `split ... at {_x}` | Compiled the regex on every call | Last compiled pattern reused |
+| `on break of stone` and other block events with a type filter | New item type per trigger per event | Reused while the block data is equal |
+| `on player enter chunk` | Two chunk lookups on every player move | Chunk coordinate comparison |
+| `if` / `else if` chains | Walked the remaining chain after every taken branch | Target found once |
+| `data tag "x" of ...` | Parsed and validated the key on every use | Last valid key remembered |
+| `location(x, y, z)` | Copied the world list on every call | Only when no world is given |
+| `formatNumber(n, "...")`, `... formatted as {_format}` | Parsed the format pattern on every call | Last format reused per thread |
+| `set chat format` | Compiled its placeholder regex for every message | Compiled once |
+| `level of <enchantment> of ...`, `filter {_list::*}`, `contains`, `is wearing` | Streams per evaluation | Plain loops |
+| `amount of <item> in <inventory>` | New item type per slot per item checked | Once per slot |
+
+Behaviour was kept exactly; a few possible changes were left out on purpose because they would change results
+(for example evaluating random expressions once instead of per player).
+
 ## Debugging aid
 
 Start the server with `-Dhyperskript.verifyTemplates=true` to compare every templated text component with a full
