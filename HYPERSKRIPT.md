@@ -20,6 +20,10 @@ both builds produced identical results in every case.
 | Geometric mean of 60 micro-benchmarks | | | **1.81×** |
 | Loading 40 scripts (12,960 lines): startup / `/sk reload` | 3.35 s / ~2.3 s | 2.44 s / ~1.3 s | **1.37× / 1.73×** |
 
+After the [syntax audit](#syntax-audit), a shorter check of the final build (26 of the micro-benchmarks: blocks,
+conditions, lists, strings and the workload; one run per build) found every case faster with identical results, and
+the 50-player workload at 1.17 ms → 0.18 ms (**6.6×**).
+
 Correctness: Skript's test suite passes (799/799 script tests, 123/123 JUnit tests, same as the unmodified source);
 870 templated text components were compared with a full parse with no differences; saved variable files are
 byte-identical to the official build's.
