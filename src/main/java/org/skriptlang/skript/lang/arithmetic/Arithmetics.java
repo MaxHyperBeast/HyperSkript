@@ -2,11 +2,13 @@ package org.skriptlang.skript.lang.arithmetic;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAPIException;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.jetbrains.annotations.UnmodifiableView;
 import org.skriptlang.skript.util.ClassCache;
 import org.skriptlang.skript.util.ClassPairCache;
+import org.skriptlang.skript.util.RegistryCaches;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -164,6 +166,17 @@ public final class Arithmetics {
 				" operation registered for types '" + leftClass.getName() + "' and '" +
 				rightClass.getName() + "'");
 		getRawOperations(operator).add(new OperationInfo<>(leftClass, rightClass, returnType, operation));
+		RegistryCaches.clearAll(); // may happen at runtime (addons), cached lookups must see it
+	}
+
+	/**
+	 * Clears the cached operation lookups. See {@link RegistryCaches}.
+	 */
+	@ApiStatus.Internal
+	public static void clearCaches() {
+		synchronized (Arithmetics.class) {
+			operatorCaches = new OperatorCaches[0];
+		}
 	}
 
 	/**

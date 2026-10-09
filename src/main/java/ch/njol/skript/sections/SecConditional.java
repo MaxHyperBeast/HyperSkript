@@ -292,7 +292,7 @@ public class SecConditional extends Section {
 
 	@Override
 	public @Nullable TriggerItem getNext() {
-		return findSkippedNext(); // also used while loading, when the chain may not be complete yet
+		return getSkippedNext();
 	}
 
 	@Override
@@ -302,7 +302,7 @@ public class SecConditional extends Section {
 		} else if (parseIf || checkConditions(event)) {
 			// if this is a multiline if, we need to run the "then" section instead
 			SecConditional sectionToRun = multiline ? (SecConditional) getActualNext() : this;
-			TriggerItem skippedNext = getCachedSkippedNext();
+			TriggerItem skippedNext = getSkippedNext();
 			if (sectionToRun.last != null)
 				sectionToRun.last.setNext(skippedNext);
 			return sectionToRun.first != null ? sectionToRun.first : skippedNext;
@@ -324,23 +324,8 @@ public class SecConditional extends Section {
 		return super.triggerExecutionIntent();
 	}
 
-	/**
-	 * The chain of else ifs/elses doesn't change once the script is loaded, so when running,
-	 * the item after it is only searched for the first time a branch runs.
-	 */
-	private @Nullable TriggerItem skippedNext;
-	private volatile boolean skippedNextFound;
-
-	private @Nullable TriggerItem getCachedSkippedNext() {
-		if (skippedNextFound)
-			return skippedNext;
-		TriggerItem next = findSkippedNext();
-		skippedNext = next;
-		skippedNextFound = true;
-		return next;
-	}
-
-	private @Nullable TriggerItem findSkippedNext() {
+	@Nullable
+	private TriggerItem getSkippedNext() {
 		TriggerItem next = getActualNext();
 		while (next instanceof SecConditional nextSecCond && nextSecCond.type != ConditionalType.IF)
 			next = next.getActualNext();

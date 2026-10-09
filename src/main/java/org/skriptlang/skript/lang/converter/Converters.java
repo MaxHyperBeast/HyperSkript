@@ -2,7 +2,10 @@ package org.skriptlang.skript.lang.converter;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAPIException;
+import ch.njol.util.Pair;
+import org.jetbrains.annotations.ApiStatus;
 import org.skriptlang.skript.util.ClassPairCache;
+import org.skriptlang.skript.util.RegistryCaches;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
@@ -39,7 +42,21 @@ public final class Converters {
 	 * Some pairs may point to a null value, indicating that no converter exists between the two types.
 	 * This is useful for skipping complex lookups that may require chaining.
 	 */
-	private static final ClassPairCache<ConverterInfo<?, ?>> QUICK_ACCESS_CONVERTERS = new ClassPairCache<>();
+	private static final ClassPairCache<ConverterInfo<?, ?>> CONVERTER_CACHE = new ClassPairCache<>();
+
+	/**
+	 * {@link #CONVERTER_CACHE} as the map this field used to be; some addons edit it through reflection.
+	 */
+	@SuppressWarnings("unused")
+	private static final Map<Pair<Class<?>, Class<?>>, ConverterInfo<?, ?>> QUICK_ACCESS_CONVERTERS = CONVERTER_CACHE.asPairMap();
+
+	/**
+	 * Clears the cached converter lookups. Called when converters or types change, which addons may also do at runtime.
+	 */
+	@ApiStatus.Internal
+	public static void clearCache() {
+		CONVERTER_CACHE.clear();
+	}
 
 	/**
 	 * Registers a new Converter with Skript's collection of Converters.
@@ -71,6 +88,7 @@ public final class Converters {
 			}
 			CONVERTERS.add(info);
 		}
+		RegistryCaches.clearAll(); // may happen at runtime (addons), cached lookups must see it
 	}
 
 	/**
@@ -221,7 +239,7 @@ public final class Converters {
 	public static <F, T> ConverterInfo<F, T> getConverterInfo(Class<F> fromType, Class<T> toType) {
 		assertIsDoneLoading();
 
-		return (ConverterInfo<F, T>) QUICK_ACCESS_CONVERTERS.get(fromType, toType, Converters::getConverterInfo_i);
+		return (ConverterInfo<F, T>) CONVERTER_CACHE.get(fromType, toType, Converters::getConverterInfo_i);
 	}
 
 	/**

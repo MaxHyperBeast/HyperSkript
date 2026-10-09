@@ -4,16 +4,20 @@ import ch.njol.skript.Skript;
 import ch.njol.skript.SkriptAPIException;
 import ch.njol.skript.registrations.Classes;
 import ch.njol.skript.util.Utils;
+import ch.njol.util.Pair;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.skriptlang.skript.lang.converter.Converter;
 import org.skriptlang.skript.lang.converter.ConverterInfo;
 import org.skriptlang.skript.lang.converter.Converters;
 import org.skriptlang.skript.util.ClassPairCache;
+import org.skriptlang.skript.util.RegistryCaches;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Comparators are used to provide Skript with specific instructions for comparing two objects.
@@ -56,7 +60,22 @@ public final class Comparators {
 	 * Some pairs may point to a null value, indicating that no comparator exists between the two types.
 	 * This is useful for skipping complex lookups that may require conversion and inversion.
 	 */
-	private static final ClassPairCache<ComparatorInfo<?, ?>> QUICK_ACCESS_COMPARATORS = new ClassPairCache<>();
+	private static final ClassPairCache<ComparatorInfo<?, ?>> COMPARATOR_CACHE = new ClassPairCache<>();
+
+	/**
+	 * {@link #COMPARATOR_CACHE} as the map this field used to be; some addons edit it through reflection.
+	 */
+	@SuppressWarnings("unused")
+	private static final Map<Pair<Class<?>, Class<?>>, ComparatorInfo<?, ?>> QUICK_ACCESS_COMPARATORS = COMPARATOR_CACHE.asPairMap();
+
+	/**
+	 * Clears the cached comparator lookups. Called when comparators, converters or types change,
+	 * which addons may also do at runtime.
+	 */
+	@ApiStatus.Internal
+	public static void clearCache() {
+		COMPARATOR_CACHE.clear();
+	}
 
 	/**
 	 * Registers a new Comparator with Skript's collection of Comparators.
@@ -83,6 +102,7 @@ public final class Comparators {
 			}
 			COMPARATORS.add(new ComparatorInfo<>(firstType, secondType, comparator));
 		}
+		RegistryCaches.clearAll(); // may happen at runtime (addons), cached lookups must see it
 	}
 
 	/**
@@ -180,7 +200,7 @@ public final class Comparators {
 	public static <T1, T2> ComparatorInfo<T1, T2> getComparatorInfo(Class<T1> firstType, Class<T2> secondType) {
 		assertIsDoneLoading();
 
-		return (ComparatorInfo<T1, T2>) QUICK_ACCESS_COMPARATORS.get(firstType, secondType, Comparators::getComparatorInfo_i);
+		return (ComparatorInfo<T1, T2>) COMPARATOR_CACHE.get(firstType, secondType, Comparators::getComparatorInfo_i);
 	}
 
 	/**

@@ -103,6 +103,12 @@ public class SecLoop extends LoopSection {
 	 */
 	private transient @Nullable LoopState lastState;
 
+	@Override
+	protected Map<Event, Long> createLoopCounterMap() {
+		// the counters live in the loop states; addons reading the field see them through this view
+		return loopCounterView(() -> states, state -> state.counter);
+	}
+
 	protected @Nullable TriggerItem actualNext;
 	private boolean guaranteedToLoop;
 	private boolean loopPeeking;

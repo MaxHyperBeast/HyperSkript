@@ -31,6 +31,13 @@ public final class ClassCache<V> {
 		this.computer = computer;
 	}
 
+	/**
+	 * Removes all cached values.
+	 */
+	public void clear() {
+		cache.clear();
+	}
+
 	@SuppressWarnings("unchecked")
 	public @Nullable V get(Class<?> type) {
 		Object value = cache.get(type);

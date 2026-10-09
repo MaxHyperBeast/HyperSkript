@@ -73,6 +73,12 @@ public class SecWhile extends LoopSection {
 	private transient @Nullable WhileState lastState;
 
 	@Override
+	protected Map<Event, Long> createLoopCounterMap() {
+		// the counters live in the loop states; addons reading the field see them through this view
+		return loopCounterView(() -> states, state -> state.counter);
+	}
+
+	@Override
 	public boolean init(Expression<?>[] exprs,
 						int matchedPattern,
 						Kleenean isDelayed,

@@ -36,6 +36,7 @@ import org.skriptlang.skript.lang.converter.ConverterInfo;
 import org.skriptlang.skript.lang.converter.Converters;
 import org.skriptlang.skript.lang.properties.Property;
 import org.skriptlang.skript.util.ClassCache;
+import org.skriptlang.skript.util.RegistryCaches;
 
 import java.io.*;
 import java.lang.reflect.Array;
@@ -77,6 +78,7 @@ public abstract class Classes {
 			exactClassInfos.put(info.getC(), info);
 			classInfosByCodeName.put(info.getCodeName(), info);
 			tempClassInfos.add(info);
+			RegistryCaches.clearAll(); // may happen at runtime (addons), cached lookups must see it
 			if (info.getParser() instanceof PatternedParser<?> patternedParser) {
 				String[] patterns = patternedParser.getPatterns();
 				for (String pattern : patterns) {
@@ -188,6 +190,7 @@ public abstract class Classes {
 		}
 
 		Classes.classInfos = classInfos.toArray(new ClassInfo[classInfos.size()]);
+		RegistryCaches.clearAll(); // addons may re-sort at runtime (e.g. oopsk), cached lookups must see the new order
 
 		// check for circular dependencies
 		if (!tempClassInfos.isEmpty()) {
@@ -395,6 +398,17 @@ public abstract class Classes {
 	 * Caches {@link #getClassInfoFromUserInput(String)} by lowercase name. Only used once registration is over.
 	 */
 	private static final Map<String, Optional<ClassInfo<?>>> classInfosFromUserInput = new ConcurrentHashMap<>();
+
+	/**
+	 * Clears the cached class info lookups. See {@link RegistryCaches}.
+	 */
+	@ApiStatus.Internal
+	public static void clearCaches() {
+		superClassInfos.clear();
+		stringifyingClassInfos.clear();
+		parsingClassInfos.clear();
+		classInfosFromUserInput.clear();
+	}
 
 	private static @Nullable ClassInfo<?> findClassInfoFromUserInput(String name) {
 		for (final ClassInfo<?> ci : getClassInfos()) {
