@@ -5,7 +5,7 @@ one section at a time for runtime performance. **Status:** ✅ OK = reviewed, no
 ⚡ Optimized = changed (the note says what was slow and what changed); ⏳ = not reviewed yet.
 Every change keeps the exact behaviour; Skript's test suite must pass after each section.
 
-**Progress:** 1054 of 1054 reviewed, 59 optimized.
+**Progress:** 1054 of 1054 reviewed, 58 optimized.
 
 | Section | Contents | Reviewed |
 |---|---|---|
@@ -97,7 +97,7 @@ Most used syntax
 | `uuid[s]` | Expression | ExprUUID | ✅ OK | One getter. |
 | `[the] world [of %locations/entities/chunk%]` | Expression | ExprWorld | ✅ OK | One getter. |
 | `(spawn\|summon) ` | Effect | EffSecSpawn | ✅ OK | Entity spawning dominates. |
-| `any` | Section | SecConditional | ⚡ Optimized | Every taken branch walked past all remaining else ifs/elses to find the code after the chain; the result is now cached after the first run (the chain is fixed once loaded). |
+| `any` | Section | SecConditional | ✅ OK | A cache of the item after an if/else chain was tried and removed again: profilers such as SkTrace rewire the chain at runtime, and the walk past the chain is only a few pointer hops. |
 | `(for [each]\|loop) [value] %~object% in %objects%` | Section | SecFor | ⚡ Optimized | Uses the loop state objects of SecLoop (no WeakHashMap operations per iteration). |
 | `loop %objects%` | Section | SecLoop | ⚡ Optimized | 4-6 WeakHashMap operations per iteration; now one state object per running loop plus a fast path (2.4x faster list loops). |
 | `[:do] while <.+>` | Section | SecWhile | ⚡ Optimized | Loop counter and do-while flag were WeakHashMap operations per iteration; now a state object (2.5x faster). |

@@ -1,0 +1,123 @@
+# Addon compatibility test: /addontest runs one check per addon and logs
+#   RESULT|<addon>|<check>|<value>
+# to plugins/Skript/logs/addontest.log. The same script runs on official Skript and HyperSkript;
+# a passing addon parses here without errors and logs the same values on both builds.
+
+import:
+	java.lang.Math
+	java.util.ArrayList
+
+# --- oopsk: struct template (top-level structure) ---
+struct HbPoint:
+	px: number
+	py: number = 5
+
+# --- skript-placeholders: custom placeholder (top-level structure) ---
+placeholderapi placeholder with the prefix "hbtest":
+	if the identifier is "hello":
+		set the result to "hello-from-skript"
+
+function hbLog(addon: text, check: text, value: text):
+	log "RESULT|%{_addon}%|%{_check}%|%{_value}%" to "addontest.log"
+
+command /addontest:
+	permission: op
+	trigger:
+		log "START|%skript version%" to "addontest.log"
+
+		# --- SkBee ---
+		set {_n} to nbt compound from "{a:1,b:""x"",list:[1,2,3]}"
+		set {_a} to int tag "a" of {_n}
+		hbLog("SkBee", "nbt int tag", "%{_a}%")
+		set {_b} to string tag "b" of {_n}
+		hbLog("SkBee", "nbt string tag", {_b})
+		set {_i} to diamond with custom nbt from "{hbtest:7}"
+		set {_c} to int tag "hbtest" of custom nbt of {_i}
+		hbLog("SkBee", "item custom nbt", "%{_c}%")
+		set {_tc} to text component from "hello component"
+		hbLog("SkBee", "text component", "%{_tc}%")
+
+		# --- skript-reflect ---
+		hbLog("skript-reflect", "static call", "%Math.max(3, 7)%")
+		set {_str} to "abc"
+		hbLog("skript-reflect", "instance call", "%{_str}.toUpperCase()%")
+		set {_al} to new ArrayList()
+		{_al}.add("x")
+		{_al}.add("y")
+		hbLog("skript-reflect", "new instance", "%{_al}.size()%")
+
+		# --- skript-worldguard (needs WorldGuard) ---
+		create region named "hbtestregion" in world "world" between location(0, 0, 0, world "world") and location(10, 100, 10, world "world")
+		set {_regs::*} to regions at location(5, 50, 5, world "world")
+		hbLog("skript-worldguard", "regions at", "%size of {_regs::*}%")
+		hbLog("skript-worldguard", "region priority", "%region priority of {_regs::1}%")
+
+		# --- oopsk ---
+		set {_p} to a hbpoint struct instance
+		set {_p}->px to 3
+		hbLog("oopsk", "struct fields", "%{_p}->px + {_p}->py%")
+
+		# --- SkCheese ---
+		hbLog("SkCheese", "bitwise and", "%12 & 10%")
+		hbLog("SkCheese", "hex literal", "%0xFF%")
+		set {_v} to 2
+		switch {_v}:
+			case 1:
+				set {_sw} to "one"
+			case 2:
+				set {_sw} to "two"
+			default:
+				set {_sw} to "other"
+		hbLog("SkCheese", "switch", {_sw})
+
+		# --- skript-gui ---
+		create a gui with virtual chest inventory with 3 rows named "HbTest":
+			make gui slot 0 with diamond
+			make gui slot 1 with stone
+		set {_g} to last gui
+		hbLog("skript-gui", "create gui", "%whether {_g} is set%")
+
+		# --- skript-placeholders (needs PlaceholderAPI) ---
+		set {_ph} to placeholder "hbtest_hello"
+		hbLog("skript-placeholders", "custom placeholder", "%{_ph}%")
+
+		# --- DiSky (no bot connected: builders only) ---
+		make embed:
+			set title of embed to "HbTest embed"
+			set footer of embed to "footer"
+		hbLog("DiSky", "embed builder", "%title of last embed%")
+
+		log "DONE" to "addontest.log"
+		send "addontest done"
+
+# --- SkTrace target: a periodic trigger with a loop, a while loop and a function call ---
+function hbTraceWork(n: number) :: number:
+	return {_n} * 2
+
+every 5 ticks:
+	set {_s} to 0
+	loop 200 times:
+		add loop-value to {_s}
+	set {_w} to 0
+	while {_w} < 50:
+		add 1 to {_w}
+	set {-hbtrace} to hbTraceWork({_s})
+
+# --- if/else chain inside a periodic trigger (exercises SkTrace's line-level tracing) ---
+every 7 ticks:
+	set {_x} to mod(floor(unix timestamp of now), 4)
+	if {_x} is 0:
+		set {-hbchain} to "zero"
+	else if {_x} is 1:
+		set {-hbchain} to "one"
+	else if {_x} is 2:
+		set {-hbchain} to "two"
+	else:
+		set {-hbchain} to "other"
+	add 1 to {-hbchaincount}
+
+# --- a loop that stays active across ticks (exercises SkTrace's loop watcher) ---
+every 2 seconds:
+	loop 30 times:
+		add 1 to {-hbslowloop}
+		wait 1 tick

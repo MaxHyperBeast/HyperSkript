@@ -70,7 +70,6 @@ was found and changed for each element, is in [SYNTAX-AUDIT.md](SYNTAX-AUDIT.md)
 | `replace all regex ...`, `split ... at {_x}` | Compiled the regex on every call | Last compiled pattern reused |
 | `on break of stone` and other block events with a type filter | New item type per trigger per event | Reused while the block data is equal |
 | `on player enter chunk` | Two chunk lookups on every player move | Chunk coordinate comparison |
-| `if` / `else if` chains | Walked the remaining chain after every taken branch | Target found once |
 | `data tag "x" of ...` | Parsed and validated the key on every use | Last valid key remembered |
 | `location(x, y, z)` | Copied the world list on every call | Only when no world is given |
 | `formatNumber(n, "...")`, `... formatted as {_format}` | Parsed the format pattern on every call | Last format reused per thread |
@@ -80,6 +79,15 @@ was found and changed for each element, is in [SYNTAX-AUDIT.md](SYNTAX-AUDIT.md)
 
 Behaviour was kept exactly; a few possible changes were left out on purpose because they would change results
 (for example evaluating random expressions once instead of per player).
+
+## Addon compatibility
+
+Common addons (SkBee, skript-reflect, skript-worldguard, oopsk, SkCheese, skript-gui, DiSky, skript-placeholders,
+SkTrace) are verified to give the same results as on official Skript; see [ADDONS.md](ADDONS.md) for versions and how
+they are checked. Some addons change Skript's internals through reflection, so HyperSkript keeps those internals
+reachable in their old form: the converter and comparator caches are still maps keyed by class pairs, loop counters are
+still readable from `LoopSection.currentLoopCounter`, and all registry caches are cleared whenever types,
+converters, comparators or operations are registered, including at runtime.
 
 ## Debugging aid
 
