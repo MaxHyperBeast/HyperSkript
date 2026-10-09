@@ -5,7 +5,7 @@ one section at a time for runtime performance. **Status:** ✅ OK = reviewed, no
 ⚡ Optimized = changed (the note says what was slow and what changed); ⏳ = not reviewed yet.
 Every change keeps the exact behaviour; Skript's test suite must pass after each section.
 
-**Progress:** 562 of 1054 reviewed, 38 optimized.
+**Progress:** 642 of 1054 reviewed, 39 optimized.
 
 | Section | Contents | Reviewed |
 |---|---|---|
@@ -15,7 +15,7 @@ Every change keeps the exact behaviour; Skript's test suite must pass after each
 | [4](#section-4) | conditions | 80/80 |
 | [5](#section-5) | conditions, effects | 80/80 |
 | [6](#section-6) | effects, expressions | 80/80 |
-| [7](#section-7) | expressions | 0/80 |
+| [7](#section-7) | expressions | 80/80 |
 | [8](#section-8) | expressions | 0/80 |
 | [9](#section-9) | expressions | 0/80 |
 | [10](#section-10) | expressions, hooks.chat.expressions, hooks.economy.expressions, ... | 0/80 |
@@ -633,86 +633,86 @@ expressions
 
 | Syntax | Kind | Class | Status | Notes |
 |---|---|---|---|---|
-| `cursor slot` | Expression | ExprCursorSlot | ⏳ |  |
-| `[custom] model data` | Expression | ExprCustomModelData | ⏳ |  |
-| `[the] damage` | Expression | ExprDamage | ⏳ |  |
-| `damage cause` | Expression | ExprDamageCause | ⏳ |  |
-| `%itemtype% with (damage\|data) [value] %number%` | Expression | ExprDamagedItem | ⏳ |  |
-| `debug info[rmation]` | Expression | ExprDebugInfo | ⏳ |  |
-| `(de\|un)queued %queue%` | Expression | ExprDequeuedQueue | ⏳ |  |
-| `difference (between\|of) %object% and %object%` | Expression | ExprDifference | ⏳ |  |
-| `difficult(y\|ies)` | Expression | ExprDifficulty | ⏳ |  |
-| `[%-number% [(block\|met(er\|re))[s]] [to the]] (` | Expression | ExprDirection | ⏳ |  |
-| `[:max[imum]] domestication level` | Expression | ExprDomestication | ⏳ |  |
-| `[the] drops` | Expression | ExprDrops | ⏳ |  |
-| `[(all\|the\|all [of] the)] drops of %blocks% [(using\|with) %-itemt...` | Expression | ExprDropsOfBlock | ⏳ |  |
-| `(duplicat(e\|ing\|ion)\|clon(e\|ing)) cool[ ]down [time]` | Expression | ExprDuplicateCooldown | ⏳ |  |
-| `(damage[s] [value[s]]\|1:durabilit(y\|ies))` | Expression | ExprDurability | ⏳ |  |
-| `[:max[imum]] (dust\|brush)[ed\|ing] (value\|stage\|progress[ion])` | Expression | ExprDustedStage | ⏳ |  |
-| `[thrown] egg` | Expression | ExprEgg | ⏳ |  |
-| `ender[ ]chest[s]` | Expression | ExprEnderChest | ⏳ |  |
-| `[the] [event-]<.+>` | Expression | ExprEntity | ⏳ |  |
-| `[the] %attributetype% [(1:(total\|final\|modified))] attribute [val...` | Expression | ExprEntityAttribute | ⏳ |  |
-| `[elapsed\|:remaining] (item\|tool) us[ag]e time` | Expression | ExprEntityItemUseTime | ⏳ |  |
-| `[the] (owner\|tamer) of %livingentities%` | Expression | ExprEntityOwner | ⏳ |  |
-| `entity size` | Expression | ExprEntitySize | ⏳ |  |
-| `entity snapshot` | Expression | ExprEntitySnapshot | ⏳ |  |
-| `unchecked` | Expression | ExprEntitySound | ⏳ |  |
-| `[max:max[imum]] [stored] entity count` | Expression | ExprEntityStorageEntityCount | ⏳ |  |
-| `[the] [event-]initiator[( \|-)inventory]` | Expression | ExprEvtInitiator | ⏳ |  |
-| `exact item[s]` | Expression | ExprExactItem | ⏳ |  |
-| `%objects% (except\|excluding\|not including) %objects%` | Expression | ExprExcept | ⏳ |  |
-| `exhaustion` | Expression | ExprExhaustion | ⏳ |  |
-| `[the] (spawned\|dropped\|) [e]xp[erience] [orb[s]]` | Expression | ExprExperience | ⏳ |  |
-| `(experience\|[e]xp) [pickup\|collection] cooldown` | Expression | ExprExperienceCooldown | ⏳ |  |
-| `(experience\|[e]xp) cooldown change (reason\|cause\|type)` | Expression | ExprExperienceCooldownChangeReason | ⏳ |  |
-| `[the] exploded blocks` | Expression | ExprExplodedBlocks | ⏳ |  |
-| `[the] [explosion['s]] block (yield\|amount)` | Expression | ExprExplosionBlockYield | ⏳ |  |
-| `[the] explosion (yield\|radius\|size)` | Expression | ExprExplosionYield | ⏳ |  |
-| `explosive (yield\|radius\|size\|power)` | Expression | ExprExplosiveYield | ⏳ |  |
-| `(head\|eye[s]) [location[s]]` | Expression | ExprEyeLocation | ⏳ |  |
-| `(1¦horizontal\|) facing` | Expression | ExprFacing | ⏳ |  |
-| `fall[en] (distance\|height)` | Expression | ExprFallDistance | ⏳ |  |
-| `[all] [the] fertilized blocks` | Expression | ExprFertilizedBlocks | ⏳ |  |
-| `[the] final damage` | Expression | ExprFinalDamage | ⏳ |  |
-| `[:max[imum]] (burn[ing]\|fire) (time\|duration)` | Expression | ExprFireTicks | ⏳ |  |
-| `(1¦\|2¦flickering\|3¦trailing\|4¦flickering trailing\|5¦trailing fl...` | Expression | ExprFireworkEffect | ⏳ |  |
-| `first empty slot[s]` | Expression | ExprFirstEmptySlot | ⏳ |  |
-| `fl(y[ing]\|ight) (mode\|state)` | Expression | ExprFlightMode | ⏳ |  |
-| `[the] (food\|hunger)[[ ](level\|met(er\|re)\|bar)] [of %players%]` | Expression | ExprFoodLevel | ⏳ |  |
-| `%dates% formatted [human-readable] [(with\|as) %-string%]` | Expression | ExprFormatDate | ⏳ |  |
-| `freeze time` | Expression | ExprFreezeTicks | ⏳ |  |
-| `[:offline[ ]]player[s] from %uuids%` | Expression | ExprFromUUID | ⏳ |  |
-| `[the\|a] function [named] %string% [(in\|from) %-script%]` | Expression | ExprFunction | ⏳ |  |
-| `[the] gamerule %gamerule% of %worlds%` | Expression | ExprGameRule | ⏳ |  |
-| `(gliding\|glider) [state]` | Expression | ExprGlidingState | ⏳ |  |
-| `glowing` | Expression | ExprGlowing | ⏳ |  |
-| `gravity` | Expression | ExprGravity | ⏳ |  |
-| `[the] hanging (entity\|:remover)` | Expression | ExprHanging | ⏳ |  |
-| `%strings% hash[ed] with (:(MD5\|SHA-256\|SHA-384\|SHA-512))` | Expression | ExprHash | ⏳ |  |
-| `[the] hatching number` | Expression | ExprHatchingNumber | ⏳ |  |
-| `[the] hatching entity [type]` | Expression | ExprHatchingType | ⏳ |  |
-| `[the] heal[ing] amount` | Expression | ExprHealAmount | ⏳ |  |
-| `(regen\|health regain\|heal[ing]) (reason\|cause)` | Expression | ExprHealReason | ⏳ |  |
-| `[(all [[of] the]\|the)] hidden players (of\|for) %players%` | Expression | ExprHiddenPlayers | ⏳ |  |
-| `[the] (host\|domain)[ ][name]` | Expression | ExprHostname | ⏳ |  |
-| `[the] hotbar button` | Expression | ExprHotbarButton | ⏳ |  |
-| `[([current:currently] selected\|current:current)] hotbar slot[s]` | Expression | ExprHotbarSlot | ⏳ |  |
-| `[the] [custom] [player\|server] (hover\|sample) ([message] list\|me...` | Expression | ExprHoverList | ⏳ |  |
-| `humidit(y\|ies)` | Expression | ExprHumidity | ⏳ |  |
-| `[the] [1:first\|2:last\|3:all] (position[mult:s]\|mult:indices\|ind...` | Expression | ExprIndicesOfValue | ⏳ |  |
-| `input` | Expression | ExprInput | ⏳ |  |
-| `inventory action` | Expression | ExprInventoryAction | ⏳ |  |
-| `[the] inventory clos(e\|ing) (reason\|cause)` | Expression | ExprInventoryCloseReason | ⏳ |  |
-| `(` | Expression | ExprInventoryInfo | ⏳ |  |
-| `[the] slot[s] %numbers% of %inventory%` | Expression | ExprInventorySlot | ⏳ |  |
-| `[the] (inverse\|opposite)[s] of %booleans%` | Expression | ExprInverse | ⏳ |  |
-| `IP[s][( \|-)address[es]] of %players%` | Expression | ExprIP | ⏳ |  |
-| `item` | Expression | ExprItem | ⏳ |  |
-| `[the] [item] cooldown of %itemtypes% for %players%` | Expression | ExprItemCooldown | ⏳ |  |
-| `item flags` | Expression | ExprItemFlags | ⏳ |  |
-| `[the] uuid of [the] [dropped] item owner [of %itementities%]` | Expression | ExprItemOwner | ⏳ |  |
-| `[all [[of] the]\|the] block[[ ]type]s` | Expression | ExprItems | ⏳ |  |
+| `cursor slot` | Expression | ExprCursorSlot | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[custom] model data` | Expression | ExprCustomModelData | ✅ OK | Item meta read is required. |
+| `[the] damage` | Expression | ExprDamage | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `damage cause` | Expression | ExprDamageCause | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `%itemtype% with (damage\|data) [value] %number%` | Expression | ExprDamagedItem | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `debug info[rmation]` | Expression | ExprDebugInfo | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(de\|un)queued %queue%` | Expression | ExprDequeuedQueue | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `difference (between\|of) %object% and %object%` | Expression | ExprDifference | ✅ OK | Difference lookups are cached. |
+| `difficult(y\|ies)` | Expression | ExprDifficulty | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[%-number% [(block\|met(er\|re))[s]] [to the]] (` | Expression | ExprDirection | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[:max[imum]] domestication level` | Expression | ExprDomestication | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] drops` | Expression | ExprDrops | ✅ OK | One item type per drop, required by the return type. |
+| `[(all\|the\|all [of] the)] drops of %blocks% [(using\|with) %-itemt...` | Expression | ExprDropsOfBlock | ✅ OK | Drop calculation in the server dominates. |
+| `(duplicat(e\|ing\|ion)\|clon(e\|ing)) cool[ ]down [time]` | Expression | ExprDuplicateCooldown | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(damage[s] [value[s]]\|1:durabilit(y\|ies))` | Expression | ExprDurability | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[:max[imum]] (dust\|brush)[ed\|ing] (value\|stage\|progress[ion])` | Expression | ExprDustedStage | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[thrown] egg` | Expression | ExprEgg | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `ender[ ]chest[s]` | Expression | ExprEnderChest | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [event-]<.+>` | Expression | ExprEntity | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] %attributetype% [(1:(total\|final\|modified))] attribute [val...` | Expression | ExprEntityAttribute | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[elapsed\|:remaining] (item\|tool) us[ag]e time` | Expression | ExprEntityItemUseTime | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] (owner\|tamer) of %livingentities%` | Expression | ExprEntityOwner | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `entity size` | Expression | ExprEntitySize | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `entity snapshot` | Expression | ExprEntitySnapshot | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `unchecked` | Expression | ExprEntitySound | ✅ OK | Rare. |
+| `[max:max[imum]] [stored] entity count` | Expression | ExprEntityStorageEntityCount | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [event-]initiator[( \|-)inventory]` | Expression | ExprEvtInitiator | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `exact item[s]` | Expression | ExprExactItem | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `%objects% (except\|excluding\|not including) %objects%` | Expression | ExprExcept | ✅ OK | Comparisons are the required work. |
+| `exhaustion` | Expression | ExprExhaustion | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] (spawned\|dropped\|) [e]xp[erience] [orb[s]]` | Expression | ExprExperience | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(experience\|[e]xp) [pickup\|collection] cooldown` | Expression | ExprExperienceCooldown | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(experience\|[e]xp) cooldown change (reason\|cause\|type)` | Expression | ExprExperienceCooldownChangeReason | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] exploded blocks` | Expression | ExprExplodedBlocks | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [explosion['s]] block (yield\|amount)` | Expression | ExprExplosionBlockYield | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] explosion (yield\|radius\|size)` | Expression | ExprExplosionYield | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `explosive (yield\|radius\|size\|power)` | Expression | ExprExplosiveYield | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(head\|eye[s]) [location[s]]` | Expression | ExprEyeLocation | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(1¦horizontal\|) facing` | Expression | ExprFacing | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `fall[en] (distance\|height)` | Expression | ExprFallDistance | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[all] [the] fertilized blocks` | Expression | ExprFertilizedBlocks | ✅ OK | Rare event. |
+| `[the] final damage` | Expression | ExprFinalDamage | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[:max[imum]] (burn[ing]\|fire) (time\|duration)` | Expression | ExprFireTicks | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(1¦\|2¦flickering\|3¦trailing\|4¦flickering trailing\|5¦trailing fl...` | Expression | ExprFireworkEffect | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `first empty slot[s]` | Expression | ExprFirstEmptySlot | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `fl(y[ing]\|ight) (mode\|state)` | Expression | ExprFlightMode | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] (food\|hunger)[[ ](level\|met(er\|re)\|bar)] [of %players%]` | Expression | ExprFoodLevel | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `%dates% formatted [human-readable] [(with\|as) %-string%]` | Expression | ExprFormatDate | ⚡ Optimized | With a non-literal format (e.g. from a variable), parsed the pattern into a new SimpleDateFormat on every call. The last format is now kept per thread (SimpleDateFormat isn't thread-safe) and reused while the pattern is the same; literal formats were already parsed once. |
+| `freeze time` | Expression | ExprFreezeTicks | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[:offline[ ]]player[s] from %uuids%` | Expression | ExprFromUUID | ✅ OK | Server lookups. |
+| `[the\|a] function [named] %string% [(in\|from) %-script%]` | Expression | ExprFunction | ✅ OK | Function lookup by name. |
+| `[the] gamerule %gamerule% of %worlds%` | Expression | ExprGameRule | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(gliding\|glider) [state]` | Expression | ExprGlidingState | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `glowing` | Expression | ExprGlowing | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `gravity` | Expression | ExprGravity | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] hanging (entity\|:remover)` | Expression | ExprHanging | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `%strings% hash[ed] with (:(MD5\|SHA-256\|SHA-384\|SHA-512))` | Expression | ExprHash | ✅ OK | Hashing is the required work. |
+| `[the] hatching number` | Expression | ExprHatchingNumber | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] hatching entity [type]` | Expression | ExprHatchingType | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] heal[ing] amount` | Expression | ExprHealAmount | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(regen\|health regain\|heal[ing]) (reason\|cause)` | Expression | ExprHealReason | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[(all [[of] the]\|the)] hidden players (of\|for) %players%` | Expression | ExprHiddenPlayers | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] (host\|domain)[ ][name]` | Expression | ExprHostname | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] hotbar button` | Expression | ExprHotbarButton | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[([current:currently] selected\|current:current)] hotbar slot[s]` | Expression | ExprHotbarSlot | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [custom] [player\|server] (hover\|sample) ([message] list\|me...` | Expression | ExprHoverList | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `humidit(y\|ies)` | Expression | ExprHumidity | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [1:first\|2:last\|3:all] (position[mult:s]\|mult:indices\|ind...` | Expression | ExprIndicesOfValue | ✅ OK | Search is the required work. |
+| `input` | Expression | ExprInput | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `inventory action` | Expression | ExprInventoryAction | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] inventory clos(e\|ing) (reason\|cause)` | Expression | ExprInventoryCloseReason | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(` | Expression | ExprInventoryInfo | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] slot[s] %numbers% of %inventory%` | Expression | ExprInventorySlot | ✅ OK | Slot wrappers only. |
+| `[the] (inverse\|opposite)[s] of %booleans%` | Expression | ExprInverse | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `IP[s][( \|-)address[es]] of %players%` | Expression | ExprIP | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `item` | Expression | ExprItem | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [item] cooldown of %itemtypes% for %players%` | Expression | ExprItemCooldown | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `item flags` | Expression | ExprItemFlags | ✅ OK | Item meta read is required. |
+| `[the] uuid of [the] [dropped] item owner [of %itementities%]` | Expression | ExprItemOwner | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[all [[of] the]\|the] block[[ ]type]s` | Expression | ExprItems | ✅ OK | Literal results are already buffered. |
 
 ## Section 8
 

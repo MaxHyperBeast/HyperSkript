@@ -42,6 +42,23 @@ public class ExprFormatDate extends PropertyExpression<Date, String> {
 	}
 
 	private SimpleDateFormat format;
+
+	/**
+	 * The last format built from a non-literal pattern on each thread. Parsing a pattern is costly and the same one
+	 * is usually used again; SimpleDateFormat isn't thread-safe, so each thread keeps its own.
+	 */
+	private record CachedFormat(String pattern, SimpleDateFormat format) { }
+
+	private static final ThreadLocal<CachedFormat> LAST_FORMAT = new ThreadLocal<>();
+
+	private static SimpleDateFormat getFormat(String pattern) {
+		CachedFormat cached = LAST_FORMAT.get();
+		if (cached != null && cached.pattern.equals(pattern))
+			return cached.format;
+		SimpleDateFormat format = new SimpleDateFormat(pattern); // throws for invalid patterns, which aren't cached
+		LAST_FORMAT.set(new CachedFormat(pattern, format));
+		return format;
+	}
 	private Expression<String> customFormat;
 
 	@Override
@@ -85,7 +102,7 @@ public class ExprFormatDate extends PropertyExpression<Date, String> {
 				return null;
 
 			try {
-				format = new SimpleDateFormat(formatString);
+				format = getFormat(formatString);
 			} catch (IllegalArgumentException ex) {
 				return null;
 			}
