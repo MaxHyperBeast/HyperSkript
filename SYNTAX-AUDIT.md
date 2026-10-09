@@ -5,7 +5,7 @@ one section at a time for runtime performance. **Status:** ✅ OK = reviewed, no
 ⚡ Optimized = changed (the note says what was slow and what changed); ⏳ = not reviewed yet.
 Every change keeps the exact behaviour; Skript's test suite must pass after each section.
 
-**Progress:** 402 of 1054 reviewed, 35 optimized.
+**Progress:** 482 of 1054 reviewed, 36 optimized.
 
 | Section | Contents | Reviewed |
 |---|---|---|
@@ -13,7 +13,7 @@ Every change keeps the exact behaviour; Skript's test suite must pass after each
 | [2](#section-2) | Events | 151/151 |
 | [3](#section-3) | Default functions | 80/80 |
 | [4](#section-4) | conditions | 80/80 |
-| [5](#section-5) | conditions, effects | 0/80 |
+| [5](#section-5) | conditions, effects | 80/80 |
 | [6](#section-6) | effects, expressions | 0/80 |
 | [7](#section-7) | expressions | 0/80 |
 | [8](#section-8) | expressions | 0/80 |
@@ -459,86 +459,86 @@ conditions, effects
 
 | Syntax | Kind | Class | Status | Notes |
 |---|---|---|---|---|
-| `within %number% (block\|metre\|meter)[s] (around\|of) %locations%` | Condition | CondWithinRadius | ⏳ |  |
-| `allow %livingentities% to (duplicate\|clone)` | Effect | EffAllayCanDuplicate | ⏳ |  |
-| `make %livingentities% (duplicate\|clone)` | Effect | EffAllayDuplicate | ⏳ |  |
-| `apply [%-number%] bone[ ]meal[s] [to %blocks%]` | Effect | EffApplyBoneMeal | ⏳ |  |
-| `update %blocks% (as\|to be) %blockdata% [physics:without [neighbo[u...` | Effect | EffBlockUpdate | ⏳ |  |
-| `break %blocks% [naturally] [using %-itemtype%]` | Effect | EffBreakNaturally | ⏳ |  |
-| `(cancel\|ignore) [the] [current] [command] cooldown` | Effect | EffCancelCooldown | ⏳ |  |
-| `(cancel\|clear\|delete) [the] drops [of (items:items\|xp:[e]xp[erie...` | Effect | EffCancelDrops | ⏳ |  |
-| `(cancel\|interrupt) [the] us[ag]e of %livingentities%'[s] [active\|...` | Effect | EffCancelItemUse | ⏳ |  |
-| `make %entities% [un:(un\|not \|non[-\| ])](charged\|powered)` | Effect | EffCharge | ⏳ |  |
-| `(clear\|empty) the (stored entities\|entity storage) of %blocks%` | Effect | EffClearEntityStorage | ⏳ |  |
-| `(dye\|colo[u]r\|paint) %itemtypes% %color%` | Effect | EffColorItems | ⏳ |  |
-| `make command block[s] %blocks% [not:(un\|not )]conditional` | Effect | EffCommandBlockConditional | ⏳ |  |
-| `connect %players% to [proxy\|bungeecord] [server] %string%` | Effect | EffConnect | ⏳ |  |
-| `copy %~objects% [in]to %~objects%` | Effect | EffCopy | ⏳ |  |
-| `(:show\|hide) [the] (custom\|display)[ ]name of %entities%` | Effect | EffCustomName | ⏳ |  |
-| `make %livingentities% (start dancing\|dance) [%-direction% %-locati...` | Effect | EffDancing | ⏳ |  |
-| `detonate %entities%` | Effect | EffDetonate | ⏳ |  |
-| `<.+> if <.+>` | Effect | EffDoIf | ⏳ |  |
-| `(force\|allow) [the] (lead\|leash) [item] to drop` | Effect | EffDropLeash | ⏳ |  |
-| `make %livingentities% (:start\|stop) eating` | Effect | EffEating | ⏳ |  |
-| `(prevent\|disallow) [the] (boosting\|used) firework from being cons...` | Effect | EffElytraBoostConsume | ⏳ |  |
-| `make %livingentities% (randomly teleport\|teleport randomly)` | Effect | EffEndermanTeleport | ⏳ |  |
-| `[:un]enforce [the] [server] white[ ]list` | Effect | EffEnforceWhitelist | ⏳ |  |
-| `make %livingentities% despawn[able] (on chunk unload\|when far away)` | Effect | EffEntityUnload | ⏳ |  |
-| `hide %entities% [(from\|for) %-players%]` | Effect | EffEntityVisibility | ⏳ |  |
-| `equip [%livingentities%] with %itemtypes%` | Effect | EffEquip | ⏳ |  |
-| `cause exception` | Effect | EffExceptionDebug | ⏳ |  |
-| `instantly explode [creeper[s]] %livingentities%` | Effect | EffExplodeCreeper | ⏳ |  |
-| `[(create\|make)] [an] explosion (of\|with) (force\|strength\|power)...` | Effect | EffExplosion | ⏳ |  |
-| `feed [the] %players% [by %-number% [beef[s]]]` | Effect | EffFeed | ⏳ |  |
-| `make %itemtypes% [:not] (fire resistant\|resistant to fire)` | Effect | EffFireResistant | ⏳ |  |
-| `(launch\|deploy) [[a] firework [with effect[s]]] %fireworkeffects% ...` | Effect | EffFireworkLaunch | ⏳ |  |
-| `make %livingentities% attack %entities%` | Effect | EffForceAttack | ⏳ |  |
-| `make %blocks/itemtypes% have glowing text` | Effect | EffGlowingText | ⏳ |  |
-| `remove [the] (left horn[s]\|right:right horn[s]\|both:both horns) o...` | Effect | EffGoatHorns | ⏳ |  |
-| `make %livingentities% ram %livingentity%` | Effect | EffGoatRam | ⏳ |  |
-| `make %livingentities% (:left\|right)( \|-)handed` | Effect | EffHandedness | ⏳ |  |
-| `hide %players% (in\|on\|from) [the] server list` | Effect | EffHidePlayerFromServerList | ⏳ |  |
-| `(ignite\|set fire to) %entities% [for %-timespan%]` | Effect | EffIgnite | ⏳ |  |
-| `make %entities% [(1¦not)] incendiary` | Effect | EffIncendiary | ⏳ |  |
-| `(add\|insert) %livingentities% [in[ ]]to [the] (stored entities\|en...` | Effect | EffInsertEntityStorage | ⏳ |  |
-| `make %livingentities% (invisible\|not visible)` | Effect | EffInvisible | ⏳ |  |
-| `make %entities% (invulnerable\|invincible)` | Effect | EffInvulnerability | ⏳ |  |
-| `(prevent\|disallow) %itementities% from (naturally despawning\|desp...` | Effect | EffItemDespawn | ⏳ |  |
-| `keep [the] (inventory\|items) [(1:and [e]xp[erience][s] [point[s]])]` | Effect | EffKeepInventory | ⏳ |  |
-| `(apply knockback to\|knock[back]) %livingentities% [%direction%] [w...` | Effect | EffKnockback | ⏳ |  |
-| `(leash\|lead) %entities% to %entity%` | Effect | EffLeash | ⏳ |  |
-| `(open\|:close) [the] lid[s] (of\|for) %blocks%` | Effect | EffLidState | ⏳ |  |
-| `(create\|strike) lightning(1¦[ ]effect\|) %directions% %locations%` | Effect | EffLightning | ⏳ |  |
-| `load [the] server icon (from\|of) [the] [image] [file] %string%` | Effect | EffLoadServerIcon | ⏳ |  |
-| `(force\|make) %livingentities% [to] (face [towards]\|look [(at\|tow...` | Effect | EffLook | ⏳ |  |
-| `make [the] egg [:not] hatch` | Effect | EffMakeEggHatch | ⏳ |  |
-| `force %players% to [(start\|1¦stop)] fly[ing]` | Effect | EffMakeFly | ⏳ |  |
-| `make %players% (say\|send [the] message[s]) %strings%` | Effect | EffMakeSay | ⏳ |  |
-| `[de[-]]op %offlineplayers%` | Effect | EffOp | ⏳ |  |
-| `(open\|show) book %itemtype% (to\|for) %players%` | Effect | EffOpenBook | ⏳ |  |
-| `unchecked` | Effect | EffOpenInventory | ⏳ |  |
-| `make %livingentities% get (:on\|off) (its\|their) back[s]` | Effect | EffPandaOnBack | ⏳ |  |
-| `make %livingentities% (start:(start rolling\|roll)\|stop rolling)` | Effect | EffPandaRolling | ⏳ |  |
-| `make %livingentities% (start:(start sneezing\|sneeze)\|stop sneezing)` | Effect | EffPandaSneezing | ⏳ |  |
-| `make %livingentities% (pathfind\|move) to[wards] %livingentity/loca...` | Effect | EffPathfind | ⏳ |  |
-| `make %entities/blocks% [:not] persist[ent]` | Effect | EffPersistent | ⏳ |  |
-| `hide [all] player [related] info[rmation] [(in\|on\|from) [the] ser...` | Effect | EffPlayerInfoVisibility | ⏳ |  |
-| `make %livingentities% (start playing\|play) dead` | Effect | EffPlayingDead | ⏳ |  |
-| `(push\|thrust\|pull) %entities% [along] %direction% [(at\|with) [a]...` | Effect | EffPush | ⏳ |  |
-| `enable PvP [in %worlds%]` | Effect | EffPvP | ⏳ |  |
-| `(release\|evict) [the] (stored entities\|entity storage) of %blocks...` | Effect | EffReleaseEntityStorage | ⏳ |  |
-| `replace [(all\|every)\|first:[the] first] %strings% in %strings% wi...` | Effect | EffReplace | ⏳ |  |
-| `force %players% to respawn` | Effect | EffRespawn | ⏳ |  |
-| `ring %blocks% [from [the]] [%-direction%]` | Effect | EffRing | ⏳ |  |
-| `run %executable% [arguments:with arg[ument]s %-objects%]` | Effect | EffRun | ⏳ |  |
-| `make %livingentities% (start screaming\|scream)` | Effect | EffScreaming | ⏳ |  |
-| `(1:(enable\|load)\|2:reload\|3:disable\|4:unload) script [file\|nam...` | Effect | EffScriptFile | ⏳ |  |
-| `make %players% see %locations% as %itemtype/blockdata%` | Effect | EffSendBlockChange | ⏳ |  |
-| `send [the] resource pack [from [[the] URL]] %string% to %players%` | Effect | EffSendResourcePack | ⏳ |  |
-| `[:force] ` | Effect | EffShear | ⏳ |  |
-| `silence %entities%` | Effect | EffSilence | ⏳ |  |
-| `sort %~objects% [in (:descending\|ascending) order] [(by\|based on)...` | Effect | EffSort | ⏳ |  |
-| `make %players% (start sprinting\|sprint)` | Effect | EffSprinting | ⏳ |  |
+| `within %number% (block\|metre\|meter)[s] (around\|of) %locations%` | Condition | CondWithinRadius | ✅ OK | Squared distance math. |
+| `allow %livingentities% to (duplicate\|clone)` | Effect | EffAllayCanDuplicate | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %livingentities% (duplicate\|clone)` | Effect | EffAllayDuplicate | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `apply [%-number%] bone[ ]meal[s] [to %blocks%]` | Effect | EffApplyBoneMeal | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `update %blocks% (as\|to be) %blockdata% [physics:without [neighbo[u...` | Effect | EffBlockUpdate | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `break %blocks% [naturally] [using %-itemtype%]` | Effect | EffBreakNaturally | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(cancel\|ignore) [the] [current] [command] cooldown` | Effect | EffCancelCooldown | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(cancel\|clear\|delete) [the] drops [of (items:items\|xp:[e]xp[erie...` | Effect | EffCancelDrops | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(cancel\|interrupt) [the] us[ag]e of %livingentities%'[s] [active\|...` | Effect | EffCancelItemUse | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %entities% [un:(un\|not \|non[-\| ])](charged\|powered)` | Effect | EffCharge | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(clear\|empty) the (stored entities\|entity storage) of %blocks%` | Effect | EffClearEntityStorage | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(dye\|colo[u]r\|paint) %itemtypes% %color%` | Effect | EffColorItems | ✅ OK | Item meta update is required. |
+| `make command block[s] %blocks% [not:(un\|not )]conditional` | Effect | EffCommandBlockConditional | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `connect %players% to [proxy\|bungeecord] [server] %string%` | Effect | EffConnect | ✅ OK | Rare, network-bound. |
+| `copy %~objects% [in]to %~objects%` | Effect | EffCopy | ✅ OK | Deep copy is the required work. |
+| `(:show\|hide) [the] (custom\|display)[ ]name of %entities%` | Effect | EffCustomName | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %livingentities% (start dancing\|dance) [%-direction% %-locati...` | Effect | EffDancing | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `detonate %entities%` | Effect | EffDetonate | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `<.+> if <.+>` | Effect | EffDoIf | ✅ OK | Two field writes per run. |
+| `(force\|allow) [the] (lead\|leash) [item] to drop` | Effect | EffDropLeash | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %livingentities% (:start\|stop) eating` | Effect | EffEating | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(prevent\|disallow) [the] (boosting\|used) firework from being cons...` | Effect | EffElytraBoostConsume | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %livingentities% (randomly teleport\|teleport randomly)` | Effect | EffEndermanTeleport | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `[:un]enforce [the] [server] white[ ]list` | Effect | EffEnforceWhitelist | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %livingentities% despawn[able] (on chunk unload\|when far away)` | Effect | EffEntityUnload | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `hide %entities% [(from\|for) %-players%]` | Effect | EffEntityVisibility | ✅ OK | Re-evaluates the entity list per player; kept, because evaluating it once would change results for random expressions. |
+| `equip [%livingentities%] with %itemtypes%` | Effect | EffEquip | ✅ OK | Equipment calls in the server dominate. |
+| `cause exception` | Effect | EffExceptionDebug | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `instantly explode [creeper[s]] %livingentities%` | Effect | EffExplodeCreeper | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `[(create\|make)] [an] explosion (of\|with) (force\|strength\|power)...` | Effect | EffExplosion | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `feed [the] %players% [by %-number% [beef[s]]]` | Effect | EffFeed | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %itemtypes% [:not] (fire resistant\|resistant to fire)` | Effect | EffFireResistant | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(launch\|deploy) [[a] firework [with effect[s]]] %fireworkeffects% ...` | Effect | EffFireworkLaunch | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %livingentities% attack %entities%` | Effect | EffForceAttack | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %blocks/itemtypes% have glowing text` | Effect | EffGlowingText | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `remove [the] (left horn[s]\|right:right horn[s]\|both:both horns) o...` | Effect | EffGoatHorns | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %livingentities% ram %livingentity%` | Effect | EffGoatRam | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %livingentities% (:left\|right)( \|-)handed` | Effect | EffHandedness | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `hide %players% (in\|on\|from) [the] server list` | Effect | EffHidePlayerFromServerList | ✅ OK | Rare (server list pings). |
+| `(ignite\|set fire to) %entities% [for %-timespan%]` | Effect | EffIgnite | ✅ OK | One setter per entity. |
+| `make %entities% [(1¦not)] incendiary` | Effect | EffIncendiary | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(add\|insert) %livingentities% [in[ ]]to [the] (stored entities\|en...` | Effect | EffInsertEntityStorage | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %livingentities% (invisible\|not visible)` | Effect | EffInvisible | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %entities% (invulnerable\|invincible)` | Effect | EffInvulnerability | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(prevent\|disallow) %itementities% from (naturally despawning\|desp...` | Effect | EffItemDespawn | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `keep [the] (inventory\|items) [(1:and [e]xp[erience][s] [point[s]])]` | Effect | EffKeepInventory | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(apply knockback to\|knock[back]) %livingentities% [%direction%] [w...` | Effect | EffKnockback | ✅ OK | Server knockback call. |
+| `(leash\|lead) %entities% to %entity%` | Effect | EffLeash | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(open\|:close) [the] lid[s] (of\|for) %blocks%` | Effect | EffLidState | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(create\|strike) lightning(1¦[ ]effect\|) %directions% %locations%` | Effect | EffLightning | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `load [the] server icon (from\|of) [the] [image] [file] %string%` | Effect | EffLoadServerIcon | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(force\|make) %livingentities% [to] (face [towards]\|look [(at\|tow...` | Effect | EffLook | ✅ OK | Server look call. |
+| `make [the] egg [:not] hatch` | Effect | EffMakeEggHatch | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `force %players% to [(start\|1¦stop)] fly[ing]` | Effect | EffMakeFly | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %players% (say\|send [the] message[s]) %strings%` | Effect | EffMakeSay | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `[de[-]]op %offlineplayers%` | Effect | EffOp | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(open\|show) book %itemtype% (to\|for) %players%` | Effect | EffOpenBook | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `unchecked` | Effect | EffOpenInventory | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %livingentities% get (:on\|off) (its\|their) back[s]` | Effect | EffPandaOnBack | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %livingentities% (start:(start rolling\|roll)\|stop rolling)` | Effect | EffPandaRolling | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %livingentities% (start:(start sneezing\|sneeze)\|stop sneezing)` | Effect | EffPandaSneezing | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %livingentities% (pathfind\|move) to[wards] %livingentity/loca...` | Effect | EffPathfind | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %entities/blocks% [:not] persist[ent]` | Effect | EffPersistent | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `hide [all] player [related] info[rmation] [(in\|on\|from) [the] ser...` | Effect | EffPlayerInfoVisibility | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make %livingentities% (start playing\|play) dead` | Effect | EffPlayingDead | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(push\|thrust\|pull) %entities% [along] %direction% [(at\|with) [a]...` | Effect | EffPush | ✅ OK | Vector math per entity. |
+| `enable PvP [in %worlds%]` | Effect | EffPvP | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(release\|evict) [the] (stored entities\|entity storage) of %blocks...` | Effect | EffReleaseEntityStorage | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `replace [(all\|every)\|first:[the] first] %strings% in %strings% wi...` | Effect | EffReplace | ⚡ Optimized | 'replace all regex ... in {_x}' compiled every pattern on every run; the patterns of the last needles are now reused (same change as the replace expression). |
+| `force %players% to respawn` | Effect | EffRespawn | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `ring %blocks% [from [the]] [%-direction%]` | Effect | EffRing | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `run %executable% [arguments:with arg[ument]s %-objects%]` | Effect | EffRun | ✅ OK | Cost is the called function. |
+| `make %livingentities% (start screaming\|scream)` | Effect | EffScreaming | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `(1:(enable\|load)\|2:reload\|3:disable\|4:unload) script [file\|nam...` | Effect | EffScriptFile | ✅ OK | Script loading dominates. |
+| `make %players% see %locations% as %itemtype/blockdata%` | Effect | EffSendBlockChange | ✅ OK | Packet sending dominates. |
+| `send [the] resource pack [from [[the] URL]] %string% to %players%` | Effect | EffSendResourcePack | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `[:force] ` | Effect | EffShear | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `silence %entities%` | Effect | EffSilence | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `sort %~objects% [in (:descending\|ascending) order] [(by\|based on)...` | Effect | EffSort | ✅ OK | Sorting is the required work; comparator lookups were made lock-free earlier. |
+| `make %players% (start sprinting\|sprint)` | Effect | EffSprinting | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
 
 ## Section 6
 

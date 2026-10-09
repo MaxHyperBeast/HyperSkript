@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -131,16 +132,32 @@ public class EffReplace extends Effect {
 		}
 	}
 
+	/**
+	 * The patterns compiled for the last needles, as the same needles are usually used again.
+	 */
+	private record CompiledNeedles(Object[] needles, List<Pattern> patterns) { }
+
+	private volatile @Nullable CompiledNeedles lastNeedles;
+
+	private List<Pattern> compilePatterns(Object[] needles) {
+		CompiledNeedles last = lastNeedles;
+		if (last != null && Arrays.equals(last.needles, needles))
+			return last.patterns;
+		List<Pattern> patterns = new ArrayList<>(needles.length);
+		for (Object needle : needles) {
+			try {
+				patterns.add(Pattern.compile((String) needle));
+			} catch (Exception ignored) { }
+		}
+		lastNeedles = new CompiledNeedles(needles.clone(), patterns);
+		return patterns;
+	}
+
 	private @NotNull Function<String, String> getReplaceFunction(Object[] needles, String replacement) {
 		Function<String, String> replaceFunction;
 
 		if (replaceRegex) {
-			List<Pattern> patterns = new ArrayList<>(needles.length);
-			for (Object needle : needles) {
-				try {
-					patterns.add(Pattern.compile((String) needle));
-				} catch (Exception ignored) { }
-			}
+			List<Pattern> patterns = compilePatterns(needles);
 			replaceFunction = haystackString -> {
 				for (Pattern pattern : patterns) {
 					Matcher matcher = pattern.matcher(haystackString);
