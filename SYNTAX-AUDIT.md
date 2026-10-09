@@ -5,14 +5,14 @@ one section at a time for runtime performance. **Status:** ✅ OK = reviewed, no
 ⚡ Optimized = changed (the note says what was slow and what changed); ⏳ = not reviewed yet.
 Every change keeps the exact behaviour; Skript's test suite must pass after each section.
 
-**Progress:** 322 of 1054 reviewed, 33 optimized.
+**Progress:** 402 of 1054 reviewed, 35 optimized.
 
 | Section | Contents | Reviewed |
 |---|---|---|
 | [1](#section-1) | Most used syntax | 91/91 |
 | [2](#section-2) | Events | 151/151 |
 | [3](#section-3) | Default functions | 80/80 |
-| [4](#section-4) | conditions | 0/80 |
+| [4](#section-4) | conditions | 80/80 |
 | [5](#section-5) | conditions, effects | 0/80 |
 | [6](#section-6) | effects, expressions | 0/80 |
 | [7](#section-7) | expressions | 0/80 |
@@ -372,86 +372,86 @@ conditions
 
 | Syntax | Kind | Class | Status | Notes |
 |---|---|---|---|---|
-| `charging [a] fireball` | Condition | CondIsChargingFireball | ⏳ |  |
-| `climbing` | Condition | CondIsClimbing | ⏳ |  |
-| `[:un]conditional` | Condition | CondIsCommandBlockConditional | ⏳ |  |
-| `%entities%'[s] custom name[s] (is\|are) visible` | Condition | CondIsCustomNameVisible | ⏳ |  |
-| `dancing` | Condition | CondIsDancing | ⏳ |  |
-| `dashing` | Condition | CondIsDashing | ⏳ |  |
-| `%numbers% (is\|are) evenly divisible by %number% [with [a] toleranc...` | Condition | CondIsDivisibleBy | ⏳ |  |
-| `eating` | Condition | CondIsEating | ⏳ |  |
-| `edible` | Condition | CondIsEdible | ⏳ |  |
-| `(fire resistant\|resistant to fire)` | Condition | CondIsFireResistant | ⏳ |  |
-| `flammable` | Condition | CondIsFlammable | ⏳ |  |
-| `flying` | Condition | CondIsFlying | ⏳ |  |
-| `frozen` | Condition | CondIsFrozen | ⏳ |  |
-| `[furnace] fuel` | Condition | CondIsFuel | ⏳ |  |
-| `gliding` | Condition | CondIsGliding | ⏳ |  |
-| `%livingentities%'[s] [:main] hand[s] (is\|are) raised` | Condition | CondIsHandRaised | ⏳ |  |
-| `infinite` | Condition | CondIsInfinite | ⏳ |  |
-| `interactable` | Condition | CondIsInteractable | ⏳ |  |
-| `(invisible\|:visible)` | Condition | CondIsInvisible | ⏳ |  |
-| `(invulnerable\|invincible)` | Condition | CondIsInvulnerable | ⏳ |  |
-| `jumping` | Condition | CondIsJumping | ⏳ |  |
-| `(:left\|right)( \|-)handed` | Condition | CondIsLeftHanded | ⏳ |  |
-| `chunk[s] %directions% [%locations%] (is\|are)[(1¦(n't\| not))] loaded` | Condition | CondIsLoaded | ⏳ |  |
-| `occluding` | Condition | CondIsOccluding | ⏳ |  |
-| `on [the] ground` | Condition | CondIsOnGround | ⏳ |  |
-| `[[a] server\|an] op[erator][s]` | Condition | CondIsOp | ⏳ |  |
-| `passable` | Condition | CondIsPassable | ⏳ |  |
-| `pathfinding [to[wards] %-livingentity/location%]` | Condition | CondIsPathfinding | ⏳ |  |
-| `persistent` | Condition | CondIsPersistent | ⏳ |  |
-| `playing dead` | Condition | CondIsPlayingDead | ⏳ |  |
-| `plugin[s] %strings% (is\|are) enabled` | Condition | CondIsPluginEnabled | ⏳ |  |
-| `%itemtypes% (is\|are) %` | Condition | CondIsPreferredTool | ⏳ |  |
-| `resonating` | Condition | CondIsResonating | ⏳ |  |
-| `riding [%-entitydatas/entities%]` | Condition | CondIsRiding | ⏳ |  |
-| `ringing` | Condition | CondIsRinging | ⏳ |  |
-| `riptiding` | Condition | CondIsRiptiding | ⏳ |  |
-| `[:properly] saddled` | Condition | CondIsSaddled | ⏳ |  |
-| `screaming` | Condition | CondIsScreaming | ⏳ |  |
-| `sedated` | Condition | CondIsSedated | ⏳ |  |
-| `(sheared\|shorn)` | Condition | CondIsSheared | ⏳ |  |
-| `silent` | Condition | CondIsSilent | ⏳ |  |
-| `[a] s(k\|c)ript (command\|cmd)` | Condition | CondIsSkriptCommand | ⏳ |  |
-| `sleeping` | Condition | CondIsSleeping | ⏳ |  |
-| `([a] slime chunk\|slime chunks\|slimey)` | Condition | CondIsSlimeChunk | ⏳ |  |
-| `sneaking` | Condition | CondIsSneaking | ⏳ |  |
-| `solid` | Condition | CondIsSolid | ⏳ |  |
-| `%entitydatas% is spawnable [in [the [world]] %world%]` | Condition | CondIsSpawnable | ⏳ |  |
-| `sprinting` | Condition | CondIsSprinting | ⏳ |  |
-| `stackable` | Condition | CondIsStackable | ⏳ |  |
-| `swimming` | Condition | CondIsSwimming | ⏳ |  |
-| `tameable` | Condition | CondIsTameable | ⏳ |  |
-| `(tamed\|domesticated)` | Condition | CondIsTamed | ⏳ |  |
-| `ticking` | Condition | CondIsTicking | ⏳ |  |
-| `transparent` | Condition | CondIsTransparent | ⏳ |  |
-| `[:un]breakable` | Condition | CondIsUnbreakable | ⏳ |  |
-| `%script% is using %strings%` | Condition | CondIsUsingFeature | ⏳ |  |
-| `valid` | Condition | CondIsValid | ⏳ |  |
-| `normali(s\|z)ed` | Condition | CondIsVectorNormalized | ⏳ |  |
-| `[the] server (is\|not:(isn't\|is not)) (in white[ ]list mode\|white...` | Condition | CondIsWhitelisted | ⏳ |  |
-| `%locations% (is\|are) within %location% and %location%` | Condition | CondIsWithin | ⏳ |  |
-| `(despawn naturally\|naturally despawn)` | Condition | CondItemDespawn | ⏳ |  |
-| `leashed` | Condition | CondLeashed | ⏳ |  |
-| `[the] (lead\|leash) [item] (will\|not:(won't\|will not)) (drop\|be ...` | Condition | CondLeashWillDrop | ⏳ |  |
-| `[the] lid[s] of %blocks% (is\|are) (open[ed]\|:close[d])` | Condition | CondLidState | ⏳ |  |
-| `%strings% (1¦match[es]\|2¦do[es](n't\| not) match) %strings%` | Condition | CondMatches | ⏳ |  |
-| `running [(1¦below)] minecraft %string%` | Condition | CondMinecraftVersion | ⏳ |  |
-| `on (its\|their) back[s]` | Condition | CondPandaIsOnBack | ⏳ |  |
-| `rolling` | Condition | CondPandaIsRolling | ⏳ |  |
-| `scared` | Condition | CondPandaIsScared | ⏳ |  |
-| `sneezing` | Condition | CondPandaIsSneezing | ⏳ |  |
-| `%dates% (is\|are)[negated:(n't\| not)] in the (past\|:future)` | Condition | CondPastFuture | ⏳ |  |
-| `%offlineplayers% [(has\|have\|did)] [already] play[ed] [on (this\|t...` | Condition | CondPlayedBefore | ⏳ |  |
-| `(is PvP\|PvP is) enabled [in %worlds%]` | Condition | CondPvP | ⏳ |  |
-| `[the] resource pack (was\|is\|has) [been] %resourcepackstate%` | Condition | CondResourcePack | ⏳ |  |
-| `[the] respawn location (was\|is)[1:(n'\| no)t] [a] (:bed\|respawn a...` | Condition | CondRespawnLocation | ⏳ |  |
-| `script[s] [%-strings%] (is\|are) loaded` | Condition | CondScriptLoaded | ⏳ |  |
-| `%strings% (start\|1¦end)[s] with %strings%` | Condition | CondStartsEndsWith | ⏳ |  |
-| `shivering` | Condition | CondStriderIsShivering | ⏳ |  |
-| `[the] [entire\|:additional] tool[ ]tip[s] of %itemtypes% (is\|are) ...` | Condition | CondTooltip | ⏳ |  |
-| `[the] egg (:will\|will not\|won't) hatch` | Condition | CondWillHatch | ⏳ |  |
+| `charging [a] fireball` | Condition | CondIsChargingFireball | ✅ OK | One or two Bukkit getters / type checks. |
+| `climbing` | Condition | CondIsClimbing | ✅ OK | One or two Bukkit getters / type checks. |
+| `[:un]conditional` | Condition | CondIsCommandBlockConditional | ✅ OK | One or two Bukkit getters / type checks. |
+| `%entities%'[s] custom name[s] (is\|are) visible` | Condition | CondIsCustomNameVisible | ✅ OK | One or two Bukkit getters / type checks. |
+| `dancing` | Condition | CondIsDancing | ✅ OK | One or two Bukkit getters / type checks. |
+| `dashing` | Condition | CondIsDashing | ✅ OK | One or two Bukkit getters / type checks. |
+| `%numbers% (is\|are) evenly divisible by %number% [with [a] toleranc...` | Condition | CondIsDivisibleBy | ✅ OK | Simple math. |
+| `eating` | Condition | CondIsEating | ✅ OK | One or two Bukkit getters / type checks. |
+| `edible` | Condition | CondIsEdible | ✅ OK | One or two Bukkit getters / type checks. |
+| `(fire resistant\|resistant to fire)` | Condition | CondIsFireResistant | ✅ OK | One or two Bukkit getters / type checks. |
+| `flammable` | Condition | CondIsFlammable | ✅ OK | One or two Bukkit getters / type checks. |
+| `flying` | Condition | CondIsFlying | ✅ OK | One or two Bukkit getters / type checks. |
+| `frozen` | Condition | CondIsFrozen | ✅ OK | One or two Bukkit getters / type checks. |
+| `[furnace] fuel` | Condition | CondIsFuel | ✅ OK | One or two Bukkit getters / type checks. |
+| `gliding` | Condition | CondIsGliding | ✅ OK | One or two Bukkit getters / type checks. |
+| `%livingentities%'[s] [:main] hand[s] (is\|are) raised` | Condition | CondIsHandRaised | ✅ OK | One or two Bukkit getters / type checks. |
+| `infinite` | Condition | CondIsInfinite | ✅ OK | One or two Bukkit getters / type checks. |
+| `interactable` | Condition | CondIsInteractable | ✅ OK | One or two Bukkit getters / type checks. |
+| `(invisible\|:visible)` | Condition | CondIsInvisible | ✅ OK | One or two Bukkit getters / type checks. |
+| `(invulnerable\|invincible)` | Condition | CondIsInvulnerable | ✅ OK | One or two Bukkit getters / type checks. |
+| `jumping` | Condition | CondIsJumping | ✅ OK | One or two Bukkit getters / type checks. |
+| `(:left\|right)( \|-)handed` | Condition | CondIsLeftHanded | ✅ OK | One or two Bukkit getters / type checks. |
+| `chunk[s] %directions% [%locations%] (is\|are)[(1¦(n't\| not))] loaded` | Condition | CondIsLoaded | ✅ OK | Chunk/world lookups in the server. |
+| `occluding` | Condition | CondIsOccluding | ✅ OK | One or two Bukkit getters / type checks. |
+| `on [the] ground` | Condition | CondIsOnGround | ✅ OK | One or two Bukkit getters / type checks. |
+| `[[a] server\|an] op[erator][s]` | Condition | CondIsOp | ✅ OK | One or two Bukkit getters / type checks. |
+| `passable` | Condition | CondIsPassable | ✅ OK | One or two Bukkit getters / type checks. |
+| `pathfinding [to[wards] %-livingentity/location%]` | Condition | CondIsPathfinding | ✅ OK | Pathfinder reads in the server. |
+| `persistent` | Condition | CondIsPersistent | ✅ OK | One or two Bukkit getters / type checks. |
+| `playing dead` | Condition | CondIsPlayingDead | ✅ OK | One or two Bukkit getters / type checks. |
+| `plugin[s] %strings% (is\|are) enabled` | Condition | CondIsPluginEnabled | ✅ OK | Plugin lookup by name. |
+| `%itemtypes% (is\|are) %` | Condition | CondIsPreferredTool | ✅ OK | Tool check in the server. |
+| `resonating` | Condition | CondIsResonating | ✅ OK | One or two Bukkit getters / type checks. |
+| `riding [%-entitydatas/entities%]` | Condition | CondIsRiding | ✅ OK | Entity type checks. |
+| `ringing` | Condition | CondIsRinging | ✅ OK | One or two Bukkit getters / type checks. |
+| `riptiding` | Condition | CondIsRiptiding | ✅ OK | One or two Bukkit getters / type checks. |
+| `[:properly] saddled` | Condition | CondIsSaddled | ⚡ Optimized | 'is properly saddled' created a new saddle item for every check to compare with; now one constant. |
+| `screaming` | Condition | CondIsScreaming | ✅ OK | One or two Bukkit getters / type checks. |
+| `sedated` | Condition | CondIsSedated | ✅ OK | One or two Bukkit getters / type checks. |
+| `(sheared\|shorn)` | Condition | CondIsSheared | ✅ OK | One or two Bukkit getters / type checks. |
+| `silent` | Condition | CondIsSilent | ✅ OK | One or two Bukkit getters / type checks. |
+| `[a] s(k\|c)ript (command\|cmd)` | Condition | CondIsSkriptCommand | ✅ OK | One or two Bukkit getters / type checks. |
+| `sleeping` | Condition | CondIsSleeping | ✅ OK | One or two Bukkit getters / type checks. |
+| `([a] slime chunk\|slime chunks\|slimey)` | Condition | CondIsSlimeChunk | ✅ OK | One or two Bukkit getters / type checks. |
+| `sneaking` | Condition | CondIsSneaking | ✅ OK | One or two Bukkit getters / type checks. |
+| `solid` | Condition | CondIsSolid | ✅ OK | One or two Bukkit getters / type checks. |
+| `%entitydatas% is spawnable [in [the [world]] %world%]` | Condition | CondIsSpawnable | ✅ OK | Server check. |
+| `sprinting` | Condition | CondIsSprinting | ✅ OK | One or two Bukkit getters / type checks. |
+| `stackable` | Condition | CondIsStackable | ✅ OK | One or two Bukkit getters / type checks. |
+| `swimming` | Condition | CondIsSwimming | ✅ OK | One or two Bukkit getters / type checks. |
+| `tameable` | Condition | CondIsTameable | ✅ OK | One or two Bukkit getters / type checks. |
+| `(tamed\|domesticated)` | Condition | CondIsTamed | ✅ OK | One or two Bukkit getters / type checks. |
+| `ticking` | Condition | CondIsTicking | ✅ OK | One or two Bukkit getters / type checks. |
+| `transparent` | Condition | CondIsTransparent | ✅ OK | One or two Bukkit getters / type checks. |
+| `[:un]breakable` | Condition | CondIsUnbreakable | ✅ OK | One or two Bukkit getters / type checks. |
+| `%script% is using %strings%` | Condition | CondIsUsingFeature | ✅ OK | Script data lookups. |
+| `valid` | Condition | CondIsValid | ✅ OK | One or two Bukkit getters / type checks. |
+| `normali(s\|z)ed` | Condition | CondIsVectorNormalized | ✅ OK | One or two Bukkit getters / type checks. |
+| `[the] server (is\|not:(isn't\|is not)) (in white[ ]list mode\|white...` | Condition | CondIsWhitelisted | ✅ OK | One or two Bukkit getters / type checks. |
+| `%locations% (is\|are) within %location% and %location%` | Condition | CondIsWithin | ✅ OK | Bounding box checks required by the semantics. |
+| `(despawn naturally\|naturally despawn)` | Condition | CondItemDespawn | ✅ OK | One or two Bukkit getters / type checks. |
+| `leashed` | Condition | CondLeashed | ✅ OK | One or two Bukkit getters / type checks. |
+| `[the] (lead\|leash) [item] (will\|not:(won't\|will not)) (drop\|be ...` | Condition | CondLeashWillDrop | ✅ OK | One or two Bukkit getters / type checks. |
+| `[the] lid[s] of %blocks% (is\|are) (open[ed]\|:close[d])` | Condition | CondLidState | ✅ OK | One or two Bukkit getters / type checks. |
+| `%strings% (1¦match[es]\|2¦do[es](n't\| not) match) %strings%` | Condition | CondMatches | ⚡ Optimized | For every string it compiled every regex again, on a parallel stream (shared thread pool) per check, and full matching compiled each regex a second time. Patterns are now cached for the last regex list and compiled once, in order, when first needed; the checks are plain loops with the same and/or logic. |
+| `running [(1¦below)] minecraft %string%` | Condition | CondMinecraftVersion | ✅ OK | One or two Bukkit getters / type checks. |
+| `on (its\|their) back[s]` | Condition | CondPandaIsOnBack | ✅ OK | One or two Bukkit getters / type checks. |
+| `rolling` | Condition | CondPandaIsRolling | ✅ OK | One or two Bukkit getters / type checks. |
+| `scared` | Condition | CondPandaIsScared | ✅ OK | One or two Bukkit getters / type checks. |
+| `sneezing` | Condition | CondPandaIsSneezing | ✅ OK | One or two Bukkit getters / type checks. |
+| `%dates% (is\|are)[negated:(n't\| not)] in the (past\|:future)` | Condition | CondPastFuture | ✅ OK | One date per value. |
+| `%offlineplayers% [(has\|have\|did)] [already] play[ed] [on (this\|t...` | Condition | CondPlayedBefore | ✅ OK | One or two Bukkit getters / type checks. |
+| `(is PvP\|PvP is) enabled [in %worlds%]` | Condition | CondPvP | ✅ OK | One or two Bukkit getters / type checks. |
+| `[the] resource pack (was\|is\|has) [been] %resourcepackstate%` | Condition | CondResourcePack | ✅ OK | One getter. |
+| `[the] respawn location (was\|is)[1:(n'\| no)t] [a] (:bed\|respawn a...` | Condition | CondRespawnLocation | ✅ OK | One getter. |
+| `script[s] [%-strings%] (is\|are) loaded` | Condition | CondScriptLoaded | ✅ OK | Script lookups, rarely used in hot code. |
+| `%strings% (start\|1¦end)[s] with %strings%` | Condition | CondStartsEndsWith | ✅ OK | Plain string checks. |
+| `shivering` | Condition | CondStriderIsShivering | ✅ OK | One or two Bukkit getters / type checks. |
+| `[the] [entire\|:additional] tool[ ]tip[s] of %itemtypes% (is\|are) ...` | Condition | CondTooltip | ✅ OK | One or two Bukkit getters / type checks. |
+| `[the] egg (:will\|will not\|won't) hatch` | Condition | CondWillHatch | ✅ OK | One or two Bukkit getters / type checks. |
 
 ## Section 5
 

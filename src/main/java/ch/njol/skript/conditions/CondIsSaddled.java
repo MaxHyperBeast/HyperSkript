@@ -27,6 +27,11 @@ public class CondIsSaddled extends PropertyCondition<LivingEntity> {
 		register(CondIsSaddled.class, "[:properly] saddled", "livingentities");
 	}
 
+	/**
+	 * Compared with, never changed (a new one used to be created for every check).
+	 */
+	private static final ItemStack SADDLE = new ItemStack(Material.SADDLE);
+
 	private boolean properly;
 
 	@Override
@@ -41,7 +46,7 @@ public class CondIsSaddled extends PropertyCondition<LivingEntity> {
 			return steerable.hasSaddle();
 		} else if (entity instanceof AbstractHorse horse) {
 			ItemStack saddle = horse.getInventory().getSaddle();
-			return properly ? (saddle != null && saddle.equals(new ItemStack(Material.SADDLE))) : (saddle != null);
+			return properly ? (saddle != null && saddle.equals(SADDLE)) : (saddle != null);
 		}
 		return false;
 	}

@@ -42,6 +42,32 @@ public class CondMatches extends Condition {
 	Expression<String> regex;
 	
 	boolean partial;
+
+	/**
+	 * The patterns of the last regexes, as the same regexes are usually used again (often a literal).
+	 * Patterns are compiled when first needed, so an invalid regex only fails when it's reached.
+	 */
+	private record CompiledRegexes(String[] regexes, Pattern[] patterns) {
+
+		Pattern get(int index) {
+			Pattern pattern = patterns[index];
+			if (pattern == null)
+				patterns[index] = pattern = Pattern.compile(regexes[index]);
+			return pattern;
+		}
+
+	}
+
+	private volatile @Nullable CompiledRegexes lastRegexes;
+
+	private CompiledRegexes getCompiled(String[] regexes) {
+		CompiledRegexes last = lastRegexes;
+		if (last != null && Arrays.equals(last.regexes, regexes))
+			return last;
+		CompiledRegexes compiled = new CompiledRegexes(regexes.clone(), new Pattern[regexes.length]);
+		lastRegexes = compiled;
+		return compiled;
+	}
 	
 	@Override
 	@SuppressWarnings({"unchecked", "null"})
@@ -58,25 +84,30 @@ public class CondMatches extends Condition {
 		String[] txt = strings.getAll(e);
 		String[] regexes = regex.getAll(e);
 		if (txt.length < 1 || regexes.length < 1) return false;
-		boolean result;
 		boolean stringAnd = strings.getAnd();
 		boolean regexAnd = regex.getAnd();
-		if (stringAnd) {
-			if (regexAnd) {
-				result = Arrays.stream(txt).allMatch((str) -> Arrays.stream(regexes).parallel().map(Pattern::compile).allMatch((pattern -> matches(str, pattern))));
-			} else {
-				result = Arrays.stream(txt).allMatch((str) -> Arrays.stream(regexes).parallel().map(Pattern::compile).anyMatch((pattern -> matches(str, pattern))));
+		// same and/or logic as before, without parallel streams; each regex is compiled once (in order, when first needed)
+		CompiledRegexes compiled = getCompiled(regexes);
+		boolean result = stringAnd;
+		for (String str : txt) {
+			boolean strResult = regexAnd;
+			for (int i = 0; i < regexes.length; i++) {
+				if (matches(str, compiled.get(i)) != regexAnd) {
+					strResult = !regexAnd;
+					break;
+				}
 			}
-		} else if (regexAnd) {
-			result = Arrays.stream(txt).anyMatch((str) -> Arrays.stream(regexes).parallel().map(Pattern::compile).allMatch((pattern -> matches(str, pattern))));
-		} else {
-			result = Arrays.stream(txt).anyMatch((str) -> Arrays.stream(regexes).parallel().map(Pattern::compile).anyMatch((pattern -> matches(str, pattern))));
+			if (strResult != stringAnd) {
+				result = !stringAnd;
+				break;
+			}
 		}
 		return result == isNegated();
 	}
 	
 	public boolean matches(String str, Pattern pattern) {
-		return partial ? pattern.matcher(str).find() : str.matches(pattern.pattern());
+		// matcher(str).matches() is what String#matches does, without compiling the pattern again
+		return partial ? pattern.matcher(str).find() : pattern.matcher(str).matches();
 	}
 
 	@Override
