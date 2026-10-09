@@ -12,6 +12,7 @@ import ch.njol.skript.entity.EntityData;
 import ch.njol.skript.expressions.base.SimplePropertyExpression;
 import ch.njol.util.coll.CollectionUtils;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.TrialSpawner;
 import org.bukkit.entity.EntityType;
@@ -45,12 +46,13 @@ public class ExprSpawnerType extends SimplePropertyExpression<Block, EntityData>
 
 	@Nullable
 	public EntityData convert(Block block) {
-		if (block.getState() instanceof CreatureSpawner creatureSpawner) {
+		BlockState state = block.getState(); // one snapshot for both type checks
+		if (state instanceof CreatureSpawner creatureSpawner) {
 			EntityType type = creatureSpawner.getSpawnedType();
 			if (type == null)
 				return null;
 			return EntityUtils.toSkriptEntityData(type);
-		} else if (HAS_TRIAL_SPAWNER && block.getState() instanceof TrialSpawner trialSpawner) {
+		} else if (HAS_TRIAL_SPAWNER && state instanceof TrialSpawner trialSpawner) {
 			EntityType type;
 			if (trialSpawner.isOminous()) {
 				type = trialSpawner.getOminousConfiguration().getSpawnedType();

@@ -27,8 +27,9 @@ public class ExprRingingTime extends SimplePropertyExpression<Block, Timespan> {
 
 	@Override
 	public @Nullable Timespan convert(Block from) {
-		if (from.getState() instanceof Bell) {
-			int shakingTicks = ((Bell) from.getState(false)).getShakingTicks();
+		// one non-snapshot state instead of a full snapshot just for the type check plus a second state
+		if (from.getState(false) instanceof Bell bell) {
+			int shakingTicks = bell.getShakingTicks();
 			return shakingTicks == 0 ? null : new Timespan(Timespan.TimePeriod.TICK, shakingTicks);
 		}
 		return null;

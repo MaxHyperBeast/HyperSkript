@@ -5,7 +5,7 @@ one section at a time for runtime performance. **Status:** ✅ OK = reviewed, no
 ⚡ Optimized = changed (the note says what was slow and what changed); ⏳ = not reviewed yet.
 Every change keeps the exact behaviour; Skript's test suite must pass after each section.
 
-**Progress:** 722 of 1054 reviewed, 41 optimized.
+**Progress:** 802 of 1054 reviewed, 43 optimized.
 
 | Section | Contents | Reviewed |
 |---|---|---|
@@ -17,7 +17,7 @@ Every change keeps the exact behaviour; Skript's test suite must pass after each
 | [6](#section-6) | effects, expressions | 80/80 |
 | [7](#section-7) | expressions | 80/80 |
 | [8](#section-8) | expressions | 80/80 |
-| [9](#section-9) | expressions | 0/80 |
+| [9](#section-9) | expressions | 80/80 |
 | [10](#section-10) | expressions, hooks.chat.expressions, hooks.economy.expressions, ... | 0/80 |
 | [11](#section-11) | bukkit.enchantments.elements.expressions, bukkit.entity.displays.elements.expressions, bukkit.entity.displays.item.elements.expressions, ... | 0/80 |
 | [12](#section-12) | bukkit.itemcomponents.equippable.elements.expressions, bukkit.loottables.elements.conditions, bukkit.loottables.elements.effects, ... | 0/80 |
@@ -807,86 +807,86 @@ expressions
 
 | Syntax | Kind | Class | Status | Notes |
 |---|---|---|---|---|
-| `ring[ing] time` | Expression | ExprRingingTime | ⏳ |  |
-| `saturation` | Expression | ExprSaturation | ⏳ |  |
-| `[(all [[of] the]\|the)] scoreboard tags of %entities%` | Expression | ExprScoreboardTags | ⏳ |  |
-| `[the] [current] script` | Expression | ExprScript | ⏳ |  |
-| `[all [[of] the]\|the] scripts` | Expression | ExprScripts | ⏳ |  |
-| `[all [of the]\|the] scripts [1:without ([subdirectory] paths\|paren...` | Expression | ExprScriptsOld | ⏳ |  |
-| `sea level` | Expression | ExprSeaLevel | ⏳ |  |
-| `[:(min\|max)[imum]] [sea] pickle(s\| (count\|amount))` | Expression | ExprSeaPickles | ⏳ |  |
-| `[the] seed[s] (from\|of) %worlds%` | Expression | ExprSeed | ⏳ |  |
-| `[the] [sent] [server] command[s] list` | Expression | ExprSentCommands | ⏳ |  |
-| `[the] [(1¦(default)\|2¦(shown\|sent))] [server] icon` | Expression | ExprServerIcon | ⏳ |  |
-| `[the] shooter [of %projectile%]` | Expression | ExprShooter | ⏳ |  |
-| `shuffled %objects%` | Expression | ExprShuffledList | ⏳ |  |
-| `simulation distance[s]` | Expression | ExprSimulationDistance | ⏳ |  |
-| `skull` | Expression | ExprSkull | ⏳ |  |
-| `(head\|skull) owner` | Expression | ExprSkullOwner | ⏳ |  |
-| `[raw:(raw\|unique)] index` | Expression | ExprSlotIndex | ⏳ |  |
-| `[the] source block` | Expression | ExprSourceBlock | ⏳ |  |
-| `[the] spawn[s] [(point\|location)[s]] [of %worlds%]` | Expression | ExprSpawn | ⏳ |  |
-| `spawn egg entity` | Expression | ExprSpawnEggEntity | ⏳ |  |
-| `(spawner\|entity\|creature) type[s]` | Expression | ExprSpawnerType | ⏳ |  |
-| `spawn[ing] reason` | Expression | ExprSpawnReason | ⏳ |  |
-| `spectator target [of %-players%]` | Expression | ExprSpectatorTarget | ⏳ |  |
-| `(0¦walk[ing]\|1¦fl(y[ing]\|ight))[( \|-)]speed` | Expression | ExprSpeed | ⏳ |  |
-| `[the] %*classinfo% value [at] %string% (from\|in) %node%` | Expression | ExprSubnodeValue | ⏳ |  |
-| `(tablist[ed]\|listed) players` | Expression | ExprTablistedPlayers | ⏳ |  |
-| `[the] tamer` | Expression | ExprTamer | ⏳ |  |
-| `[the] target[[ed] %-*entitydata%] [of %livingentities%] [blocks:ign...` | Expression | ExprTarget | ⏳ |  |
-| `teleport (cause\|reason\|type)` | Expression | ExprTeleportCause | ⏳ |  |
-| `temperature[s]` | Expression | ExprTemperature | ⏳ |  |
-| `[the] time[s] [([with]in\|of) %worlds%]` | Expression | ExprTime | ⏳ |  |
-| `time (alive\|lived)` | Expression | ExprTimeLived | ⏳ |  |
-| `(time played\|play[ ]time)` | Expression | ExprTimePlayed | ⏳ |  |
-| `%number% time[s]` | Expression | ExprTimes | ⏳ |  |
-| `(:(tick\|second\|minute\|hour\|day\|week\|month\|year))s` | Expression | ExprTimespanDetails | ⏳ |  |
-| `[the] (former\|past\|old) [state] [of] %~objects%` | Expression | ExprTimeState | ⏳ |  |
-| `[total] experience` | Expression | ExprTotalExperience | ⏳ |  |
-| `tps from [the] last ([1] minute\|1[ ]m[inute])` | Expression | ExprTPS | ⏳ |  |
-| `%objects% (transformed\|mapped) (using\|with) \\[<.+>\\]` | Expression | ExprTransform | ⏳ |  |
-| `[the] transform[ing] (cause\|reason\|type)` | Expression | ExprTransformReason | ⏳ |  |
-| `type` | Expression | ExprTypeOf | ⏳ |  |
-| `[:un]breakable %itemtypes%` | Expression | ExprUnbreakable | ⏳ |  |
-| `unix date` | Expression | ExprUnixDate | ⏳ |  |
-| `unix timestamp` | Expression | ExprUnixTicks | ⏳ |  |
-| `[the] unleash[ing] reason` | Expression | ExprUnleashReason | ⏳ |  |
-| `[the] %*classinfo% value of %valued%` | Expression | ExprValue | ⏳ |  |
-| `[the] (%-*classinfo%\|value[:s]) (within\|in) %~objects%` | Expression | ExprValueWithin | ⏳ |  |
-| `[the] angle between [[the] vectors] %vector% and %vector%` | Expression | ExprVectorAngleBetween | ⏳ |  |
-| `[the] vector (from\|between) %location% (to\|and) %location%` | Expression | ExprVectorBetweenLocations | ⏳ |  |
-| `%vector% cross %vector%` | Expression | ExprVectorCrossProduct | ⏳ |  |
-| `[a] [new] cylindrical vector [from\|with] [radius] %number%, [yaw] ...` | Expression | ExprVectorCylindrical | ⏳ |  |
-| `%vector% dot %vector%` | Expression | ExprVectorDotProduct | ⏳ |  |
-| `vector[s] [from] %directions%` | Expression | ExprVectorFromDirection | ⏳ |  |
-| `[a] [new] vector [(from\|at\|to)] %number%,[ ]%number%(,[ ]\| and )...` | Expression | ExprVectorFromXYZ | ⏳ |  |
-| `[a] [new] vector (from\|with) yaw %number% and pitch %number%` | Expression | ExprVectorFromYawAndPitch | ⏳ |  |
-| `(vector\|standard\|normal) length[s]` | Expression | ExprVectorLength | ⏳ |  |
-| `normali(z\|s)e[d] %vector%` | Expression | ExprVectorNormalize | ⏳ |  |
-| `[the] vector (of\|from\|to) %location%` | Expression | ExprVectorOfLocation | ⏳ |  |
-| `[vector] projection [of] %vector% on[to] %vector%` | Expression | ExprVectorProjection | ⏳ |  |
-| `[a] random vector` | Expression | ExprVectorRandom | ⏳ |  |
-| `[a] [new] spherical vector [(from\|with)] [radius] %number%, [yaw] ...` | Expression | ExprVectorSpherical | ⏳ |  |
-| `squared length[s]` | Expression | ExprVectorSquaredLength | ⏳ |  |
-| `vehicle[s]` | Expression | ExprVehicle | ⏳ |  |
-| `velocit(y\|ies)` | Expression | ExprVelocity | ⏳ |  |
-| `(0¦[craft]bukkit\|1¦minecraft\|2¦skript)( \|-)version` | Expression | ExprVersion | ⏳ |  |
-| `[the] [shown\|custom] version [string\|text]` | Expression | ExprVersionString | ⏳ |  |
-| `view distance[s]` | Expression | ExprViewDistance | ⏳ |  |
-| `villager (level\|:experience)` | Expression | ExprVillagerLevel | ⏳ |  |
-| `villager profession` | Expression | ExprVillagerProfession | ⏳ |  |
-| `villager type` | Expression | ExprVillagerType | ⏳ |  |
-| `most angered entity` | Expression | ExprWardenAngryAt | ⏳ |  |
-| `[the] anger level [of] %livingentities% towards %livingentities%` | Expression | ExprWardenEntityAnger | ⏳ |  |
-| `[the] weather [(in\|of) %players/worlds%]` | Expression | ExprWeather | ⏳ |  |
-| `whether <.+>` | Expression | ExprWhether | ⏳ |  |
-| `[the] white[ ]list` | Expression | ExprWhitelist | ⏳ |  |
-| `%itemtype% with[:out] fire[ ]resistance` | Expression | ExprWithFireResistance | ⏳ |  |
-| `%itemtypes% with [the] item flag[s] %itemflags%` | Expression | ExprWithItemFlags | ⏳ |  |
-| `[world] environment` | Expression | ExprWorldEnvironment | ⏳ |  |
-| `[the] world [(named\|with name)] %string%` | Expression | ExprWorldFromName | ⏳ |  |
-| `[(all [[of] the]\|the)] worlds` | Expression | ExprWorlds | ⏳ |  |
+| `ring[ing] time` | Expression | ExprRingingTime | ⚡ Optimized | Took a full block state snapshot just to check the type, then a second state; now one non-snapshot state. |
+| `saturation` | Expression | ExprSaturation | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[(all [[of] the]\|the)] scoreboard tags of %entities%` | Expression | ExprScoreboardTags | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] [current] script` | Expression | ExprScript | ✅ OK | Rare. |
+| `[all [[of] the]\|the] scripts` | Expression | ExprScripts | ✅ OK | Rare. |
+| `[all [of the]\|the] scripts [1:without ([subdirectory] paths\|paren...` | Expression | ExprScriptsOld | ✅ OK | Rare. |
+| `sea level` | Expression | ExprSeaLevel | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[:(min\|max)[imum]] [sea] pickle(s\| (count\|amount))` | Expression | ExprSeaPickles | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] seed[s] (from\|of) %worlds%` | Expression | ExprSeed | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] [sent] [server] command[s] list` | Expression | ExprSentCommands | ✅ OK | Rare event. |
+| `[the] [(1¦(default)\|2¦(shown\|sent))] [server] icon` | Expression | ExprServerIcon | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] shooter [of %projectile%]` | Expression | ExprShooter | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `shuffled %objects%` | Expression | ExprShuffledList | ✅ OK | Shuffling is the required work. |
+| `simulation distance[s]` | Expression | ExprSimulationDistance | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `skull` | Expression | ExprSkull | ✅ OK | Head item creation is required. |
+| `(head\|skull) owner` | Expression | ExprSkullOwner | ✅ OK | Block state / item meta read is required. |
+| `[raw:(raw\|unique)] index` | Expression | ExprSlotIndex | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] source block` | Expression | ExprSourceBlock | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] spawn[s] [(point\|location)[s]] [of %worlds%]` | Expression | ExprSpawn | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `spawn egg entity` | Expression | ExprSpawnEggEntity | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `(spawner\|entity\|creature) type[s]` | Expression | ExprSpawnerType | ⚡ Optimized | Reading the type took a second full block state snapshot for blocks that aren't regular spawners; now one snapshot for both checks. |
+| `spawn[ing] reason` | Expression | ExprSpawnReason | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `spectator target [of %-players%]` | Expression | ExprSpectatorTarget | ✅ OK | One getter per player. |
+| `(0¦walk[ing]\|1¦fl(y[ing]\|ight))[( \|-)]speed` | Expression | ExprSpeed | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] %*classinfo% value [at] %string% (from\|in) %node%` | Expression | ExprSubnodeValue | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `(tablist[ed]\|listed) players` | Expression | ExprTablistedPlayers | ✅ OK | Viewer x player checks are required. |
+| `[the] tamer` | Expression | ExprTamer | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] target[[ed] %-*entitydata%] [of %livingentities%] [blocks:ign...` | Expression | ExprTarget | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `teleport (cause\|reason\|type)` | Expression | ExprTeleportCause | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `temperature[s]` | Expression | ExprTemperature | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] time[s] [([with]in\|of) %worlds%]` | Expression | ExprTime | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `time (alive\|lived)` | Expression | ExprTimeLived | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `(time played\|play[ ]time)` | Expression | ExprTimePlayed | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `%number% time[s]` | Expression | ExprTimes | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `(:(tick\|second\|minute\|hour\|day\|week\|month\|year))s` | Expression | ExprTimespanDetails | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] (former\|past\|old) [state] [of] %~objects%` | Expression | ExprTimeState | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[total] experience` | Expression | ExprTotalExperience | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `tps from [the] last ([1] minute\|1[ ]m[inute])` | Expression | ExprTPS | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `%objects% (transformed\|mapped) (using\|with) \\[<.+>\\]` | Expression | ExprTransform | ✅ OK | Cost is the mapping expression. |
+| `[the] transform[ing] (cause\|reason\|type)` | Expression | ExprTransformReason | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `type` | Expression | ExprTypeOf | ✅ OK | A new item type per block data is required (the result is mutable). |
+| `[:un]breakable %itemtypes%` | Expression | ExprUnbreakable | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `unix date` | Expression | ExprUnixDate | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `unix timestamp` | Expression | ExprUnixTicks | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] unleash[ing] reason` | Expression | ExprUnleashReason | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] %*classinfo% value of %valued%` | Expression | ExprValue | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] (%-*classinfo%\|value[:s]) (within\|in) %~objects%` | Expression | ExprValueWithin | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] angle between [[the] vectors] %vector% and %vector%` | Expression | ExprVectorAngleBetween | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] vector (from\|between) %location% (to\|and) %location%` | Expression | ExprVectorBetweenLocations | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `%vector% cross %vector%` | Expression | ExprVectorCrossProduct | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[a] [new] cylindrical vector [from\|with] [radius] %number%, [yaw] ...` | Expression | ExprVectorCylindrical | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `%vector% dot %vector%` | Expression | ExprVectorDotProduct | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `vector[s] [from] %directions%` | Expression | ExprVectorFromDirection | ✅ OK | Vector math. |
+| `[a] [new] vector [(from\|at\|to)] %number%,[ ]%number%(,[ ]\| and )...` | Expression | ExprVectorFromXYZ | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[a] [new] vector (from\|with) yaw %number% and pitch %number%` | Expression | ExprVectorFromYawAndPitch | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `(vector\|standard\|normal) length[s]` | Expression | ExprVectorLength | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `normali(z\|s)e[d] %vector%` | Expression | ExprVectorNormalize | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] vector (of\|from\|to) %location%` | Expression | ExprVectorOfLocation | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[vector] projection [of] %vector% on[to] %vector%` | Expression | ExprVectorProjection | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[a] random vector` | Expression | ExprVectorRandom | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[a] [new] spherical vector [(from\|with)] [radius] %number%, [yaw] ...` | Expression | ExprVectorSpherical | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `squared length[s]` | Expression | ExprVectorSquaredLength | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `vehicle[s]` | Expression | ExprVehicle | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `velocit(y\|ies)` | Expression | ExprVelocity | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `(0¦[craft]bukkit\|1¦minecraft\|2¦skript)( \|-)version` | Expression | ExprVersion | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] [shown\|custom] version [string\|text]` | Expression | ExprVersionString | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `view distance[s]` | Expression | ExprViewDistance | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `villager (level\|:experience)` | Expression | ExprVillagerLevel | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `villager profession` | Expression | ExprVillagerProfession | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `villager type` | Expression | ExprVillagerType | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `most angered entity` | Expression | ExprWardenAngryAt | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] anger level [of] %livingentities% towards %livingentities%` | Expression | ExprWardenEntityAnger | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] weather [(in\|of) %players/worlds%]` | Expression | ExprWeather | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `whether <.+>` | Expression | ExprWhether | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] white[ ]list` | Expression | ExprWhitelist | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `%itemtype% with[:out] fire[ ]resistance` | Expression | ExprWithFireResistance | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `%itemtypes% with [the] item flag[s] %itemflags%` | Expression | ExprWithItemFlags | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[world] environment` | Expression | ExprWorldEnvironment | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[the] world [(named\|with name)] %string%` | Expression | ExprWorldFromName | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
+| `[(all [[of] the]\|the)] worlds` | Expression | ExprWorlds | ✅ OK | One server call. |
 
 ## Section 10
 
