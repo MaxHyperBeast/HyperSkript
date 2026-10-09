@@ -3,9 +3,10 @@
 # HyperTrace only measures while a capture runs. Start one with /hypertrace start (optionally with a time,
 # e.g. /hypertrace start 60s), play normally, then use /hypertrace stop. It shows the slowest script lines in chat
 # and saves a full report to plugins/Skript/hypertrace/ that you can open in a browser.
-# While no capture runs, HyperTrace does nothing and costs nothing.
+# While no capture runs (and the rolling buffer below is off), HyperTrace does nothing and costs nothing.
 #
-# Changes to this file apply the next time you use /hypertrace (no restart needed).
+# Changes to this file apply the next time you use /hypertrace (no restart needed), except rolling.enabled,
+# which is read at startup (use /hypertrace rolling on|off to switch it right away).
 
 # Set to false to turn HyperTrace off completely: /hypertrace won't start captures.
 enabled: true
@@ -24,3 +25,28 @@ hang-detection-seconds: 10
 
 # How many lines /hypertrace shows in chat.
 chat-lines: 8
+
+# Show the person who started a capture its time and Skript's cost in their action bar.
+indicator: true
+
+report:
+  # Put the source of every script that ran into the report, so it can show your code with each line's cost.
+  # Turn this off if you share reports with people who shouldn't see your scripts.
+  include-sources: true
+  # Also save the report's data as a .json file (for other tools, or to compare captures).
+  write-json: true
+
+# Rolling buffer: an always-on capture, for lag that you can't predict.
+# It measures all the time (with the same small cost as a normal capture) and keeps the last one to two windows.
+# /hypertrace clip saves a report of them, and a tick slower than spike-ms saves one by itself.
+rolling:
+  enabled: false
+  # How many seconds each window covers. A clip covers between one and two windows.
+  window-seconds: 60
+  # A tick at least this slow saves a lag spike clip by itself (0 = only /hypertrace clip).
+  spike-ms: 250
+  # At most one automatic clip per this many seconds.
+  spike-cooldown-seconds: 300
+  # How long to wait after a spike before saving, so the report also shows what happened right after it.
+  # Keep this shorter than window-seconds.
+  spike-after-seconds: 5

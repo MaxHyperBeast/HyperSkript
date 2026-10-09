@@ -1,12 +1,19 @@
 package org.skriptlang.skript.hypertrace;
 
 import ch.njol.skript.Skript;
+import ch.njol.skript.classes.ClassInfo;
 import ch.njol.skript.lang.EffectSectionEffect;
 import ch.njol.skript.lang.LoopSection;
-import ch.njol.skript.lang.util.SimpleEvent;
+import ch.njol.skript.lang.SectionSkriptEvent;
+import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.Trigger;
 import ch.njol.skript.lang.TriggerItem;
 import ch.njol.skript.lang.TriggerSection;
+import ch.njol.skript.lang.Variable;
+import ch.njol.skript.lang.util.SimpleEvent;
+import ch.njol.skript.registrations.Classes;
+import ch.njol.skript.sections.SecWhile;
+import ch.njol.skript.variables.Variables;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +34,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * The data of one HyperTrace capture. Only the thread that started the capture (the server thread) records into it,
- * so the statistics need no synchronization; the hang watchdog only reads {@link #runningLines()}.
+ * so the statistics need no synchronization; the hang watchdog only reads {@link #runningLines()} and the variable
+ * save thread only adds to {@link #saves}.
  * <p>
  * Every walk of a trigger (see {@link TriggerItem#walk(TriggerItem, Event)}) and every event dispatch is a frame.
  * Each item gets an inclusive time (including functions, events and section bodies it runs in nested frames) and an
@@ -38,11 +46,15 @@ public final class Capture {
 
 	static final int MAX_TICKS = 20 * 60 * 60 * 2;
 	static final int WORST_TICKS = 10;
+	/** The most ints the per-tick trigger activity of one capture may use (3 per trigger per tick it ran in). */
+	static final int MAX_ACTIVITY_INTS = 9_000_000;
 
 	final Thread thread;
 	public final boolean lineTiming;
-	final long startedMillis = System.currentTimeMillis();
-	final long startedNanos = System.nanoTime();
+	/** "capture", "clip" (rolling buffer) or "spike" (automatic clip after a lag spike). */
+	String kind = "capture";
+	long startedMillis = System.currentTimeMillis();
+	long startedNanos = System.nanoTime();
 	long stoppedMillis;
 	long stoppedNanos;
 
@@ -50,8 +62,9 @@ public final class Capture {
 	private final IdentityHashMap<TriggerItem, LineStats> lineCache = new IdentityHashMap<>();
 	final Map<String, TriggerStats> triggers = new HashMap<>();
 	private final IdentityHashMap<Trigger, TriggerStats> triggerCache = new IdentityHashMap<>();
-	final Map<Class<?>, EventStats> events = new HashMap<>();
+	final Map<String, EventStats> events = new HashMap<>();
 	final Map<String, VariableStats> variables = new HashMap<>();
+	final List<LineStats> loops = new ArrayList<>();
 	/** Script display name to its file, for the source view. */
 	final Map<String, Path> scriptFiles = new HashMap<>();
 	private final IdentityHashMap<Script, String> scriptNames = new IdentityHashMap<>();
@@ -76,28 +89,36 @@ public final class Capture {
 	long itemsTimed;
 	final AtomicLong otherThreadRuns = new AtomicLong();
 
+	// variables
+	long variableCreates, variableUpdates, variableDeletes;
+	/** Variable file saves: {start nanos, end nanos, file size, changes since the last save}. Added by the save thread. */
+	final List<long[]> saves = new ArrayList<>(); // guarded by itself
+
 	// ticks
 	int tickId;
-	private boolean inTick;
-	/** Skript time since the last tick ended. */
-	private long tickSkriptNanos;
 	/**
-	 * The part of {@link #tickSkriptNanos} outside of the server's tick window (e.g. console commands run between ticks).
-	 * The server doesn't count it in its tick time, so it is added to the tick time.
+	 * Skript time since the last tick ended. Work run between ticks (e.g. console commands) is not always part of the
+	 * server's tick time, so a tick's time is at least this.
 	 */
-	private long tickSkriptOutsideNanos;
+	private long tickSkriptNanos;
+	private int tickVariableWrites;
 	volatile long lastProgressNanos = System.nanoTime();
 	int ticks;
 	float[] tickMs = new float[1200];
 	float[] tickSkriptMs = new float[1200];
+	int[] tickVariableWritesArray = new int[1200];
+	long[] tickEndNanos = new long[1200];
 	long tickSkriptTotalNanos;
 	double tickTotalMs;
 	int lagTicks;
+	int activityInts;
+	boolean activityCapped;
 	private final List<LineStats> touchedLines = new ArrayList<>();
 	private final List<TriggerStats> touchedTriggers = new ArrayList<>();
 	final List<TickSnapshot> worstTicks = new ArrayList<>();
 	final List<TickSnapshot> worstSkriptTicks = new ArrayList<>();
 	final List<String> hangs = new ArrayList<>(); // guarded by itself
+	private long lastLoopSampleNanos = System.nanoTime();
 
 	Capture(Thread thread, boolean lineTiming) {
 		this.thread = thread;
@@ -160,9 +181,11 @@ public final class Capture {
 			if (stats.tickId != tickId) {
 				stats.tickId = tickId;
 				stats.tickNanos = 0;
+				stats.tickCalls = 0;
 				touchedTriggers.add(stats);
 			}
 			stats.tickNanos += elapsed;
+			stats.tickCalls++;
 		}
 		if (frame == 1)
 			outermost(elapsed);
@@ -174,9 +197,9 @@ public final class Capture {
 
 	public void exitDispatch(Event event, int frame) {
 		long elapsed = pop(frame);
-		EventStats stats = events.get(event.getClass());
+		EventStats stats = events.get(event.getEventName());
 		if (stats == null)
-			events.put(event.getClass(), stats = new EventStats(event.getClass().getSimpleName()));
+			events.put(event.getEventName(), stats = new EventStats(event.getEventName()));
 		stats.count++;
 		stats.total += elapsed;
 		if (elapsed > stats.max)
@@ -188,8 +211,6 @@ public final class Capture {
 	private void outermost(long elapsed) {
 		skriptNanos += elapsed;
 		tickSkriptNanos += elapsed;
-		if (!inTick)
-			tickSkriptOutsideNanos += elapsed;
 	}
 
 	// --- items ---
@@ -284,7 +305,10 @@ public final class Capture {
 			if (stats == null) {
 				stats = new LineStats(script, line, code, trigger == null ? null : triggerStats(trigger),
 					item instanceof TriggerSection, item instanceof LoopSection);
+				stats.isWhile = item instanceof SecWhile;
 				lines.put(key, stats);
+				if (stats.loop)
+					loops.add(stats);
 				List<LineStats> ancestors = new ArrayList<>();
 				for (TriggerSection parent = structural.getParent(); parent != null && !(parent instanceof Trigger); parent = parent.getParent())
 					ancestors.add(lineStats(parent));
@@ -316,6 +340,24 @@ public final class Capture {
 		}
 	}
 
+	static TriggerKind kindOf(@Nullable Trigger trigger) {
+		if (trigger == null)
+			return TriggerKind.OTHER;
+		String name = trigger.getName();
+		if (name.startsWith("function "))
+			return TriggerKind.FUNCTION;
+		if (name.startsWith("command "))
+			return TriggerKind.COMMAND;
+		SkriptEvent event = trigger.getEvent();
+		if (event instanceof SimpleEvent || event instanceof SectionSkriptEvent)
+			return TriggerKind.OTHER;
+		return TriggerKind.EVENT;
+	}
+
+	static String triggerKey(String script, int line, String name) {
+		return script + ':' + line + ':' + name;
+	}
+
 	TriggerStats triggerStats(@Nullable Trigger trigger) {
 		TriggerStats stats = triggerCache.get(trigger);
 		if (stats != null)
@@ -323,20 +365,10 @@ public final class Capture {
 		String script = trigger == null ? "(no script)" : scriptName(trigger);
 		int line = trigger == null ? -1 : trigger.getLineNumber();
 		String name = trigger == null ? "(effect command)" : trigger.getName();
-		String key = script + ':' + line + ':' + name;
+		String key = triggerKey(script, line, name);
 		stats = triggers.get(key);
-		if (stats == null) {
-			TriggerKind kind;
-			if (trigger == null || trigger.getEvent() instanceof SimpleEvent && !name.startsWith("function ") && !name.startsWith("command "))
-				kind = TriggerKind.OTHER;
-			else if (name.startsWith("function "))
-				kind = TriggerKind.FUNCTION;
-			else if (name.startsWith("command "))
-				kind = TriggerKind.COMMAND;
-			else
-				kind = TriggerKind.EVENT;
-			triggers.put(key, stats = new TriggerStats(script, line, name, kind));
-		}
+		if (stats == null)
+			triggers.put(key, stats = new TriggerStats(script, line, name, kindOf(trigger)));
 		triggerCache.put(trigger, stats);
 		return stats;
 	}
@@ -348,23 +380,33 @@ public final class Capture {
 		String name = scriptNames.get(script);
 		if (name != null)
 			return name;
+		name = displayName(script);
 		Path path = script.getConfig().getPath();
-		name = script.getConfig().getFileName();
+		if (path != null)
+			scriptFiles.put(name, path);
+		scriptNames.put(script, name);
+		return name;
+	}
+
+	/**
+	 * @return The path of a script relative to the scripts folder, with forward slashes.
+	 */
+	static String displayName(Script script) {
+		Path path = script.getConfig().getPath();
+		String name = script.getConfig().getFileName();
 		if (path != null) {
 			try {
 				Path scripts = Skript.getInstance().getScriptsFolder().toPath().toAbsolutePath();
 				Path absolute = path.toAbsolutePath();
 				name = (absolute.startsWith(scripts) ? scripts.relativize(absolute) : absolute.getFileName()).toString().replace('\\', '/');
 			} catch (RuntimeException ignored) { }
-			scriptFiles.put(name, path);
 		}
-		scriptNames.put(script, name);
 		return name;
 	}
 
 	// --- events and variables ---
 
-	boolean checkEvent(Trigger trigger, ch.njol.skript.lang.SkriptEvent skriptEvent, Event event) {
+	boolean checkEvent(Trigger trigger, SkriptEvent skriptEvent, Event event) {
 		long started = System.nanoTime();
 		boolean passed = skriptEvent.check(event);
 		long elapsed = System.nanoTime() - started;
@@ -376,16 +418,27 @@ public final class Capture {
 		return passed;
 	}
 
-	void globalWrite(String name, boolean delete) {
-		int separator = name.indexOf(ch.njol.skript.lang.Variable.SEPARATOR);
-		String group = separator < 0 ? name : name.substring(0, separator) + ch.njol.skript.lang.Variable.SEPARATOR + "*";
+	void globalWrite(String name, @Nullable Object value) {
+		int separator = name.indexOf(Variable.SEPARATOR);
+		String group = separator < 0 ? name : name.substring(0, separator) + Variable.SEPARATOR + "*";
 		VariableStats stats = variables.get(group);
 		if (stats == null)
 			variables.put(group, stats = new VariableStats(group));
-		if (delete)
+		if (value == null) {
 			stats.deletes++;
-		else
-			stats.writes++;
+			variableDeletes++;
+		} else {
+			if (Variables.getVariable(name, null, false) == null) {
+				stats.creates++;
+				variableCreates++;
+			} else {
+				stats.updates++;
+				variableUpdates++;
+			}
+			ClassInfo<?> type = Classes.getSuperClassInfo(value.getClass());
+			stats.lastType = type.getCodeName();
+		}
+		tickVariableWrites++;
 		if (stats.names.size() < VariableStats.MAX_NAMES)
 			stats.names.add(name);
 		LineStats line = running[depth];
@@ -395,27 +448,42 @@ public final class Capture {
 		}
 	}
 
+	/**
+	 * Records a full save of the variables file. Called from the save thread.
+	 */
+	void variablesSaved(long startNanos, long endNanos, long bytes, int changes) {
+		synchronized (saves) {
+			saves.add(new long[] {startNanos, endNanos, bytes, changes});
+		}
+	}
+
 	// --- ticks ---
 
 	void tickStart() {
-		inTick = true;
 		lastProgressNanos = System.nanoTime();
 	}
 
-	void tickEnd(double durationMs) {
-		lastProgressNanos = System.nanoTime();
-		inTick = false;
-		durationMs += tickSkriptOutsideNanos / 1_000_000.0;
+	/**
+	 * @return The tick's time: the server's, or Skript's time since the last tick if that is longer.
+	 */
+	double tickEnd(double durationMs) {
+		long now = System.nanoTime();
+		lastProgressNanos = now;
+		durationMs = Math.max(durationMs, tickSkriptNanos / 1_000_000.0);
 		float skriptMs = tickSkriptNanos / 1_000_000f;
 		if (ticks < MAX_TICKS) {
 			if (ticks == tickMs.length) {
-				tickMs = Arrays.copyOf(tickMs, ticks * 2);
-				tickSkriptMs = Arrays.copyOf(tickSkriptMs, ticks * 2);
+				int size = Math.min(MAX_TICKS, ticks * 2);
+				tickMs = Arrays.copyOf(tickMs, size);
+				tickSkriptMs = Arrays.copyOf(tickSkriptMs, size);
+				tickVariableWritesArray = Arrays.copyOf(tickVariableWritesArray, size);
+				tickEndNanos = Arrays.copyOf(tickEndNanos, size);
 			}
 			tickMs[ticks] = (float) durationMs;
 			tickSkriptMs[ticks] = skriptMs;
+			tickVariableWritesArray[ticks] = tickVariableWrites;
+			tickEndNanos[ticks] = now;
 		}
-		ticks++;
 		tickTotalMs += durationMs;
 		tickSkriptTotalNanos += tickSkriptNanos;
 		if (durationMs > 50)
@@ -430,7 +498,16 @@ public final class Capture {
 			trigger.ticksActive++;
 			if (trigger.tickNanos > trigger.maxTick)
 				trigger.maxTick = trigger.tickNanos;
+			if (ticks < MAX_TICKS && !activityCapped) {
+				if (activityInts + 3 > MAX_ACTIVITY_INTS) {
+					activityCapped = true;
+				} else {
+					trigger.addActivity(ticks, trigger.tickNanos, trigger.tickCalls);
+					activityInts += 3;
+				}
+			}
 		}
+		ticks++;
 		if (qualifies(worstTicks, (float) durationMs, false) || qualifies(worstSkriptTicks, skriptMs, true)) {
 			TickSnapshot snapshot = snapshot((float) durationMs, skriptMs);
 			insert(worstTicks, snapshot, false);
@@ -439,8 +516,33 @@ public final class Capture {
 		touchedLines.clear();
 		touchedTriggers.clear();
 		tickSkriptNanos = 0;
-		tickSkriptOutsideNanos = 0;
+		tickVariableWrites = 0;
 		tickId++;
+		if (now - lastLoopSampleNanos >= 1_000_000_000L)
+			sampleLoops(now);
+		return durationMs;
+	}
+
+	/**
+	 * Samples the running loops once per second: how many run at once, their iteration and how fast they climb.
+	 */
+	private void sampleLoops(long now) {
+		double seconds = (now - lastLoopSampleNanos) / 1e9;
+		lastLoopSampleNanos = now;
+		for (LineStats loop : loops) {
+			LoopSection section = loop.loopRef == null ? null : loop.loopRef.get();
+			List<Long> counters = section == null ? List.of() : section.getRunningLoopCounters();
+			loop.runningNow = counters.size();
+			loop.currentIteration = 0;
+			for (Long counter : counters) {
+				if (counter != null && counter > loop.currentIteration)
+					loop.currentIteration = counter;
+			}
+			if (counters.size() > loop.peakConcurrent)
+				loop.peakConcurrent = counters.size();
+			loop.iterationsPerSecond = seconds <= 0 ? 0 : (loop.calls - loop.lastSampleCalls) / seconds;
+			loop.lastSampleCalls = loop.calls;
+		}
 	}
 
 	private static boolean qualifies(List<TickSnapshot> list, float value, boolean skript) {
@@ -466,11 +568,11 @@ public final class Capture {
 		touchedTriggers.stream()
 			.sorted(Comparator.comparingLong((TriggerStats t) -> t.tickNanos).reversed())
 			.limit(5)
-			.forEach(t -> snapshot.triggers.add(new TickSnapshot.Entry(t.label(), t.tickNanos)));
+			.forEach(t -> snapshot.triggers.add(new TickSnapshot.Entry(t.label(), t.script, t.line, t.tickNanos)));
 		touchedLines.stream()
 			.sorted(Comparator.comparingLong((LineStats l) -> l.tickNanos).reversed())
 			.limit(5)
-			.forEach(l -> snapshot.lines.add(new TickSnapshot.Entry(l.location() + "  " + l.code, l.tickNanos)));
+			.forEach(l -> snapshot.lines.add(new TickSnapshot.Entry(l.code, l.script, l.line, l.tickNanos)));
 		return snapshot;
 	}
 
@@ -493,6 +595,128 @@ public final class Capture {
 		return skriptNanos == 0 ? 0 : 100.0 * nanos / skriptNanos;
 	}
 
+	/**
+	 * @return The index of the tick that ended last before the given time.
+	 */
+	int tickAt(long nanos) {
+		int count = Math.min(ticks, MAX_TICKS);
+		int index = Arrays.binarySearch(tickEndNanos, 0, count, nanos);
+		if (index < 0)
+			index = -index - 1;
+		return Math.max(0, Math.min(count - 1, index));
+	}
+
+	// --- merging (rolling buffer clips) ---
+
+	/**
+	 * Combines consecutive captures (segments of the rolling buffer) into one, for a report.
+	 */
+	static Capture merge(List<Capture> parts, String kind) {
+		Capture first = parts.getFirst();
+		Capture merged = new Capture(first.thread, first.lineTiming);
+		merged.kind = kind;
+		merged.startedMillis = first.startedMillis;
+		merged.startedNanos = first.startedNanos;
+		Capture last = parts.getLast();
+		merged.stoppedNanos = last.stoppedNanos != 0 ? last.stoppedNanos : System.nanoTime();
+		merged.stoppedMillis = last.stoppedMillis != 0 ? last.stoppedMillis : System.currentTimeMillis();
+		Map<TriggerStats, TriggerStats> triggerMap = new IdentityHashMap<>();
+		Map<LineStats, LineStats> lineMap = new IdentityHashMap<>();
+		for (Capture part : parts) {
+			int tickOffset = merged.ticks;
+			double secondOffset = (part.startedMillis - first.startedMillis) / 1000.0;
+			for (Map.Entry<String, TriggerStats> entry : part.triggers.entrySet()) {
+				TriggerStats source = entry.getValue();
+				TriggerStats target = merged.triggers.computeIfAbsent(entry.getKey(),
+					k -> new TriggerStats(source.script, source.line, source.name, source.kind));
+				target.add(source, tickOffset);
+				triggerMap.put(source, target);
+			}
+			for (Map.Entry<String, LineStats> entry : part.lines.entrySet()) {
+				LineStats source = entry.getValue();
+				LineStats target = merged.lines.get(entry.getKey());
+				if (target == null) {
+					target = new LineStats(source.script, source.line, source.code,
+						source.trigger == null ? null : triggerMap.get(source.trigger), source.section, source.loop);
+					target.isWhile = source.isWhile;
+					merged.lines.put(entry.getKey(), target);
+					if (target.loop)
+						merged.loops.add(target);
+				}
+				target.add(source);
+				lineMap.put(source, target);
+			}
+			for (Map.Entry<String, EventStats> entry : part.events.entrySet()) {
+				EventStats target = merged.events.computeIfAbsent(entry.getKey(), EventStats::new);
+				EventStats source = entry.getValue();
+				target.count += source.count;
+				target.total += source.total;
+				target.max = Math.max(target.max, source.max);
+			}
+			for (Map.Entry<String, VariableStats> entry : part.variables.entrySet()) {
+				VariableStats target = merged.variables.computeIfAbsent(entry.getKey(), VariableStats::new);
+				VariableStats source = entry.getValue();
+				target.creates += source.creates;
+				target.updates += source.updates;
+				target.deletes += source.deletes;
+				if (source.lastType != null)
+					target.lastType = source.lastType;
+				for (String name : source.names) {
+					if (target.names.size() >= VariableStats.MAX_NAMES)
+						break;
+					target.names.add(name);
+				}
+				source.writers.forEach((line, count) -> {
+					LineStats mapped = lineMap.get(line);
+					if (mapped != null)
+						target.writers.merge(mapped, count, Long::sum);
+				});
+			}
+			merged.scriptFiles.putAll(part.scriptFiles);
+			merged.skriptNanos += part.skriptNanos;
+			merged.itemsTimed += part.itemsTimed;
+			merged.overheadNanos += part.overheadNanos;
+			merged.otherThreadRuns.addAndGet(part.otherThreadRuns.get());
+			merged.variableCreates += part.variableCreates;
+			merged.variableUpdates += part.variableUpdates;
+			merged.variableDeletes += part.variableDeletes;
+			merged.tickSkriptTotalNanos += part.tickSkriptTotalNanos;
+			merged.tickTotalMs += part.tickTotalMs;
+			merged.lagTicks += part.lagTicks;
+			merged.activityCapped |= part.activityCapped;
+			int count = Math.min(part.ticks, MAX_TICKS);
+			for (int i = 0; i < count && merged.ticks < MAX_TICKS; i++) {
+				merged.appendTick(part.tickMs[i], part.tickSkriptMs[i], part.tickVariableWritesArray[i], part.tickEndNanos[i]);
+			}
+			for (TickSnapshot snapshot : part.worstTicks)
+				insert(merged.worstTicks, snapshot.shifted(tickOffset, secondOffset), false);
+			for (TickSnapshot snapshot : part.worstSkriptTicks)
+				insert(merged.worstSkriptTicks, snapshot.shifted(tickOffset, secondOffset), true);
+			synchronized (part.hangs) {
+				merged.hangs.addAll(part.hangs);
+			}
+			synchronized (part.saves) {
+				merged.saves.addAll(part.saves);
+			}
+		}
+		return merged;
+	}
+
+	private void appendTick(float ms, float skriptMs, int variableWrites, long endNanos) {
+		if (ticks == tickMs.length) {
+			int size = Math.min(MAX_TICKS, ticks * 2);
+			tickMs = Arrays.copyOf(tickMs, size);
+			tickSkriptMs = Arrays.copyOf(tickSkriptMs, size);
+			tickVariableWritesArray = Arrays.copyOf(tickVariableWritesArray, size);
+			tickEndNanos = Arrays.copyOf(tickEndNanos, size);
+		}
+		tickMs[ticks] = ms;
+		tickSkriptMs[ticks] = skriptMs;
+		tickVariableWritesArray[ticks] = variableWrites;
+		tickEndNanos[ticks] = endNanos;
+		ticks++;
+	}
+
 	// --- statistics ---
 
 	enum TriggerKind { EVENT, COMMAND, FUNCTION, OTHER }
@@ -507,6 +731,7 @@ public final class Capture {
 		final @Nullable TriggerStats trigger;
 		final boolean section;
 		final boolean loop;
+		boolean isWhile;
 		LineStats[] ancestors = new LineStats[0];
 		@Nullable WeakReference<LoopSection> loopRef;
 
@@ -514,6 +739,10 @@ public final class Capture {
 		int tickId = -1;
 		long tickNanos, maxTick;
 		int ticksActive;
+		// loop samples
+		int runningNow, peakConcurrent;
+		long currentIteration, lastSampleCalls;
+		double iterationsPerSecond;
 
 		LineStats(String script, int line, String code, @Nullable TriggerStats trigger, boolean section, boolean loop) {
 			this.script = script;
@@ -528,6 +757,24 @@ public final class Capture {
 			return script + ':' + (line > 0 ? String.valueOf(line) : "?");
 		}
 
+		void add(LineStats other) {
+			calls += other.calls;
+			total += other.total;
+			own += other.own;
+			max = Math.max(max, other.max);
+			block += other.block;
+			maxIterations = Math.max(maxIterations, other.maxIterations);
+			globalWrites += other.globalWrites;
+			maxTick = Math.max(maxTick, other.maxTick);
+			ticksActive += other.ticksActive;
+			runningNow = other.runningNow;
+			currentIteration = other.currentIteration;
+			iterationsPerSecond = other.iterationsPerSecond;
+			peakConcurrent = Math.max(peakConcurrent, other.peakConcurrent);
+			if (other.loopRef != null)
+				loopRef = other.loopRef;
+		}
+
 	}
 
 	static final class TriggerStats {
@@ -540,7 +787,11 @@ public final class Capture {
 		long calls, resumes, total, own, max, checks, passes, checkNanos;
 		int tickId = -1;
 		long tickNanos, maxTick;
+		int tickCalls;
 		int ticksActive;
+		/** Per tick it ran in: tick index, time in units of 100 ns, runs. */
+		int[] activity = new int[0];
+		int activitySize;
 
 		TriggerStats(String script, int line, String name, TriggerKind kind) {
 			this.script = script;
@@ -562,6 +813,34 @@ public final class Capture {
 			return total + checkNanos;
 		}
 
+		void addActivity(int tick, long nanos, int runs) {
+			if (activitySize + 3 > activity.length)
+				activity = Arrays.copyOf(activity, Math.max(48, activity.length * 2));
+			activity[activitySize++] = tick;
+			activity[activitySize++] = (int) Math.min(Integer.MAX_VALUE, nanos / 100);
+			activity[activitySize++] = runs;
+		}
+
+		void add(TriggerStats other, int tickOffset) {
+			calls += other.calls;
+			resumes += other.resumes;
+			total += other.total;
+			own += other.own;
+			max = Math.max(max, other.max);
+			checks += other.checks;
+			passes += other.passes;
+			checkNanos += other.checkNanos;
+			maxTick = Math.max(maxTick, other.maxTick);
+			ticksActive += other.ticksActive;
+			for (int i = 0; i + 2 < other.activitySize; i += 3) {
+				if (activitySize + 3 > activity.length)
+					activity = Arrays.copyOf(activity, Math.max(48, activity.length * 2));
+				activity[activitySize++] = other.activity[i] + tickOffset;
+				activity[activitySize++] = other.activity[i + 1];
+				activity[activitySize++] = other.activity[i + 2];
+			}
+		}
+
 	}
 
 	static final class EventStats {
@@ -580,7 +859,8 @@ public final class Capture {
 		static final int MAX_NAMES = 10_000;
 
 		final String group;
-		long writes, deletes;
+		long creates, updates, deletes;
+		@Nullable String lastType;
 		final Set<String> names = new HashSet<>();
 		final Map<LineStats, Long> writers = new HashMap<>();
 
@@ -588,8 +868,12 @@ public final class Capture {
 			this.group = group;
 		}
 
+		long writes() {
+			return creates + updates + deletes;
+		}
+
 		boolean memoryOnly() {
-			return group.startsWith(ch.njol.skript.lang.Variable.EPHEMERAL_VARIABLE_TOKEN);
+			return group.startsWith(Variable.EPHEMERAL_VARIABLE_TOKEN);
 		}
 
 		@Nullable LineStats topWriter() {
@@ -600,7 +884,7 @@ public final class Capture {
 
 	static final class TickSnapshot {
 
-		record Entry(String label, long nanos) { }
+		record Entry(String label, String script, int line, long nanos) { }
 
 		final int tick;
 		final float ms, skriptMs;
@@ -613,6 +897,13 @@ public final class Capture {
 			this.ms = ms;
 			this.skriptMs = skriptMs;
 			this.second = second;
+		}
+
+		TickSnapshot shifted(int tickOffset, double secondOffset) {
+			TickSnapshot copy = new TickSnapshot(tick + tickOffset, ms, skriptMs, second + secondOffset);
+			copy.triggers.addAll(triggers);
+			copy.lines.addAll(lines);
+			return copy;
 		}
 
 	}

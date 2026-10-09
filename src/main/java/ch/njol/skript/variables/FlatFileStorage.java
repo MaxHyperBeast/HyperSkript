@@ -12,6 +12,7 @@ import ch.njol.skript.util.Utils;
 import ch.njol.skript.util.Version;
 import ch.njol.util.NotifyingReference;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.hypertrace.HyperTrace;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -400,6 +401,8 @@ public class FlatFileStorage extends VariablesStorage {
 					//  (if saving fails during writing to the actual file,
 					//  the data in the actual file may be partially lost)
 					File tempFile = new File(file.getParentFile(), file.getName() + ".temp");
+					long traceStart = HyperTrace.active ? System.nanoTime() : 0;
+					int traceChanges = changes.get();
 
 					try (PrintWriter pw = new PrintWriter(tempFile, "UTF-8")) {
 						pw.println("# === Skript's variable storage ===");
@@ -412,6 +415,8 @@ public class FlatFileStorage extends VariablesStorage {
 						pw.flush();
 						pw.close();
 						FileUtils.move(tempFile, file, true);
+						if (traceStart != 0)
+							HyperTrace.variablesSaved(traceStart, System.nanoTime(), file.length(), traceChanges);
 					} catch (IOException e) {
 						Skript.error("Unable to make a final save of the database '" + getUserConfigurationName() +
 								"' (no variables are lost): " + ExceptionUtils.toString(e));

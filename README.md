@@ -30,17 +30,21 @@ HyperTrace shows what your scripts cost while the server runs, down to the exact
 /hypertrace lines         the slowest lines (hover one for details)
 /hypertrace blocks        the slowest loops and if-blocks, with everything inside them
 /hypertrace stop          stop and save the full report
+/hypertrace rolling on    always measure, and save a report by itself when a lag spike happens
 ```
 
 - **In chat:** the slowest lines with their time per tick, their share of Skript's time and why each one is slow
   (runs very often, slow every time, causes lag spikes, or slow because of a function it calls).
-- **Full report:** an HTML page in `plugins/Skript/hypertrace/` with:
+- **Full report:** an interactive HTML page (and JSON) in `plugins/Skript/hypertrace/` with:
   - plain-language findings;
-  - a tick chart;
+  - a tick chart you can zoom into, showing what ran in any moment;
+  - time by script and the spread of tick times;
   - tables of lines, loops, triggers, functions and events;
   - the slowest ticks and what ran in them;
-  - saved variables that are written too often;
-  - every script with its lines colored by cost.
+  - variable writes (created, updated, deleted) and saves of the variables file;
+  - triggers that never ran;
+  - a script viewer with every line colored by cost.
+- **Lag spikes:** the optional rolling buffer measures all the time and saves a report by itself when a tick is slow.
 - **Freezes:** if the server stops ticking during a capture, the console names the line that was running, the loop
   around it and its trigger.
 - **Safe on a live server:** it never changes your scripts. While no capture runs, it costs nothing measurable.

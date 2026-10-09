@@ -604,7 +604,7 @@ public class Variables {
 			map.setVariable(name, value);
 		} else {
 			if (HyperTrace.active)
-				HyperTrace.globalWrite(name, value == null);
+				HyperTrace.globalWrite(name, value);
 			setVariable(name, value);
 		}
 	}

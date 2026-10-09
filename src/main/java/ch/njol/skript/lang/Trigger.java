@@ -3,6 +3,7 @@ package ch.njol.skript.lang;
 import ch.njol.skript.variables.Variables;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.hypertrace.HyperTrace;
 import org.skriptlang.skript.lang.script.Script;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class Trigger extends TriggerSection {
 		this.name = name;
 		this.event = event;
 		this.debugLabel = "unknown trigger";
+		HyperTrace.registerTrigger(this);
 	}
 
 	/**
