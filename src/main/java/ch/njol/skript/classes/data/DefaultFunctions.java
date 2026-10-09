@@ -44,6 +44,23 @@ public class DefaultFunctions {
 	private static final DecimalFormat DEFAULT_INTEGER_FORMAT = new DecimalFormat("###,###");
 	private static final DecimalFormat DEFAULT_DECIMAL_FORMAT = new DecimalFormat("###,###.##");
 
+	/**
+	 * The last custom format used by formatNumber on each thread. Parsing a format pattern is costly and scripts
+	 * usually use the same one; DecimalFormat isn't thread-safe, so each thread keeps its own.
+	 */
+	private record CachedFormat(String pattern, DecimalFormat format) { }
+
+	private static final ThreadLocal<CachedFormat> LAST_FORMAT = new ThreadLocal<>();
+
+	private static DecimalFormat getFormat(String pattern) {
+		CachedFormat cached = LAST_FORMAT.get();
+		if (cached != null && cached.pattern.equals(pattern))
+			return cached.format;
+		DecimalFormat format = new DecimalFormat(pattern); // throws for invalid patterns, which aren't cached
+		LAST_FORMAT.set(new CachedFormat(pattern, format));
+		return format;
+	}
+
 	static {
 		SkriptAddon skript = Skript.instance();
 		Parameter<?>[] numberParam = new Parameter[] {new Parameter<>("n", DefaultClasses.NUMBER, true, null)};
@@ -486,7 +503,9 @@ public class DefaultFunctions {
 			.parameter("yaw", Float.class, Modifier.OPTIONAL)
 			.parameter("pitch", Float.class, Modifier.OPTIONAL)
 			.build(args -> {
-				World world = args.getOrDefault("world", Bukkit.getWorlds().get(0));
+				// same as args.getOrDefault("world", Bukkit.getWorlds().get(0)), but the default world is only looked up
+				// when the argument is left out (getWorlds() copies the world list); a given but unset world stays null
+				World world = args.names().contains("world") ? args.get("world") : Bukkit.getWorlds().get(0);
 
 				return new Location(world,
 					args.<Number>get("x").doubleValue(), args.<Number>get("y").doubleValue(), args.<Number>get("z").doubleValue(),
@@ -803,7 +822,7 @@ public class DefaultFunctions {
 					}
 
 					try {
-						return new String[]{new DecimalFormat(format).format(number)};
+						return new String[]{getFormat(format).format(number)};
 					} catch (IllegalArgumentException e) {
 						return null; // invalid format
 					}

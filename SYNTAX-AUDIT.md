@@ -5,13 +5,13 @@ one section at a time for runtime performance. **Status:** ✅ OK = reviewed, no
 ⚡ Optimized = changed (the note says what was slow and what changed); ⏳ = not reviewed yet.
 Every change keeps the exact behaviour; Skript's test suite must pass after each section.
 
-**Progress:** 242 of 1054 reviewed, 31 optimized.
+**Progress:** 322 of 1054 reviewed, 33 optimized.
 
 | Section | Contents | Reviewed |
 |---|---|---|
 | [1](#section-1) | Most used syntax | 91/91 |
 | [2](#section-2) | Events | 151/151 |
-| [3](#section-3) | Default functions | 0/80 |
+| [3](#section-3) | Default functions | 80/80 |
 | [4](#section-4) | conditions | 0/80 |
 | [5](#section-5) | conditions, effects | 0/80 |
 | [6](#section-6) | effects, expressions | 0/80 |
@@ -285,86 +285,86 @@ Default functions
 
 | Syntax | Kind | Class | Status | Notes |
 |---|---|---|---|---|
-| `(ai\|artificial intelligence)` | Condition | CondAI | ⏳ |  |
-| `(duplicate\|clone)` | Condition | CondAllayCanDuplicate | ⏳ |  |
-| `%strings% (is\|are) alphanumeric` | Condition | CondAlphanumeric | ⏳ |  |
-| `respawn anchors [do[1:(n't\| not)]] work in %worlds%` | Condition | CondAnchorWorks | ⏳ |  |
-| `[the] event is cancel[l]ed` | Condition | CondCancelled | ⏳ |  |
-| `fly` | Condition | CondCanFly | ⏳ |  |
-| `pick([ ]up items\| items up)` | Condition | CondCanPickUpItems | ⏳ |  |
-| `%entities% (is\|are) [visible\|:invisible] for %players%` | Condition | CondCanSee | ⏳ |  |
-| `see chat colo[u]r[s\|ing]` | Condition | CondChatColors | ⏳ |  |
-| `(chat\|text) filtering (on\|enabled)` | Condition | CondChatFiltering | ⏳ |  |
-| `%player% can see all messages [in chat]` | Condition | CondChatVisibility | ⏳ |  |
-| `[the] damage (was\|is\|has)(0¦\|1¦n('\|o)t) [been] (caused\|done\|m...` | Condition | CondDamageCause | ⏳ |  |
-| `[the] (boosting\|used) firework will be consumed` | Condition | CondElytraBoostConsume | ⏳ |  |
-| `been stared at` | Condition | CondEndermanStaredAt | ⏳ |  |
-| `in (` | Condition | CondEntityIsInLiquid | ⏳ |  |
-| `wet` | Condition | CondEntityIsWet | ⏳ |  |
-| `[the] entity storage of %blocks% (is\|are) full` | Condition | CondEntityStorageIsFull | ⏳ |  |
-| `despawn (on chunk unload\|when far away)` | Condition | CondEntityUnload | ⏳ |  |
-| `%entities% (is\|are) from a [mob] spawner` | Condition | CondFromMobSpawner | ⏳ |  |
-| `glowing text` | Condition | CondGlowingText | ⏳ |  |
-| `((any\|a) horn\|left:[a] left horn[s]\|right:[a] right horn[s]\|bot...` | Condition | CondGoatHasHorns | ⏳ |  |
-| `[a] (client\|custom) weather [set]` | Condition | CondHasClientWeather | ⏳ |  |
-| `[custom] model data [1:floats\|2:flags\|3:strings\|4:colo[u]rs]` | Condition | CondHasCustomModelData | ⏳ |  |
-| `%players% (has\|have) [([an] item\|a)] cooldown (on\|for) %itemtypes%` | Condition | CondHasItemCooldown | ⏳ |  |
-| `%livingentities% (has\|have) [a] [direct] line of sight to %entitie...` | Condition | CondHasLineOfSight | ⏳ |  |
-| `%metadataholders% (has\|have) metadata [(value\|tag)[s]] %strings%` | Condition | CondHasMetadata | ⏳ |  |
-| `[a] resource pack [(loaded\|installed)]` | Condition | CondHasResourcePack | ⏳ |  |
-| `[the] score[ ]board tag[s] %strings%` | Condition | CondHasScoreboardTag | ⏳ |  |
-| `[creeper[s]] %livingentities% ((is\|are)\|1¦(isn't\|is not\|aren't\...` | Condition | CondIgnitionProcess | ⏳ |  |
-| `%entities% ((is\|are) incendiary\|cause[s] a[n] (incendiary\|fiery)...` | Condition | CondIncendiary | ⏳ |  |
-| `%offlineplayers/strings% (is\|are) banned` | Condition | CondIsBanned | ⏳ |  |
-| `([a] block\|blocks)` | Condition | CondIsBlock | ⏳ |  |
-| `(blocking\|defending) [with [a] shield]` | Condition | CondIsBlocking | ⏳ |  |
-| `%blocks% (is\|are) redstone powered` | Condition | CondIsBlockRedstonePowered | ⏳ |  |
-| `(burning\|ignited\|on fire)` | Condition | CondIsBurning | ⏳ |  |
-| `(charged\|powered)` | Condition | CondIsCharged | ⏳ |  |
-| `abs(...)` | Function | Function | ⏳ |  |
-| `acos(...)` | Function | Function | ⏳ |  |
-| `asin(...)` | Function | Function | ⏳ |  |
-| `atan(...)` | Function | Function | ⏳ |  |
-| `axisAngle(...)` | Function | Function | ⏳ |  |
-| `calcExperience(...)` | Function | Function | ⏳ |  |
-| `ceil(...)` | Function | Function | ⏳ |  |
-| `ceiling(...)` | Function | Function | ⏳ |  |
-| `clamp(...)` | Function | Function | ⏳ |  |
-| `combinations(...)` | Function | Function | ⏳ |  |
-| `concat(...)` | Function | Function | ⏳ |  |
-| `cos(...)` | Function | Function | ⏳ |  |
-| `date(...)` | Function | Function | ⏳ |  |
-| `entity(...)` | Function | Function | ⏳ |  |
-| `exp(...)` | Function | Function | ⏳ |  |
-| `factorial(...)` | Function | Function | ⏳ |  |
-| `floor(...)` | Function | Function | ⏳ |  |
-| `formatNumber(...)` | Function | Function | ⏳ |  |
-| `fromBase(...)` | Function | Function | ⏳ |  |
-| `isNaN(...)` | Function | Function | ⏳ |  |
-| `ln(...)` | Function | Function | ⏳ |  |
-| `location(...)` | Function | Function | ⏳ |  |
-| `log(...)` | Function | Function | ⏳ |  |
-| `max(...)` | Function | Function | ⏳ |  |
-| `mean(...)` | Function | Function | ⏳ |  |
-| `median(...)` | Function | Function | ⏳ |  |
-| `min(...)` | Function | Function | ⏳ |  |
-| `mod(...)` | Function | Function | ⏳ |  |
-| `offlineplayer(...)` | Function | Function | ⏳ |  |
-| `permutations(...)` | Function | Function | ⏳ |  |
-| `player(...)` | Function | Function | ⏳ |  |
-| `product(...)` | Function | Function | ⏳ |  |
-| `quaternion(...)` | Function | Function | ⏳ |  |
-| `rgb(...)` | Function | Function | ⏳ |  |
-| `root(...)` | Function | Function | ⏳ |  |
-| `round(...)` | Function | Function | ⏳ |  |
-| `sin(...)` | Function | Function | ⏳ |  |
-| `sqrt(...)` | Function | Function | ⏳ |  |
-| `sum(...)` | Function | Function | ⏳ |  |
-| `tan(...)` | Function | Function | ⏳ |  |
-| `toBase(...)` | Function | Function | ⏳ |  |
-| `uuid(...)` | Function | Function | ⏳ |  |
-| `vector(...)` | Function | Function | ⏳ |  |
-| `world(...)` | Function | Function | ⏳ |  |
+| `(ai\|artificial intelligence)` | Condition | CondAI | ✅ OK | One Bukkit getter. |
+| `(duplicate\|clone)` | Condition | CondAllayCanDuplicate | ✅ OK | One Bukkit getter. |
+| `%strings% (is\|are) alphanumeric` | Condition | CondAlphanumeric | ✅ OK | Simple string check. |
+| `respawn anchors [do[1:(n't\| not)]] work in %worlds%` | Condition | CondAnchorWorks | ✅ OK | One Bukkit getter. |
+| `[the] event is cancel[l]ed` | Condition | CondCancelled | ✅ OK | One getter. |
+| `fly` | Condition | CondCanFly | ✅ OK | One Bukkit getter. |
+| `pick([ ]up items\| items up)` | Condition | CondCanPickUpItems | ✅ OK | One Bukkit getter. |
+| `%entities% (is\|are) [visible\|:invisible] for %players%` | Condition | CondCanSee | ✅ OK | One Bukkit getter. |
+| `see chat colo[u]r[s\|ing]` | Condition | CondChatColors | ✅ OK | One Bukkit getter. |
+| `(chat\|text) filtering (on\|enabled)` | Condition | CondChatFiltering | ✅ OK | One Bukkit getter. |
+| `%player% can see all messages [in chat]` | Condition | CondChatVisibility | ✅ OK | One Bukkit getter. |
+| `[the] damage (was\|is\|has)(0¦\|1¦n('\|o)t) [been] (caused\|done\|m...` | Condition | CondDamageCause | ✅ OK | One comparison. |
+| `[the] (boosting\|used) firework will be consumed` | Condition | CondElytraBoostConsume | ✅ OK | One Bukkit getter. |
+| `been stared at` | Condition | CondEndermanStaredAt | ✅ OK | One Bukkit getter. |
+| `in (` | Condition | CondEntityIsInLiquid | ✅ OK | One Bukkit getter. |
+| `wet` | Condition | CondEntityIsWet | ✅ OK | One Bukkit getter. |
+| `[the] entity storage of %blocks% (is\|are) full` | Condition | CondEntityStorageIsFull | ✅ OK | Block state snapshot is required to read the storage. |
+| `despawn (on chunk unload\|when far away)` | Condition | CondEntityUnload | ✅ OK | One Bukkit getter. |
+| `%entities% (is\|are) from a [mob] spawner` | Condition | CondFromMobSpawner | ✅ OK | One Bukkit getter. |
+| `glowing text` | Condition | CondGlowingText | ✅ OK | Block state snapshot is required to read the sign. |
+| `((any\|a) horn\|left:[a] left horn[s]\|right:[a] right horn[s]\|bot...` | Condition | CondGoatHasHorns | ✅ OK | One Bukkit getter. |
+| `[a] (client\|custom) weather [set]` | Condition | CondHasClientWeather | ✅ OK | One Bukkit getter. |
+| `[custom] model data [1:floats\|2:flags\|3:strings\|4:colo[u]rs]` | Condition | CondHasCustomModelData | ✅ OK | Item meta read is required. |
+| `%players% (has\|have) [([an] item\|a)] cooldown (on\|for) %itemtypes%` | Condition | CondHasItemCooldown | ✅ OK | Bukkit cooldown lookups. |
+| `%livingentities% (has\|have) [a] [direct] line of sight to %entitie...` | Condition | CondHasLineOfSight | ✅ OK | Ray trace in the server dominates. |
+| `%metadataholders% (has\|have) metadata [(value\|tag)[s]] %strings%` | Condition | CondHasMetadata | ✅ OK | Bukkit metadata lookup. |
+| `[a] resource pack [(loaded\|installed)]` | Condition | CondHasResourcePack | ✅ OK | One Bukkit getter. |
+| `[the] score[ ]board tag[s] %strings%` | Condition | CondHasScoreboardTag | ✅ OK | Reads the live tag set (no copy, verified in the server code). |
+| `[creeper[s]] %livingentities% ((is\|are)\|1¦(isn't\|is not\|aren't\...` | Condition | CondIgnitionProcess | ✅ OK | One Bukkit getter. |
+| `%entities% ((is\|are) incendiary\|cause[s] a[n] (incendiary\|fiery)...` | Condition | CondIncendiary | ✅ OK | One Bukkit getter. |
+| `%offlineplayers/strings% (is\|are) banned` | Condition | CondIsBanned | ✅ OK | Ban list lookups in the server dominate. |
+| `([a] block\|blocks)` | Condition | CondIsBlock | ✅ OK | One Bukkit getter. |
+| `(blocking\|defending) [with [a] shield]` | Condition | CondIsBlocking | ✅ OK | One Bukkit getter. |
+| `%blocks% (is\|are) redstone powered` | Condition | CondIsBlockRedstonePowered | ✅ OK | Redstone power check in the server. |
+| `(burning\|ignited\|on fire)` | Condition | CondIsBurning | ✅ OK | One Bukkit getter. |
+| `(charged\|powered)` | Condition | CondIsCharged | ✅ OK | One Bukkit getter. |
+| `abs(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `acos(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `asin(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `atan(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `axisAngle(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `calcExperience(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `ceil(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `ceiling(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `clamp(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `combinations(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `concat(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `cos(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `date(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `entity(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `exp(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `factorial(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `floor(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `formatNumber(...)` | Function | Function | ⚡ Optimized | With a custom format, parsed the format pattern into a new DecimalFormat on every call. The last format is now kept per thread (DecimalFormat isn't thread-safe) and reused while the pattern is the same. |
+| `fromBase(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `isNaN(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `ln(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `location(...)` | Function | Function | ⚡ Optimized | Called Bukkit.getWorlds() (copies the world list) on every call to get the default world, even when a world was given. Now only when the world argument is left out; a given but unset world still gives a location without a world, as before (caught by the test suite during the change). |
+| `log(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `max(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `mean(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `median(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `min(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `mod(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `offlineplayer(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `permutations(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `player(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `product(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `quaternion(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `rgb(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `root(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `round(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `sin(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `sqrt(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `sum(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `tan(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `toBase(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `uuid(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `vector(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
+| `world(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
 
 ## Section 4
 
