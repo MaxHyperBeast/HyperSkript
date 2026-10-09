@@ -5,12 +5,12 @@ one section at a time for runtime performance. **Status:** ✅ OK = reviewed, no
 ⚡ Optimized = changed (the note says what was slow and what changed); ⏳ = not reviewed yet.
 Every change keeps the exact behaviour; Skript's test suite must pass after each section.
 
-**Progress:** 91 of 1054 reviewed, 27 optimized.
+**Progress:** 242 of 1054 reviewed, 31 optimized.
 
 | Section | Contents | Reviewed |
 |---|---|---|
 | [1](#section-1) | Most used syntax | 91/91 |
-| [2](#section-2) | Events | 0/151 |
+| [2](#section-2) | Events | 151/151 |
 | [3](#section-3) | Default functions | 0/80 |
 | [4](#section-4) | conditions | 0/80 |
 | [5](#section-5) | conditions, effects | 0/80 |
@@ -127,157 +127,157 @@ Events
 
 | Syntax | Kind | Class | Status | Notes |
 |---|---|---|---|---|
-| `Attempt Attack` | Event | EvtAttemptAttack | ⏳ |  |
-| `*At Time` | Event | EvtAtTime | ⏳ |  |
-| `Beacon Effect` | Event | EvtBeaconEffect | ⏳ |  |
-| `Beacon Toggle` | Event | EvtBeaconToggle | ⏳ |  |
-| `Break / Mine` | Event | EvtBlock | ⏳ |  |
-| `Book Edit` | Event | EvtBookEdit | ⏳ |  |
-| `Book Sign` | Event | EvtBookSign | ⏳ |  |
-| `Click` | Event | EvtClick | ⏳ |  |
-| `Command` | Event | EvtCommand | ⏳ |  |
-| `Damage` | Event | EvtDamage | ⏳ |  |
-| `Death` | Event | EvtEntity | ⏳ |  |
-| `Enderman/Sheep/Silverfish/Falling Block` | Event | EvtEntityBlockChange | ⏳ |  |
-| `Entity Shoot Bow` | Event | EvtEntityShootBow | ⏳ |  |
-| `Target` | Event | EvtEntityTarget | ⏳ |  |
-| `Entity Transform` | Event | EvtEntityTransform | ⏳ |  |
-| `Experience Change` | Event | EvtExperienceChange | ⏳ |  |
-| `Experience Spawn` | Event | EvtExperienceSpawn | ⏳ |  |
-| `Firework Explode` | Event | EvtFirework | ⏳ |  |
-| `First Join` | Event | EvtFirstJoin | ⏳ |  |
-| `Grow` | Event | EvtGrow | ⏳ |  |
-| `Harvest Block` | Event | EvtHarvestBlock | ⏳ |  |
-| `Heal` | Event | EvtHealing | ⏳ |  |
-| `Dispense` | Event | EvtItem | ⏳ |  |
-| `Leash / Unleash` | Event | EvtLeash | ⏳ |  |
-| `Level Change` | Event | EvtLevel | ⏳ |  |
-| `Move / Rotate` | Event | EvtMove | ⏳ |  |
-| `Move On` | Event | EvtMoveOn | ⏳ |  |
-| `*Periodical` | Event | EvtPeriodical | ⏳ |  |
-| `Block Growth` | Event | EvtPlantGrowth | ⏳ |  |
-| `Armor Change` | Event | EvtPlayerArmorChange | ⏳ |  |
-| `Player Chunk Enter` | Event | EvtPlayerChunkEnter | ⏳ |  |
-| `Send Command List` | Event | EvtPlayerCommandSend | ⏳ |  |
-| `Portal` | Event | EvtPortal | ⏳ |  |
-| `Pressure Plate / Trip` | Event | EvtPressurePlate | ⏳ |  |
-| `System Time` | Event | EvtRealTime | ⏳ |  |
-| `Resource Pack Request Response` | Event | EvtResourcePackResponse | ⏳ |  |
-| `Script Load/Unload` | Event | EvtScript | ⏳ |  |
-| `Server Start/Stop` | Event | EvtSkript | ⏳ |  |
-| `Spectate` | Event | EvtSpectate | ⏳ |  |
-| `Teleport` | Event | EvtTeleport | ⏳ |  |
-| `Vehicle Collision` | Event | EvtVehicleCollision | ⏳ |  |
-| `Weather Change` | Event | EvtWeatherChange | ⏳ |  |
-| `World Save` | Event | EvtWorld | ⏳ |  |
-| `Region Enter/Leave` | Event | EvtRegionBorder | ⏳ |  |
-| `Smelt` | Event | EvtFurnace | ⏳ |  |
-| `Entity Breed` | Event | EvtBreed | ⏳ |  |
-| `Brewing Complete` | Event | EvtBrewingComplete | ⏳ |  |
-| `Brewing Fuel` | Event | EvtBrewingFuel | ⏳ |  |
-| `Brewing Start` | Event | EvtBrewingStart | ⏳ |  |
-| `Player GameMode Change` | Event | EvtPlayerGameModeChange | ⏳ |  |
-| `Player Pick Item` | Event | EvtPlayerPickItem | ⏳ |  |
-| `Bucket Catch Entity` | Event | EvtBucketEntity | ⏳ |  |
-| `Fishing` | Event | EvtFish | ⏳ |  |
-| `org.bukkit.event.player.PlayerInputEvent` | Event | EvtPlayerInput | ⏳ |  |
-| `Entity Potion Effect` | Event | EvtEntityPotion | ⏳ |  |
-| `[block] can build check` | Event | SimpleEvents | ⏳ |  |
-| `block damag(ing\|e)` | Event | SimpleEvents | ⏳ |  |
-| `[block] flow[ing]` | Event | SimpleEvents | ⏳ |  |
-| `[block] ignit(e\|ion)` | Event | SimpleEvents | ⏳ |  |
-| `[block] physics` | Event | SimpleEvents | ⏳ |  |
-| `piston extend[ing]` | Event | SimpleEvents | ⏳ |  |
-| `piston retract[ing]` | Event | SimpleEvents | ⏳ |  |
-| `redstone [current] [chang(e\|ing)]` | Event | SimpleEvents | ⏳ |  |
-| `spread[ing]` | Event | SimpleEvents | ⏳ |  |
-| `chunk load[ing]` | Event | SimpleEvents | ⏳ |  |
-| `chunk (generat\|populat)(e\|ing)` | Event | SimpleEvents | ⏳ |  |
-| `chunk unload[ing]` | Event | SimpleEvents | ⏳ |  |
-| `creeper power` | Event | SimpleEvents | ⏳ |  |
-| `zombie break[ing] [a] [wood[en]] door` | Event | SimpleEvents | ⏳ |  |
-| `combust[ing]` | Event | SimpleEvents | ⏳ |  |
-| `explo(d(e\|ing)\|sion)` | Event | SimpleEvents | ⏳ |  |
-| `portal enter[ing]` | Event | SimpleEvents | ⏳ |  |
-| `[entity] tam(e\|ing)` | Event | SimpleEvents | ⏳ |  |
-| `explosion prime` | Event | SimpleEvents | ⏳ |  |
-| `(food\|hunger) (level\|met(er\|re)\|bar) chang(e\|ing)` | Event | SimpleEvents | ⏳ |  |
-| `leaves decay[ing]` | Event | SimpleEvents | ⏳ |  |
-| `lightning [strike]` | Event | SimpleEvents | ⏳ |  |
-| `pig[ ]zap` | Event | SimpleEvents | ⏳ |  |
-| `bed enter[ing]` | Event | SimpleEvents | ⏳ |  |
-| `bed leav(e\|ing)` | Event | SimpleEvents | ⏳ |  |
-| `bucket empty[ing]` | Event | SimpleEvents | ⏳ |  |
-| `bucket fill[ing]` | Event | SimpleEvents | ⏳ |  |
-| `throw[ing] [of] [an] egg` | Event | SimpleEvents | ⏳ |  |
-| `[player] tool break[ing]` | Event | SimpleEvents | ⏳ |  |
-| `item damag(e\|ing)` | Event | SimpleEvents | ⏳ |  |
-| `[player['s]] (tool\|item held\|held item) chang(e\|ing)` | Event | SimpleEvents | ⏳ |  |
-| `[player] (login\|logging in\|join[ing])` | Event | SimpleEvents | ⏳ |  |
-| `[player] connect[ing]` | Event | SimpleEvents | ⏳ |  |
-| `[player] (kick\|being kicked)` | Event | SimpleEvents | ⏳ |  |
-| `(quit[ting]\|disconnect[ing]\|log[ ]out\|logging out\|leav(e\|ing))` | Event | SimpleEvents | ⏳ |  |
-| `[player] respawn[ing]` | Event | SimpleEvents | ⏳ |  |
-| `[player] toggl(e\|ing) sneak` | Event | SimpleEvents | ⏳ |  |
-| `[player] toggl(e\|ing) sprint` | Event | SimpleEvents | ⏳ |  |
-| `portal creat(e\|ion)` | Event | SimpleEvents | ⏳ |  |
-| `projectile hit` | Event | SimpleEvents | ⏳ |  |
-| `projectile collide` | Event | SimpleEvents | ⏳ |  |
-| `[projectile] (shoot\|launch)` | Event | SimpleEvents | ⏳ |  |
-| `sign (chang[e]\|edit)[ing]` | Event | SimpleEvents | ⏳ |  |
-| `[world] spawn change` | Event | SimpleEvents | ⏳ |  |
-| `vehicle create` | Event | SimpleEvents | ⏳ |  |
-| `vehicle damage` | Event | SimpleEvents | ⏳ |  |
-| `vehicle destroy` | Event | SimpleEvents | ⏳ |  |
-| `vehicle enter` | Event | SimpleEvents | ⏳ |  |
-| `vehicle exit` | Event | SimpleEvents | ⏳ |  |
-| `mount[ing]` | Event | SimpleEvents | ⏳ |  |
-| `dismount[ing]` | Event | SimpleEvents | ⏳ |  |
-| `(gliding state change\|toggl(e\|ing) gliding)` | Event | SimpleEvents | ⏳ |  |
-| `(area\|AoE) [cloud] effect` | Event | SimpleEvents | ⏳ |  |
-| `sheep [re]grow[ing] wool` | Event | SimpleEvents | ⏳ |  |
-| `inventory open[ed]` | Event | SimpleEvents | ⏳ |  |
-| `inventory clos(ing\|e[d])` | Event | SimpleEvents | ⏳ |  |
-| `slime split[ting]` | Event | SimpleEvents | ⏳ |  |
-| `[entity] resurrect[ion] [attempt]` | Event | SimpleEvents | ⏳ |  |
-| `[player] world chang(ing\|e[d])` | Event | SimpleEvents | ⏳ |  |
-| `[player] flight toggl(e\|ing)` | Event | SimpleEvents | ⏳ |  |
-| `[player] (language\|locale) chang(e\|ing)` | Event | SimpleEvents | ⏳ |  |
-| `[player] jump[ing]` | Event | SimpleEvents | ⏳ |  |
-| `swap[ping of] [(hand\|held)] item[s]` | Event | SimpleEvents | ⏳ |  |
-| `server [list] ping` | Event | SimpleEvents | ⏳ |  |
-| `[entity] toggl(e\|ing) swim` | Event | SimpleEvents | ⏳ |  |
-| `[use of] riptide [enchant[ment]]` | Event | SimpleEvents | ⏳ |  |
-| `sponge absorb` | Event | SimpleEvents | ⏳ |  |
-| `[item] enchant prepare` | Event | SimpleEvents | ⏳ |  |
-| `[item] enchant` | Event | SimpleEvents | ⏳ |  |
-| `inventory pick[ ]up` | Event | SimpleEvents | ⏳ |  |
-| `horse jump` | Event | SimpleEvents | ⏳ |  |
-| `[block] fertilize` | Event | SimpleEvents | ⏳ |  |
-| `[player] arm swing` | Event | SimpleEvents | ⏳ |  |
-| `item mend[ing]` | Event | SimpleEvents | ⏳ |  |
-| `anvil prepar(e\|ing)` | Event | SimpleEvents | ⏳ |  |
-| `player trad(e\|ing)` | Event | SimpleEvents | ⏳ |  |
-| `entity jump[ing]` | Event | SimpleEvents | ⏳ |  |
-| `anvil damag(e\|ing)` | Event | SimpleEvents | ⏳ |  |
-| `[player] (stop\|end) (using item\|item use)` | Event | SimpleEvents | ⏳ |  |
-| `[player] ((ready\|choose\|draw\|load) arrow\|arrow (choose\|draw\|l...` | Event | SimpleEvents | ⏳ |  |
-| `[player] inventory slot chang(e\|ing)` | Event | SimpleEvents | ⏳ |  |
-| `[player] deep sleep[ing]` | Event | SimpleEvents | ⏳ |  |
-| `[player] (pick[ing\| ]up [an] arrow\|arrow pick[ing\| ]up)` | Event | SimpleEvents | ⏳ |  |
-| `inventory drag[ging]` | Event | SimpleEvents | ⏳ |  |
-| `piglin (barter[ing]\|trad(e\|ing))` | Event | SimpleEvents | ⏳ |  |
-| `bell ring[ing]` | Event | SimpleEvents | ⏳ |  |
-| `bell resonat(e\|ing)` | Event | SimpleEvents | ⏳ |  |
-| `enderman (enrage\|anger)` | Event | SimpleEvents | ⏳ |  |
-| `beacon change effect` | Event | SimpleEvents | ⏳ |  |
-| `broadcast` | Event | SimpleEvents | ⏳ |  |
-| `player (experience\|[e]xp) cooldown change` | Event | SimpleEvents | ⏳ |  |
-| `vehicle move` | Event | SimpleEvents | ⏳ |  |
-| `elytra boost` | Event | SimpleEvents | ⏳ |  |
-| `bat toggle sleep` | Event | SimpleEvents | ⏳ |  |
-| `vault display[ing] item` | Event | SimpleEvents | ⏳ |  |
-| `villager career chang(e[d]\|ing)` | Event | SimpleEvents | ⏳ |  |
+| `Attempt Attack` | Event | EvtAttemptAttack | ✅ OK | A few instanceof checks. |
+| `*At Time` | Event | EvtAtTime | ✅ OK | Scheduled internally, no per-event check. |
+| `Beacon Effect` | Event | EvtBeaconEffect | ✅ OK | Simple field checks. |
+| `Beacon Toggle` | Event | EvtBeaconToggle | ✅ OK | Simple instanceof checks. |
+| `Break / Mine` | Event | EvtBlock | ⚡ Optimized | Every trigger with a type filter ("on break of stone") built a new item type from the block on every event. The item type only depends on the block data, so the last one is reused while the block data is equal (full block state comparison); the block data is also read once instead of twice. |
+| `Book Edit` | Event | EvtBookEdit | ✅ OK | One getter. |
+| `Book Sign` | Event | EvtBookSign | ✅ OK | One getter. |
+| `Click` | Event | EvtClick | ✅ OK | Interaction tracking and type checks are required by the semantics. |
+| `Command` | Event | EvtCommand | ⚡ Optimized | Matched the command against the listed commands with a stream on every command; now a loop. |
+| `Damage` | Event | EvtDamage | ✅ OK | Entity type checks. |
+| `Death` | Event | EvtEntity | ✅ OK | Entity type checks. |
+| `Enderman/Sheep/Silverfish/Falling Block` | Event | EvtEntityBlockChange | ✅ OK | Entity type checks. |
+| `Entity Shoot Bow` | Event | EvtEntityShootBow | ✅ OK | Entity type checks. |
+| `Target` | Event | EvtEntityTarget | ✅ OK | One getter. |
+| `Entity Transform` | Event | EvtEntityTransform | ✅ OK | Simple checks. |
+| `Experience Change` | Event | EvtExperienceChange | ✅ OK | One getter. |
+| `Experience Spawn` | Event | EvtExperienceSpawn | ✅ OK | Handled internally, no per-event check. |
+| `Firework Explode` | Event | EvtFirework | ✅ OK | Builds a color set per check, but firework explosions are rare. |
+| `First Join` | Event | EvtFirstJoin | ✅ OK | One getter. |
+| `Grow` | Event | EvtGrow | ✅ OK | Type checks required by the semantics. |
+| `Harvest Block` | Event | EvtHarvestBlock | ✅ OK | Type checks. |
+| `Heal` | Event | EvtHealing | ✅ OK | Simple loops. |
+| `Dispense` | Event | EvtItem | ✅ OK | Item type checks required by the semantics. |
+| `Leash / Unleash` | Event | EvtLeash | ✅ OK | Entity type checks. |
+| `Level Change` | Event | EvtLevel | ✅ OK | Two getters. |
+| `Move / Rotate` | Event | EvtMove | ✅ OK | Four comparisons per move; no allocations. |
+| `Move On` | Event | EvtMoveOn | ✅ OK | Uses its own listener with block lookups per move; required by the semantics. |
+| `*Periodical` | Event | EvtPeriodical | ✅ OK | Scheduled task, no per-event check. |
+| `Block Growth` | Event | EvtPlantGrowth | ✅ OK | Builds an item type per listed type, but growth events with filters are rare. |
+| `Armor Change` | Event | EvtPlayerArmorChange | ✅ OK | One getter. |
+| `Player Chunk Enter` | Event | EvtPlayerChunkEnter | ⚡ Optimized | Looked up the chunk of both locations on every player move to compare them; now compares the world and chunk coordinates directly (identical to the chunk equality check, verified in the server code). |
+| `Send Command List` | Event | EvtPlayerCommandSend | ✅ OK | Copies the command list, required for the event values. |
+| `Portal` | Event | EvtPortal | ✅ OK | One instanceof check. |
+| `Pressure Plate / Trip` | Event | EvtPressurePlate | ✅ OK | Tag lookup on a constant tag. |
+| `System Time` | Event | EvtRealTime | ✅ OK | Scheduled task, no per-event check. |
+| `Resource Pack Request Response` | Event | EvtResourcePackResponse | ✅ OK | One getter. |
+| `Script Load/Unload` | Event | EvtScript | ✅ OK | Called by Skript itself, no per-event check. |
+| `Server Start/Stop` | Event | EvtSkript | ✅ OK | Called by Skript itself, no per-event check. |
+| `Spectate` | Event | EvtSpectate | ✅ OK | Entity type checks. |
+| `Teleport` | Event | EvtTeleport | ✅ OK | Entity type checks. |
+| `Vehicle Collision` | Event | EvtVehicleCollision | ✅ OK | Type checks, rare event. |
+| `Weather Change` | Event | EvtWeatherChange | ✅ OK | Simple checks. |
+| `World Save` | Event | EvtWorld | ✅ OK | One comparison. |
+| `Region Enter/Leave` | Event | EvtRegionBorder | ✅ OK | Region lookups per move happen in the region plugin. |
+| `Smelt` | Event | EvtFurnace | ✅ OK | One item type per event, required by the comparison. |
+| `Entity Breed` | Event | EvtBreed | ✅ OK | Entity type checks. |
+| `Brewing Complete` | Event | EvtBrewingComplete | ✅ OK | Simple loops. |
+| `Brewing Fuel` | Event | EvtBrewingFuel | ✅ OK | Simple loop. |
+| `Brewing Start` | Event | EvtBrewingStart | ✅ OK | One instanceof check. |
+| `Player GameMode Change` | Event | EvtPlayerGameModeChange | ✅ OK | One comparison. |
+| `Player Pick Item` | Event | EvtPlayerPickItem | ✅ OK | Type checks. |
+| `Bucket Catch Entity` | Event | EvtBucketEntity | ✅ OK | Stream per event, but bucket events are rare. |
+| `Fishing` | Event | EvtFish | ✅ OK | One comparison. |
+| `org.bukkit.event.player.PlayerInputEvent` | Event | EvtPlayerInput | ⚡ Optimized | Built a new set of the listed keys on every input event; the keys are a literal, so the set is built once. |
+| `Entity Potion Effect` | Event | EvtEntityPotion | ✅ OK | Streams per event over a few literal values; potion events are infrequent. |
+| `[block] can build check` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `block damag(ing\|e)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[block] flow[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[block] ignit(e\|ion)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[block] physics` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `piston extend[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `piston retract[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `redstone [current] [chang(e\|ing)]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `spread[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `chunk load[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `chunk (generat\|populat)(e\|ing)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `chunk unload[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `creeper power` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `zombie break[ing] [a] [wood[en]] door` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `combust[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `explo(d(e\|ing)\|sion)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `portal enter[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[entity] tam(e\|ing)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `explosion prime` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `(food\|hunger) (level\|met(er\|re)\|bar) chang(e\|ing)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `leaves decay[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `lightning [strike]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `pig[ ]zap` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `bed enter[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `bed leav(e\|ing)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `bucket empty[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `bucket fill[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `throw[ing] [of] [an] egg` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] tool break[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `item damag(e\|ing)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player['s]] (tool\|item held\|held item) chang(e\|ing)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] (login\|logging in\|join[ing])` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] connect[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] (kick\|being kicked)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `(quit[ting]\|disconnect[ing]\|log[ ]out\|logging out\|leav(e\|ing))` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] respawn[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] toggl(e\|ing) sneak` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] toggl(e\|ing) sprint` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `portal creat(e\|ion)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `projectile hit` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `projectile collide` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[projectile] (shoot\|launch)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `sign (chang[e]\|edit)[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[world] spawn change` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `vehicle create` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `vehicle damage` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `vehicle destroy` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `vehicle enter` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `vehicle exit` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `mount[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `dismount[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `(gliding state change\|toggl(e\|ing) gliding)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `(area\|AoE) [cloud] effect` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `sheep [re]grow[ing] wool` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `inventory open[ed]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `inventory clos(ing\|e[d])` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `slime split[ting]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[entity] resurrect[ion] [attempt]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] world chang(ing\|e[d])` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] flight toggl(e\|ing)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] (language\|locale) chang(e\|ing)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] jump[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `swap[ping of] [(hand\|held)] item[s]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `server [list] ping` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[entity] toggl(e\|ing) swim` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[use of] riptide [enchant[ment]]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `sponge absorb` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[item] enchant prepare` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[item] enchant` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `inventory pick[ ]up` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `horse jump` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[block] fertilize` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] arm swing` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `item mend[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `anvil prepar(e\|ing)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `player trad(e\|ing)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `entity jump[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `anvil damag(e\|ing)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] (stop\|end) (using item\|item use)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] ((ready\|choose\|draw\|load) arrow\|arrow (choose\|draw\|l...` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] inventory slot chang(e\|ing)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] deep sleep[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `[player] (pick[ing\| ]up [an] arrow\|arrow pick[ing\| ]up)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `inventory drag[ging]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `piglin (barter[ing]\|trad(e\|ing))` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `bell ring[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `bell resonat(e\|ing)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `enderman (enrage\|anger)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `beacon change effect` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `broadcast` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `player (experience\|[e]xp) cooldown change` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `vehicle move` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `elytra boost` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `bat toggle sleep` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `vault display[ing] item` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `villager career chang(e[d]\|ing)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
 
 ## Section 3
 

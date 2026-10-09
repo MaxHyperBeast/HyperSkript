@@ -5,6 +5,7 @@ import ch.njol.skript.lang.Literal;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import org.bukkit.event.Event;
+import org.bukkit.Location;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,7 +28,11 @@ public class EvtPlayerChunkEnter extends SkriptEvent {
 	@Override
 	public boolean check(Event event) {
 		PlayerMoveEvent moveEvent = ((PlayerMoveEvent) event);
-		return !moveEvent.getFrom().getChunk().equals(moveEvent.getTo().getChunk());
+		// the same as comparing the chunks (same world and chunk coordinates), without looking the chunks up
+		Location from = moveEvent.getFrom(), to = moveEvent.getTo();
+		return from.getWorld() != to.getWorld()
+			|| from.getBlockX() >> 4 != to.getBlockX() >> 4
+			|| from.getBlockZ() >> 4 != to.getBlockZ() >> 4;
 	}
 
 	@Override

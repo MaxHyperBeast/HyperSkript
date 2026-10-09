@@ -50,6 +50,7 @@ public class EvtPlayerInput extends SkriptEvent {
 	}
 
 	private @Nullable Literal<InputKey> keysToCheck;
+	private @Nullable Set<InputKey> keySet;
 	private InputType type;
 
 	@Override
@@ -65,7 +66,13 @@ public class EvtPlayerInput extends SkriptEvent {
 		PlayerInputEvent inputEvent = (PlayerInputEvent) event;
 		Set<InputKey> previousKeys = InputKey.fromInput(inputEvent.getPlayer().getCurrentInput());
 		Set<InputKey> currentKeys = InputKey.fromInput(inputEvent.getInput());
-		Set<InputKey> keysToCheck = this.keysToCheck != null ? Set.of(this.keysToCheck.getAll()) : null;
+		Set<InputKey> keysToCheck = null;
+		if (this.keysToCheck != null) {
+			// the keys are a literal, so the set only needs to be built once
+			keysToCheck = keySet;
+			if (keysToCheck == null)
+				keySet = keysToCheck = Set.of(this.keysToCheck.getAll());
+		}
 		boolean and = this.keysToCheck != null && this.keysToCheck.getAnd();
 		return type.checkInputKeys(previousKeys, currentKeys, keysToCheck, and);
 	}

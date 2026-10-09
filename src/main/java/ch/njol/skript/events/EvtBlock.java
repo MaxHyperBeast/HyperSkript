@@ -90,6 +90,23 @@ public class EvtBlock extends SkriptEvent {
 		return true;
 	}
 	
+	/**
+	 * The last item type built from block data. Many triggers check the same block (e.g. several 'on break of ...'),
+	 * and an item type only depends on the block data, so it's reused while the data is equal.
+	 */
+	private record BlockItemType(BlockData blockData, ItemType itemType) { }
+
+	private static volatile @Nullable BlockItemType lastBlockItemType;
+
+	private static ItemType itemTypeOf(BlockData blockData) {
+		BlockItemType last = lastBlockItemType;
+		if (last != null && last.blockData.equals(blockData))
+			return last.itemType;
+		ItemType itemType = new ItemType(blockData); // the same as new ItemType(block)
+		lastBlockItemType = new BlockItemType(blockData, itemType);
+		return itemType;
+	}
+
 	@SuppressWarnings("null")
 	@Override
 	public boolean check(final Event event) {
@@ -105,20 +122,20 @@ public class EvtBlock extends SkriptEvent {
 
 		if (event instanceof BlockFormEvent blockFormEvent) {
 			BlockState newState = blockFormEvent.getNewState();
-			item = new ItemType(newState.getBlockData());
 			blockData = newState.getBlockData();
+			item = itemTypeOf(blockData);
 		} else if (event instanceof BlockDropItemEvent blockDropItemEvent) {
 			Block block = blockDropItemEvent.getBlock();
-			item = new ItemType(block);
 			blockData = block.getBlockData();
+			item = itemTypeOf(blockData);
 		} else if (event instanceof BlockEvent blockEvent) {
 			Block block = blockEvent.getBlock();
-			item = new ItemType(block);
 			blockData = block.getBlockData();
+			item = itemTypeOf(blockData);
 		} else if (event instanceof PlayerBucketFillEvent playerBucketFillEvent) {
 			Block block = playerBucketFillEvent.getBlockClicked();
-			item = new ItemType(block);
 			blockData = block.getBlockData();
+			item = itemTypeOf(blockData);
 		} else if (event instanceof PlayerBucketEmptyEvent playerBucketEmptyEvent) {
 			item = new ItemType(playerBucketEmptyEvent.getItemStack());
 		} else if (event instanceof HangingEvent hangingEvent) {
