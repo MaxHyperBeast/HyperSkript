@@ -31,9 +31,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.StreamSupport;
 
 @Name("Filter")
 @Description({
@@ -111,6 +108,17 @@ public class SecFilter extends Section implements InputSource {
 		return true;
 	}
 
+	/**
+	 * @return Whether any (for 'filter any') or all of the conditions pass, checked in order and short-circuiting.
+	 */
+	private boolean checkConditions(Event event) {
+		for (Condition condition : conditions) {
+			if (condition.check(event) == isAny)
+				return isAny;
+		}
+		return !isAny;
+	}
+
 	@Override
 	protected @Nullable TriggerItem walk(Event event) {
 		// get the name only once to avoid issues where the name may change between evaluations.
@@ -130,27 +138,16 @@ public class SecFilter extends Section implements InputSource {
 		List<String> toRemove = new ArrayList<>();
 
 		var variableIterator = Variables.getVariableIterator(varName, local, event);
-		var stream = StreamSupport.stream(Spliterators.spliteratorUnknownSize(variableIterator, Spliterator.ORDERED), false);
-		if (isAny) {
-			stream.forEach(pair -> {
-				currentValue = pair.getValue();
-				currentIndex = pair.getKey();
-				if (conditions.stream().anyMatch(c -> c.check(event))) {
-					toKeep.add(pair);
-				} else {
-					toRemove.add(pair.getKey());
-				}
-			});
-		} else {
-			stream.forEach(pair -> {
-				currentValue = pair.getValue();
-				currentIndex = pair.getKey();
-				if (conditions.stream().allMatch(c -> c.check(event))) {
-					toKeep.add(pair);
-				} else {
-					toRemove.add(pair.getKey());
-				}
-			});
+		// same as before (a stream over the elements, anyMatch/allMatch over the conditions), as plain loops
+		while (variableIterator.hasNext()) {
+			Pair<String, Object> pair = variableIterator.next();
+			currentValue = pair.getValue();
+			currentIndex = pair.getKey();
+			if (checkConditions(event)) {
+				toKeep.add(pair);
+			} else {
+				toRemove.add(pair.getKey());
+			}
 		}
 
 		// optimize by either removing or clearing + adding depending on which is fewer operations

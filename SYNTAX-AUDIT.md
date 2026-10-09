@@ -5,7 +5,7 @@ one section at a time for runtime performance. **Status:** ✅ OK = reviewed, no
 ⚡ Optimized = changed (the note says what was slow and what changed); ⏳ = not reviewed yet.
 Every change keeps the exact behaviour; Skript's test suite must pass after each section.
 
-**Progress:** 802 of 1054 reviewed, 43 optimized.
+**Progress:** 882 of 1054 reviewed, 44 optimized.
 
 | Section | Contents | Reviewed |
 |---|---|---|
@@ -18,7 +18,7 @@ Every change keeps the exact behaviour; Skript's test suite must pass after each
 | [7](#section-7) | expressions | 80/80 |
 | [8](#section-8) | expressions | 80/80 |
 | [9](#section-9) | expressions | 80/80 |
-| [10](#section-10) | expressions, hooks.chat.expressions, hooks.economy.expressions, ... | 0/80 |
+| [10](#section-10) | expressions, hooks.chat.expressions, hooks.economy.expressions, ... | 80/80 |
 | [11](#section-11) | bukkit.enchantments.elements.expressions, bukkit.entity.displays.elements.expressions, bukkit.entity.displays.item.elements.expressions, ... | 0/80 |
 | [12](#section-12) | bukkit.itemcomponents.equippable.elements.expressions, bukkit.loottables.elements.conditions, bukkit.loottables.elements.effects, ... | 0/80 |
 | [13](#section-13) | common.properties.elements.expressions | 0/12 |
@@ -894,86 +894,86 @@ expressions, hooks.chat.expressions, hooks.economy.expressions, ...
 
 | Syntax | Kind | Class | Status | Notes |
 |---|---|---|---|---|
-| `%number% of %itemstacks/itemtypes/entitytypes/particles%` | Expression | ExprXOf | ⏳ |  |
-| `[vector\|quaternion] (:w\|:x\|:y\|:z) [component[s]]` | Expression | ExprXYZComponent | ⏳ |  |
-| `(:yaw\|pitch)` | Expression | ExprYawPitch | ⏳ |  |
-| `[chat] (1:prefix\|2:suffix)` | Expression | ExprPrefixSuffix | ⏳ |  |
-| `(money\|balance\|[bank] account)` | Expression | ExprBalance | ⏳ |  |
-| `all groups` | Expression | ExprAllGroups | ⏳ |  |
-| `group[plural:s]` | Expression | ExprGroup | ⏳ |  |
-| `%players% (can\|(is\|are) allowed to) build %directions% %locations%` | Condition | CondCanBuild | ⏳ |  |
-| `%offlineplayers% (is\|are) (0¦[a] member\|1¦[(the\|an)] owner) of [...` | Condition | CondIsMember | ⏳ |  |
-| `[[the] region] %regions% contain[s] %directions% %locations%` | Condition | CondRegionContains | ⏳ |  |
-| `[(all\|the)] blocks (in\|of) [[the] region[s]] %regions%` | Expression | ExprBlocksInRegion | ⏳ |  |
-| `(all\|the\|) (0¦members\|1¦owner[s]) of [[the] region[s]] %regions%` | Expression | ExprMembersOfRegion | ⏳ |  |
-| `[event-]region` | Expression | ExprRegion | ⏳ |  |
-| `[the] region(1¦s\|) %direction% %locations%` | Expression | ExprRegionsAt | ⏳ |  |
-| `at` | Literal | LitAt | ⏳ |  |
-| `[the] (console\|server)` | Literal | LitConsole | ⏳ |  |
-| `[the] max[imum] double value` | Literal | LitDoubleMaxValue | ⏳ |  |
-| `[the] min[imum] double value` | Literal | LitDoubleMinValue | ⏳ |  |
-| `[an] eternity` | Literal | LitEternity | ⏳ |  |
-| `[the] max[imum] float value` | Literal | LitFloatMaxValue | ⏳ |  |
-| `[the] min[imum] float value` | Literal | LitFloatMinValue | ⏳ |  |
-| `positive (infinity\|∞) [value]` | Literal | LitInfinity | ⏳ |  |
-| `[the] max[imum] integer value` | Literal | LitIntMaxValue | ⏳ |  |
-| `[the] min[imum] integer value` | Literal | LitIntMinValue | ⏳ |  |
-| `[the] max[imum] long value` | Literal | LitLongMaxValue | ⏳ |  |
-| `[the] min[imum] long value` | Literal | LitLongMinValue | ⏳ |  |
-| `NaN [value]` | Literal | LitNaN | ⏳ |  |
-| `(-\|minus \|negative )(infinity\|∞) [value]` | Literal | LitNegativeInfinity | ⏳ |  |
-| `nl` | Literal | LitNewLine | ⏳ |  |
-| `(pi\|π)` | Literal | LitPi | ⏳ |  |
-| `shoot %entitydatas% [from %livingentities/locations%] [(at\|with) (...` | Effect | EffSecShoot | ⏳ |  |
-| `catch [run[ ]time] error[s]` | Section | SecCatchErrors | ⏳ |  |
-| `filter %~objects% to match [:any\|all]` | Section | SecFilter | ⏳ |  |
-| `aliases` | Structure | StructAliases | ⏳ |  |
-| `auto[matically] reload [(this\|the) script]` | Structure | StructAutoReload | ⏳ |  |
-| `example` | Structure | StructExample | ⏳ |  |
-| `using [[the] experiment] <.+>` | Structure | StructUsing | ⏳ |  |
-| `` | Expression | ExprFurnaceEventItems | ⏳ |  |
-| `[the] ` | Expression | ExprFurnaceSlot | ⏳ |  |
-| `[the] [furnace] ` | Expression | ExprFurnaceTime | ⏳ |  |
-| `line %integer% [of %block%]` | Expression | ExprSignText | ⏳ |  |
-| `unchecked` | Condition | CondHasBossBarFlag | ⏳ |  |
-| `remove` | Effect | EffBossBarFlags | ⏳ |  |
-| `boss[ ]bar` | Expression | ExprBossBarFromEntity | ⏳ |  |
-| `[the] boss[ ]bar[s] (from\|with) [the] (id\|key)[s] %strings%` | Expression | ExprBossBarFromKey | ⏳ |  |
-| `boss[ ]bar (key\|id)` | Expression | ExprKeyOfBossBar | ⏳ |  |
-| `[a] [new] [%-color%] boss[ ]bar [(with title\|titled) %-textcompone...` | Expression | ExprSecCreateBossBar | ⏳ |  |
-| `(age\|grow (up\|old[er]))` | Condition | CondCanAge | ⏳ |  |
-| `(breed\|be bred)` | Condition | CondCanBreed | ⏳ |  |
-| `[an] adult` | Condition | CondIsAdult | ⏳ |  |
-| `a (child\|baby)` | Condition | CondIsBaby | ⏳ |  |
-| `in lov(e\|ing) [state\|mode]` | Condition | CondIsInLove | ⏳ |  |
-| `lock age of %livingentities%` | Effect | EffAllowAging | ⏳ |  |
-| `make %livingentities% breedable` | Effect | EffBreedable | ⏳ |  |
-| `make %livingentities% [a[n]] (:adult\|baby\|child)` | Effect | EffMakeAdultOrBaby | ⏳ |  |
-| `[the] breeding mother` | Expression | ExprBreedingFamily | ⏳ |  |
-| `love[d] time` | Expression | ExprLoveTime | ⏳ |  |
-| `[the] brewing stand will consume [the] fuel` | Condition | CondBrewingConsume | ⏳ |  |
-| `make [the] brewing stand consume [its\|the] fuel` | Effect | EffBrewingConsume | ⏳ |  |
-| `brewing [stand] fuel (level\|amount)` | Expression | ExprBrewingFuelLevel | ⏳ |  |
-| `[the] brewing results` | Expression | ExprBrewingResults | ⏳ |  |
-| `[the] ` | Expression | ExprBrewingSlot | ⏳ |  |
-| `[current\|remaining] brewing time` | Expression | ExprBrewingTime | ⏳ |  |
-| `%damagesources% ((does\|do) scale\|scales) damage with difficulty` | Condition | CondScalesWithDifficulty | ⏳ |  |
-| `%damagesources% (was\|were) ([:in]directly caused\|caused [:in]dire...` | Condition | CondWasIndirect | ⏳ |  |
-| `(causing\|responsible) entity` | Expression | ExprCausingEntity | ⏳ |  |
-| `created damage source` | Expression | ExprCreatedDamageSource | ⏳ |  |
-| `damage location` | Expression | ExprDamageLocation | ⏳ |  |
-| `damage type` | Expression | ExprDamageType | ⏳ |  |
-| `direct entity` | Expression | ExprDirectEntity | ⏳ |  |
-| `food exhaustion` | Expression | ExprFoodExhaustion | ⏳ |  |
-| `[a] custom damage source [(with\|using) [the\|a] [damage type [of]]...` | Expression | ExprSecDamageSource | ⏳ |  |
-| `source location` | Expression | ExprSourceLocation | ⏳ |  |
-| `enchanted [with %-enchantmenttypes% [or (1:(better\|greater\|higher...` | Condition | CondIsEnchanted | ⏳ |  |
-| `enchantment glint overrid(den\|e)` | Condition | CondItemEnchantmentGlint | ⏳ |  |
-| `unchecked` | Effect | EffEnchant | ⏳ |  |
-| `(force\|make) %itemtypes% [to] [start] glint[ing]` | Effect | EffForceEnchantmentGlint | ⏳ |  |
-| `[the] applied enchant[ment]s` | Expression | ExprAppliedEnchantments | ⏳ |  |
-| `[the] [displayed] ([e]xp[erience]\|enchanting) cost` | Expression | ExprEnchantingExpCost | ⏳ |  |
-| `[the] enchant[:ed] item` | Expression | ExprEnchantItem | ⏳ |  |
+| `%number% of %itemstacks/itemtypes/entitytypes/particles%` | Expression | ExprXOf | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `[vector\|quaternion] (:w\|:x\|:y\|:z) [component[s]]` | Expression | ExprXYZComponent | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `(:yaw\|pitch)` | Expression | ExprYawPitch | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `[chat] (1:prefix\|2:suffix)` | Expression | ExprPrefixSuffix | ✅ OK | Vault chat call. |
+| `(money\|balance\|[bank] account)` | Expression | ExprBalance | ✅ OK | Vault economy call. |
+| `all groups` | Expression | ExprAllGroups | ✅ OK | Vault permission call. |
+| `group[plural:s]` | Expression | ExprGroup | ✅ OK | Vault permission call. |
+| `%players% (can\|(is\|are) allowed to) build %directions% %locations%` | Condition | CondCanBuild | ✅ OK | Region plugin check. |
+| `%offlineplayers% (is\|are) (0¦[a] member\|1¦[(the\|an)] owner) of [...` | Condition | CondIsMember | ✅ OK | Region plugin check. |
+| `[[the] region] %regions% contain[s] %directions% %locations%` | Condition | CondRegionContains | ✅ OK | Region plugin check. |
+| `[(all\|the)] blocks (in\|of) [[the] region[s]] %regions%` | Expression | ExprBlocksInRegion | ✅ OK | Region iteration. |
+| `(all\|the\|) (0¦members\|1¦owner[s]) of [[the] region[s]] %regions%` | Expression | ExprMembersOfRegion | ✅ OK | Region plugin lookup. |
+| `[event-]region` | Expression | ExprRegion | ✅ OK | Event value. |
+| `[the] region(1¦s\|) %direction% %locations%` | Expression | ExprRegionsAt | ✅ OK | Region plugin lookup. |
+| `at` | Literal | LitAt | ✅ OK | Constant literal, no runtime work. |
+| `[the] (console\|server)` | Literal | LitConsole | ✅ OK | Constant literal, no runtime work. |
+| `[the] max[imum] double value` | Literal | LitDoubleMaxValue | ✅ OK | Constant literal, no runtime work. |
+| `[the] min[imum] double value` | Literal | LitDoubleMinValue | ✅ OK | Constant literal, no runtime work. |
+| `[an] eternity` | Literal | LitEternity | ✅ OK | Constant literal, no runtime work. |
+| `[the] max[imum] float value` | Literal | LitFloatMaxValue | ✅ OK | Constant literal, no runtime work. |
+| `[the] min[imum] float value` | Literal | LitFloatMinValue | ✅ OK | Constant literal, no runtime work. |
+| `positive (infinity\|∞) [value]` | Literal | LitInfinity | ✅ OK | Constant literal, no runtime work. |
+| `[the] max[imum] integer value` | Literal | LitIntMaxValue | ✅ OK | Constant literal, no runtime work. |
+| `[the] min[imum] integer value` | Literal | LitIntMinValue | ✅ OK | Constant literal, no runtime work. |
+| `[the] max[imum] long value` | Literal | LitLongMaxValue | ✅ OK | Constant literal, no runtime work. |
+| `[the] min[imum] long value` | Literal | LitLongMinValue | ✅ OK | Constant literal, no runtime work. |
+| `NaN [value]` | Literal | LitNaN | ✅ OK | Constant literal, no runtime work. |
+| `(-\|minus \|negative )(infinity\|∞) [value]` | Literal | LitNegativeInfinity | ✅ OK | Constant literal, no runtime work. |
+| `nl` | Literal | LitNewLine | ✅ OK | Constant literal, no runtime work. |
+| `(pi\|π)` | Literal | LitPi | ✅ OK | Constant literal, no runtime work. |
+| `shoot %entitydatas% [from %livingentities/locations%] [(at\|with) (...` | Effect | EffSecShoot | ✅ OK | Projectile spawning dominates. |
+| `catch [run[ ]time] error[s]` | Section | SecCatchErrors | ✅ OK | Error catcher setup is required per run. |
+| `filter %~objects% to match [:any\|all]` | Section | SecFilter | ⚡ Optimized | 'filter {_list::*}' created a stream over the conditions for every list element (inside a stream over the elements); now plain loops with the same any/all short-circuiting. |
+| `aliases` | Structure | StructAliases | ✅ OK | Load time only. |
+| `auto[matically] reload [(this\|the) script]` | Structure | StructAutoReload | ✅ OK | Load time only. |
+| `example` | Structure | StructExample | ✅ OK | Load time only. |
+| `using [[the] experiment] <.+>` | Structure | StructUsing | ✅ OK | Load time only. |
+| `` | Expression | ExprFurnaceEventItems | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `[the] ` | Expression | ExprFurnaceSlot | ✅ OK | Block state read is required. |
+| `[the] [furnace] ` | Expression | ExprFurnaceTime | ✅ OK | Block state read is required. |
+| `line %integer% [of %block%]` | Expression | ExprSignText | ✅ OK | Block state read is required. |
+| `unchecked` | Condition | CondHasBossBarFlag | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `remove` | Effect | EffBossBarFlags | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `boss[ ]bar` | Expression | ExprBossBarFromEntity | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `[the] boss[ ]bar[s] (from\|with) [the] (id\|key)[s] %strings%` | Expression | ExprBossBarFromKey | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `boss[ ]bar (key\|id)` | Expression | ExprKeyOfBossBar | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `[a] [new] [%-color%] boss[ ]bar [(with title\|titled) %-textcompone...` | Expression | ExprSecCreateBossBar | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `(age\|grow (up\|old[er]))` | Condition | CondCanAge | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `(breed\|be bred)` | Condition | CondCanBreed | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `[an] adult` | Condition | CondIsAdult | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `a (child\|baby)` | Condition | CondIsBaby | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `in lov(e\|ing) [state\|mode]` | Condition | CondIsInLove | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `lock age of %livingentities%` | Effect | EffAllowAging | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `make %livingentities% breedable` | Effect | EffBreedable | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `make %livingentities% [a[n]] (:adult\|baby\|child)` | Effect | EffMakeAdultOrBaby | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `[the] breeding mother` | Expression | ExprBreedingFamily | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `love[d] time` | Expression | ExprLoveTime | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `[the] brewing stand will consume [the] fuel` | Condition | CondBrewingConsume | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `make [the] brewing stand consume [its\|the] fuel` | Effect | EffBrewingConsume | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `brewing [stand] fuel (level\|amount)` | Expression | ExprBrewingFuelLevel | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `[the] brewing results` | Expression | ExprBrewingResults | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `[the] ` | Expression | ExprBrewingSlot | ✅ OK | Block state read is required. |
+| `[current\|remaining] brewing time` | Expression | ExprBrewingTime | ✅ OK | Block state read is required. |
+| `%damagesources% ((does\|do) scale\|scales) damage with difficulty` | Condition | CondScalesWithDifficulty | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `%damagesources% (was\|were) ([:in]directly caused\|caused [:in]dire...` | Condition | CondWasIndirect | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `(causing\|responsible) entity` | Expression | ExprCausingEntity | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `created damage source` | Expression | ExprCreatedDamageSource | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `damage location` | Expression | ExprDamageLocation | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `damage type` | Expression | ExprDamageType | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `direct entity` | Expression | ExprDirectEntity | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `food exhaustion` | Expression | ExprFoodExhaustion | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `[a] custom damage source [(with\|using) [the\|a] [damage type [of]]...` | Expression | ExprSecDamageSource | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `source location` | Expression | ExprSourceLocation | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `enchanted [with %-enchantmenttypes% [or (1:(better\|greater\|higher...` | Condition | CondIsEnchanted | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `enchantment glint overrid(den\|e)` | Condition | CondItemEnchantmentGlint | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `unchecked` | Effect | EffEnchant | ✅ OK | Item change is required. |
+| `(force\|make) %itemtypes% [to] [start] glint[ing]` | Effect | EffForceEnchantmentGlint | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `[the] applied enchant[ment]s` | Expression | ExprAppliedEnchantments | ✅ OK | Rare event. |
+| `[the] [displayed] ([e]xp[erience]\|enchanting) cost` | Expression | ExprEnchantingExpCost | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
+| `[the] enchant[:ed] item` | Expression | ExprEnchantItem | ✅ OK | Rare event. |
 
 ## Section 11
 
