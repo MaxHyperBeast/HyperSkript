@@ -46,8 +46,9 @@ public class ExprAmountOfItems extends SimpleExpression<Long> {
 		for (Inventory inventory : inventories.getArray(e)) {
 			itemsLoop: for (ItemStack itemStack : inventory.getContents()) {
 				if (itemStack != null) {
+					ItemType stackType = new ItemType(itemStack); // once per stack, not once per item type checked
 					for (ItemType itemType : itemTypes) {
-						if (new ItemType(itemStack).isSimilar(itemType)) {
+						if (stackType.isSimilar(itemType)) {
 							amount += itemStack.getAmount();
 							continue itemsLoop;
 						}

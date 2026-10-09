@@ -5,7 +5,7 @@ one section at a time for runtime performance. **Status:** ✅ OK = reviewed, no
 ⚡ Optimized = changed (the note says what was slow and what changed); ⏳ = not reviewed yet.
 Every change keeps the exact behaviour; Skript's test suite must pass after each section.
 
-**Progress:** 482 of 1054 reviewed, 36 optimized.
+**Progress:** 562 of 1054 reviewed, 38 optimized.
 
 | Section | Contents | Reviewed |
 |---|---|---|
@@ -14,7 +14,7 @@ Every change keeps the exact behaviour; Skript's test suite must pass after each
 | [3](#section-3) | Default functions | 80/80 |
 | [4](#section-4) | conditions | 80/80 |
 | [5](#section-5) | conditions, effects | 80/80 |
-| [6](#section-6) | effects, expressions | 0/80 |
+| [6](#section-6) | effects, expressions | 80/80 |
 | [7](#section-7) | expressions | 0/80 |
 | [8](#section-8) | expressions | 0/80 |
 | [9](#section-9) | expressions | 0/80 |
@@ -546,86 +546,86 @@ effects, expressions
 
 | Syntax | Kind | Class | Status | Notes |
 |---|---|---|---|---|
-| `(stop\|shut[ ]down) [the] server` | Effect | EffStopServer | ⏳ |  |
-| `stop (all:all sound[s]\|sound[s] %-strings%) [(in [the]\|from) %-so...` | Effect | EffStopSound | ⏳ |  |
-| `make %livingentities% start shivering` | Effect | EffStriderShivering | ⏳ |  |
-| `[stop:un]suppress [local variable] type hints` | Effect | EffSuppressTypeHints | ⏳ |  |
-| `[local[ly]] suppress [the] (` | Effect | EffSuppressWarnings | ⏳ |  |
-| `make %livingentities% swing [their] [main] hand` | Effect | EffSwingHand | ⏳ |  |
-| `[:un](tame\|domesticate) %entities%` | Effect | EffTame | ⏳ |  |
-| `Cannot toggle '` | Effect | EffToggle | ⏳ |  |
-| `allow %livingentities% to pick([ ]up items\| items up)` | Effect | EffToggleCanPickUpItems | ⏳ |  |
-| `(allow\|enable) (fly\|flight) (for\|to) %players%` | Effect | EffToggleFlight | ⏳ |  |
-| `(show\|reveal\|:hide) %itemtypes%'[s] [entire\|:additional] tool[ ]tip` | Effect | EffTooltip | ⏳ |  |
-| `(transform\|map) %~objects% (using\|with) <.+>` | Effect | EffTransform | ⏳ |  |
-| `(grow\|create\|generate) tree [of type %treetype%] %directions% %lo...` | Effect | EffTree | ⏳ |  |
-| `(make\|let\|force) %entities% [to] (ride\|mount) [(in\|on)] %entity...` | Effect | EffVehicle | ⏳ |  |
-| `make %livingentities% (start sleeping\|[go to] sleep) [%-direction%...` | Effect | EffWakeupSleep | ⏳ |  |
-| `make %livingentities% sense [a] disturbance %direction% %location%` | Effect | EffWardenDisturbance | ⏳ |  |
-| `load [the] world[s] %strings% [with environment %-environment%]` | Effect | EffWorldLoad | ⏳ |  |
-| `save [[the] world[s]] %worlds%` | Effect | EffWorldSave | ⏳ |  |
-| `zombify %livingentities%` | Effect | EffZombify | ⏳ |  |
-| `[the] absorbed blocks` | Expression | ExprAbsorbedBlocks | ⏳ |  |
-| `(raised\|active) (tool\|item\|weapon)` | Expression | ExprActiveItem | ⏳ |  |
-| `[the] affected entities` | Expression | ExprAffectedEntities | ⏳ |  |
-| `[:max[imum]] age` | Expression | ExprAge | ⏳ |  |
-| `(ai\|artificial intelligence)` | Expression | ExprAI | ⏳ |  |
-| `target jukebox` | Expression | ExprAllayJukebox | ⏳ |  |
-| `[all [[of] the]\|the] banned (players\|ips:(ips\|ip addresses))` | Expression | ExprAllBannedEntries | ⏳ |  |
-| `[(all\|the\|all [of] the)] [registered] [(1¦script)] commands` | Expression | ExprAllCommands | ⏳ |  |
-| `alphabetically sorted %strings%` | Expression | ExprAlphabetList | ⏳ |  |
-| `altitude[s]` | Expression | ExprAltitude | ⏳ |  |
-| `[the] (amount\|number) of %itemtypes% (in\|of) %inventories%` | Expression | ExprAmountOfItems | ⏳ |  |
-| `%number% [in] deg[ree][s]` | Expression | ExprAngle | ⏳ |  |
-| `[anvil] [item] [:max[imum]] repair cost` | Expression | ExprAnvilRepairCost | ⏳ |  |
-| `anvil [inventory] (rename\|text) input` | Expression | ExprAnvilText | ⏳ |  |
-| `(any [one]\|one) of [the] %objects%` | Expression | ExprAnyOf | ⏳ |  |
-| `[the] applied [beacon] effect` | Expression | ExprAppliedEffect | ⏳ |  |
-| `(:alpha\|:red\|:green\|:blue) (value\|component)` | Expression | ExprARGB | ⏳ |  |
-| `(old\|unequipped) armo[u]r item` | Expression | ExprArmorChangeItem | ⏳ |  |
-| `(%-*equipmentslots%\|[the] armo[u]r[s]) [item:item[s]]` | Expression | ExprArmorSlot | ⏳ |  |
-| `arrow knockback strength` | Expression | ExprArrowKnockbackStrength | ⏳ |  |
-| `arrow pierce level` | Expression | ExprArrowPierceLevel | ⏳ |  |
-| `[number of] arrow[s] stuck in %livingentities%` | Expression | ExprArrowsStuck | ⏳ |  |
-| `(attached\|hit) block[multiple:s]` | Expression | ExprAttachedBlock | ⏳ |  |
-| `attack cooldown` | Expression | ExprAttackCooldown | ⏳ |  |
-| `[the] (attacked\|damaged\|victim) [<(.+)>]` | Expression | ExprAttacked | ⏳ |  |
-| `[a[n]] %*bannerpatterntypes% item[s]` | Expression | ExprBannerItem | ⏳ |  |
-| `[all [[of] the]\|the] banner pattern[s] of %itemstacks/itemtypes/sl...` | Expression | ExprBannerPatterns | ⏳ |  |
-| `[the] [piglin] barter[ing] drops` | Expression | ExprBarterDrops | ⏳ |  |
-| `[the] [piglin] barter[ing] input` | Expression | ExprBarterInput | ⏳ |  |
-| `(:primary\|secondary) [beacon] effect` | Expression | ExprBeaconEffects | ⏳ |  |
-| `beacon [effect] range` | Expression | ExprBeaconRange | ⏳ |  |
-| `beacon tier` | Expression | ExprBeaconTier | ⏳ |  |
-| `[(safe:(safe\|valid)\|(unsafe\|invalid))] bed[s] [location[s]]` | Expression | ExprBed | ⏳ |  |
-| `target flower` | Expression | ExprBeehiveFlower | ⏳ |  |
-| `[max:max[imum]] honey level` | Expression | ExprBeehiveHoneyLevel | ⏳ |  |
-| `[the] biome [(of\|%direction%) %locations%]` | Expression | ExprBiome | ⏳ |  |
-| `block[ ]data` | Expression | ExprBlockData | ⏳ |  |
-| `[block] hardness` | Expression | ExprBlockHardness | ⏳ |  |
-| `[(all [[of] the]\|the)] blocks %direction% [%locations%]` | Expression | ExprBlocks | ⏳ |  |
-| `(1:break\|2:fall\|3:hit\|4:place\|5:step) sound[s]` | Expression | ExprBlockSound | ⏳ |  |
-| `[(all [[of] the]\|the)] blocks in radius %number% [(of\|around) %lo...` | Expression | ExprBlockSphere | ⏳ |  |
-| `[the] break speed[s] [of %blocks%] [for %players%]` | Expression | ExprBreakSpeed | ⏳ |  |
-| `(brushable\|buried) item` | Expression | ExprBrushableItem | ⏳ |  |
-| `carr(ied\|ying) block[[ ]data]` | Expression | ExprCarryingBlockData | ⏳ |  |
-| `[the] last caught [run[ ]time] errors` | Expression | ExprCaughtErrors | ⏳ |  |
-| `character (from\|at\|with) code([ ]point\| position) %integer%` | Expression | ExprCharacterFromCodepoint | ⏳ |  |
-| `[(all [[of] the]\|the)] [:alphanumeric] characters (between\|from) ...` | Expression | ExprCharacters | ⏳ |  |
-| `[:max[imum]] charge[s]` | Expression | ExprCharges | ⏳ |  |
-| `[a] [new] chest inventory (named\|with name) %textcomponent% [with ...` | Expression | ExprChestInventory | ⏳ |  |
-| `[(all [[of] the]\|the)] chunk[s] (of\|%-directions%) %locations%` | Expression | ExprChunk | ⏳ |  |
-| `[the] (` | Expression | ExprClicked | ⏳ |  |
-| `client view distance[s]` | Expression | ExprClientViewDistance | ⏳ |  |
-| `[the] remaining [time] [of [the] (cooldown\|wait) [(of\|for) [the] ...` | Expression | ExprCmdCooldownInfo | ⏳ |  |
-| `[unicode\|character] code([ ]point\| position)` | Expression | ExprCodepoint | ⏳ |  |
-| `[command[ ]block] command` | Expression | ExprCommandBlockCommand | ⏳ |  |
-| `[the] main command [label\|name] [of [[the] command[s] %-strings%]]` | Expression | ExprCommandInfo | ⏳ |  |
-| `[command['s]] (sender\|executor)` | Expression | ExprCommandSender | ⏳ |  |
-| `compass target` | Expression | ExprCompassTarget | ⏳ |  |
-| `[the] [skript] config` | Expression | ExprConfig | ⏳ |  |
-| `[the] consumed item` | Expression | ExprConsumedItem | ⏳ |  |
-| `[creeper] max[imum] fuse tick[s]` | Expression | ExprCreeperMaxFuseTicks | ⏳ |  |
+| `(stop\|shut[ ]down) [the] server` | Effect | EffStopServer | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `stop (all:all sound[s]\|sound[s] %-strings%) [(in [the]\|from) %-so...` | Effect | EffStopSound | ✅ OK | Sound lookup per name. |
+| `make %livingentities% start shivering` | Effect | EffStriderShivering | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[stop:un]suppress [local variable] type hints` | Effect | EffSuppressTypeHints | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[local[ly]] suppress [the] (` | Effect | EffSuppressWarnings | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `make %livingentities% swing [their] [main] hand` | Effect | EffSwingHand | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[:un](tame\|domesticate) %entities%` | Effect | EffTame | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `Cannot toggle '` | Effect | EffToggle | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `allow %livingentities% to pick([ ]up items\| items up)` | Effect | EffToggleCanPickUpItems | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `(allow\|enable) (fly\|flight) (for\|to) %players%` | Effect | EffToggleFlight | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `(show\|reveal\|:hide) %itemtypes%'[s] [entire\|:additional] tool[ ]tip` | Effect | EffTooltip | ✅ OK | Item meta update is required. |
+| `(transform\|map) %~objects% (using\|with) <.+>` | Effect | EffTransform | ✅ OK | Mapping is the required work. |
+| `(grow\|create\|generate) tree [of type %treetype%] %directions% %lo...` | Effect | EffTree | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `(make\|let\|force) %entities% [to] (ride\|mount) [(in\|on)] %entity...` | Effect | EffVehicle | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `make %livingentities% (start sleeping\|[go to] sleep) [%-direction%...` | Effect | EffWakeupSleep | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `make %livingentities% sense [a] disturbance %direction% %location%` | Effect | EffWardenDisturbance | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `load [the] world[s] %strings% [with environment %-environment%]` | Effect | EffWorldLoad | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `save [[the] world[s]] %worlds%` | Effect | EffWorldSave | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `zombify %livingentities%` | Effect | EffZombify | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[the] absorbed blocks` | Expression | ExprAbsorbedBlocks | ✅ OK | Rare event. |
+| `(raised\|active) (tool\|item\|weapon)` | Expression | ExprActiveItem | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[the] affected entities` | Expression | ExprAffectedEntities | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[:max[imum]] age` | Expression | ExprAge | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `(ai\|artificial intelligence)` | Expression | ExprAI | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `target jukebox` | Expression | ExprAllayJukebox | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[all [[of] the]\|the] banned (players\|ips:(ips\|ip addresses))` | Expression | ExprAllBannedEntries | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[(all\|the\|all [of] the)] [registered] [(1¦script)] commands` | Expression | ExprAllCommands | ⚡ Optimized | 'all commands' collected the labels with a parallel stream (shared thread pool) per call; now a plain loop with the same order. |
+| `alphabetically sorted %strings%` | Expression | ExprAlphabetList | ✅ OK | Sorting is the required work. |
+| `altitude[s]` | Expression | ExprAltitude | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[the] (amount\|number) of %itemtypes% (in\|of) %inventories%` | Expression | ExprAmountOfItems | ⚡ Optimized | 'amount of <items> in <inventory>' built a new item type for every stack once per item type checked; now once per stack. |
+| `%number% [in] deg[ree][s]` | Expression | ExprAngle | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[anvil] [item] [:max[imum]] repair cost` | Expression | ExprAnvilRepairCost | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `anvil [inventory] (rename\|text) input` | Expression | ExprAnvilText | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `(any [one]\|one) of [the] %objects%` | Expression | ExprAnyOf | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[the] applied [beacon] effect` | Expression | ExprAppliedEffect | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `(:alpha\|:red\|:green\|:blue) (value\|component)` | Expression | ExprARGB | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `(old\|unequipped) armo[u]r item` | Expression | ExprArmorChangeItem | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `(%-*equipmentslots%\|[the] armo[u]r[s]) [item:item[s]]` | Expression | ExprArmorSlot | ✅ OK | Stream per call, but only a few slots per entity. |
+| `arrow knockback strength` | Expression | ExprArrowKnockbackStrength | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `arrow pierce level` | Expression | ExprArrowPierceLevel | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[number of] arrow[s] stuck in %livingentities%` | Expression | ExprArrowsStuck | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `(attached\|hit) block[multiple:s]` | Expression | ExprAttachedBlock | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `attack cooldown` | Expression | ExprAttackCooldown | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[the] (attacked\|damaged\|victim) [<(.+)>]` | Expression | ExprAttacked | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[a[n]] %*bannerpatterntypes% item[s]` | Expression | ExprBannerItem | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[all [[of] the]\|the] banner pattern[s] of %itemstacks/itemtypes/sl...` | Expression | ExprBannerPatterns | ✅ OK | Block state read is required. |
+| `[the] [piglin] barter[ing] drops` | Expression | ExprBarterDrops | ✅ OK | Rare event. |
+| `[the] [piglin] barter[ing] input` | Expression | ExprBarterInput | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `(:primary\|secondary) [beacon] effect` | Expression | ExprBeaconEffects | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `beacon [effect] range` | Expression | ExprBeaconRange | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `beacon tier` | Expression | ExprBeaconTier | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[(safe:(safe\|valid)\|(unsafe\|invalid))] bed[s] [location[s]]` | Expression | ExprBed | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `target flower` | Expression | ExprBeehiveFlower | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[max:max[imum]] honey level` | Expression | ExprBeehiveHoneyLevel | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[the] biome [(of\|%direction%) %locations%]` | Expression | ExprBiome | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `block[ ]data` | Expression | ExprBlockData | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[block] hardness` | Expression | ExprBlockHardness | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[(all [[of] the]\|the)] blocks %direction% [%locations%]` | Expression | ExprBlocks | ✅ OK | Block iteration is the required work. |
+| `(1:break\|2:fall\|3:hit\|4:place\|5:step) sound[s]` | Expression | ExprBlockSound | ✅ OK | Rare. |
+| `[(all [[of] the]\|the)] blocks in radius %number% [(of\|around) %lo...` | Expression | ExprBlockSphere | ✅ OK | Lazy iterator. |
+| `[the] break speed[s] [of %blocks%] [for %players%]` | Expression | ExprBreakSpeed | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `(brushable\|buried) item` | Expression | ExprBrushableItem | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `carr(ied\|ying) block[[ ]data]` | Expression | ExprCarryingBlockData | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[the] last caught [run[ ]time] errors` | Expression | ExprCaughtErrors | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `character (from\|at\|with) code([ ]point\| position) %integer%` | Expression | ExprCharacterFromCodepoint | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[(all [[of] the]\|the)] [:alphanumeric] characters (between\|from) ...` | Expression | ExprCharacters | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[:max[imum]] charge[s]` | Expression | ExprCharges | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[a] [new] chest inventory (named\|with name) %textcomponent% [with ...` | Expression | ExprChestInventory | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[(all [[of] the]\|the)] chunk[s] (of\|%-directions%) %locations%` | Expression | ExprChunk | ✅ OK | Chunk lookups in the server. |
+| `[the] (` | Expression | ExprClicked | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `client view distance[s]` | Expression | ExprClientViewDistance | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[the] remaining [time] [of [the] (cooldown\|wait) [(of\|for) [the] ...` | Expression | ExprCmdCooldownInfo | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[unicode\|character] code([ ]point\| position)` | Expression | ExprCodepoint | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[command[ ]block] command` | Expression | ExprCommandBlockCommand | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[the] main command [label\|name] [of [[the] command[s] %-strings%]]` | Expression | ExprCommandInfo | ✅ OK | Rare. |
+| `[command['s]] (sender\|executor)` | Expression | ExprCommandSender | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `compass target` | Expression | ExprCompassTarget | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[the] [skript] config` | Expression | ExprConfig | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[the] consumed item` | Expression | ExprConsumedItem | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[creeper] max[imum] fuse tick[s]` | Expression | ExprCreeperMaxFuseTicks | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 
 ## Section 7
 

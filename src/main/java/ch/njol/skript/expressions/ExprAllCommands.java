@@ -1,5 +1,6 @@
 package ch.njol.skript.expressions;
 
+import org.bukkit.command.Command;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +15,10 @@ import ch.njol.skript.lang.ExpressionType;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.skript.lang.util.SimpleExpression;
 import ch.njol.util.Kleenean;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Name("All commands")
 @Description("Returns all registered commands or all script commands.")
@@ -43,11 +48,12 @@ public class ExprAllCommands extends SimpleExpression<String> {
 		} else {
 			if (Commands.getCommandMap() == null)
 				return null;
-			return Commands.getCommandMap()
-					.getCommands()
-					.parallelStream()
-					.map(command -> command.getLabel())
-					.toArray(String[]::new);
+			// same order as before (parallelStream().toArray() keeps the encounter order), without the thread pool
+			Collection<Command> commands = Commands.getCommandMap().getCommands();
+			List<String> labels = new ArrayList<>(commands.size());
+			for (Command command : commands)
+				labels.add(command.getLabel());
+			return labels.toArray(new String[0]);
 		}
 	}
 	
