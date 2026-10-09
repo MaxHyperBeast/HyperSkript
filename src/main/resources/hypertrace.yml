@@ -1,0 +1,26 @@
+# HyperTrace: HyperSkript's built-in script profiler.
+#
+# HyperTrace only measures while a capture runs. Start one with /hypertrace start (optionally with a time,
+# e.g. /hypertrace start 60s), play normally, then use /hypertrace stop. It shows the slowest script lines in chat
+# and saves a full report to plugins/Skript/hypertrace/ that you can open in a browser.
+# While no capture runs, HyperTrace does nothing and costs nothing.
+#
+# Changes to this file apply the next time you use /hypertrace (no restart needed).
+
+# Set to false to turn HyperTrace off completely: /hypertrace won't start captures.
+enabled: true
+
+# Time every line of every script. This is what finds the exact slow lines, loops and sections.
+# When false, only events, triggers, functions and ticks are measured, which costs a little less while capturing.
+line-timing: true
+
+# A capture without a time stops by itself after this many minutes, so a forgotten capture can't run forever.
+# 0 = never.
+max-capture-minutes: 30
+
+# If the server stops ticking for this many seconds during a capture (for example an endless loop without a wait),
+# the script line that is running is written to the console. 0 = off.
+hang-detection-seconds: 10
+
+# How many lines /hypertrace shows in chat.
+chat-lines: 8

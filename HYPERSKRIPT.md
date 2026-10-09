@@ -80,6 +80,14 @@ was found and changed for each element, is in [SYNTAX-AUDIT.md](SYNTAX-AUDIT.md)
 Behaviour was kept exactly; a few possible changes were left out on purpose because they would change results
 (for example evaluating random expressions once instead of per player).
 
+## HyperTrace (built-in profiler)
+
+`/hypertrace start 60s` measures every script line, loop, trigger, function and event on the server thread and shows
+the slowest lines in chat, with a full HTML report in `plugins/Skript/hypertrace/`. Lines are matched by the line
+numbers recorded at load time and nothing in the scripts is rewired, so it is exact and safe on a live server. While no
+capture runs it costs nothing measurable. It can be turned off in `plugins/Skript/hypertrace.yml`. See
+[HYPERTRACE.md](HYPERTRACE.md).
+
 ## Addon compatibility
 
 Common addons (SkBee, skript-reflect, skript-worldguard, oopsk, SkCheese, skript-gui, DiSky, skript-placeholders,

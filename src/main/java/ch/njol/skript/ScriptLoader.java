@@ -1061,6 +1061,7 @@ public class ScriptLoader {
 				if (Skript.debug() || subNode.debug())
 					Skript.debug(TextComponentParser.instance().escape(parser.getIndentation() + item.toString(null, true)));
 
+				item.setHyperTraceLine(subNode.getLine());
 				items.add(item);
 			} else if (subNode instanceof SectionNode subSection) {
 
@@ -1136,6 +1137,7 @@ public class ScriptLoader {
 					afterParse.printLog();
 				}
 
+				item.setHyperTraceLine(subNode.getLine());
 				items.add(item);
 			} else {
 				continue;

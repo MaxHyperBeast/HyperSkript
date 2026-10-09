@@ -37,6 +37,11 @@ commands:
         aliases: [sk]
         permission: skript.admin
         usage: /skript help
+    hypertrace:
+        description: HyperTrace, HyperSkript's built-in script profiler. Type '/hypertrace' for help.
+        aliases: [htrace]
+        permission: skript.hypertrace
+        usage: /hypertrace help
 
 softdepend: [SQLibrary, Vault, WorldGuard, Residence, PreciousStones, GriefPrevention]
 
@@ -48,6 +53,7 @@ permissions:
             skript.reloadnotify: true
             skript.admin: true
             skript.see_runtime_errors: true
+            skript.hypertrace: true
             #skript.config: true
     skript.effectcommands:
         default: false
@@ -61,3 +67,6 @@ permissions:
     skript.see_runtime_errors:
         default: op
         description: Shows notifications in chat when runtime errors occur.
+    skript.hypertrace:
+        default: op
+        description: Allows use of /hypertrace (HyperSkript's script profiler).

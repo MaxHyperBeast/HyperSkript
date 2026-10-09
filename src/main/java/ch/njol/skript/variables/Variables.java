@@ -28,6 +28,7 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
+import org.skriptlang.skript.hypertrace.HyperTrace;
 import org.skriptlang.skript.lang.converter.Converters;
 
 import java.lang.reflect.Constructor;
@@ -602,6 +603,8 @@ public class Variables {
 				map = localVariables.computeIfAbsent(event, e -> new VariablesMap());
 			map.setVariable(name, value);
 		} else {
+			if (HyperTrace.active)
+				HyperTrace.globalWrite(name, value == null);
 			setVariable(name, value);
 		}
 	}

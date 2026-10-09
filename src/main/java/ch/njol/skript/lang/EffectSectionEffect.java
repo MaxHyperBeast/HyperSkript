@@ -3,6 +3,7 @@ package ch.njol.skript.lang;
 import ch.njol.skript.lang.SkriptParser.ParseResult;
 import ch.njol.util.Kleenean;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -14,6 +15,14 @@ public class EffectSectionEffect extends Effect {
 
 	public EffectSectionEffect(EffectSection effectSection) {
 		this.effectSection = effectSection;
+	}
+
+	/**
+	 * @return The wrapped effect section, which holds this item's parent.
+	 */
+	@ApiStatus.Internal
+	public EffectSection getEffectSection() {
+		return effectSection;
 	}
 
 	@Override

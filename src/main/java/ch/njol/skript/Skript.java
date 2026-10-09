@@ -60,6 +60,7 @@ import org.junit.After;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
+import org.skriptlang.skript.hypertrace.HyperTrace;
 import org.skriptlang.skript.addon.AddonModule;
 import org.skriptlang.skript.bukkit.BukkitModule;
 import org.skriptlang.skript.bukkit.SkriptMetrics;
@@ -531,6 +532,7 @@ public final class Skript extends JavaPlugin implements Listener {
 		assert skriptCommand != null; // It is defined, unless build is corrupted or something like that
 		skriptCommand.setExecutor(new SkriptCommand());
 		skriptCommand.setTabCompleter(new SkriptCommandTabCompleter());
+		HyperTrace.enable(this);
 
 		final AddonModule legacyModule = new AddonModule() {
 
@@ -1265,6 +1267,8 @@ public final class Skript extends JavaPlugin implements Listener {
 		if (disabled)
 			return;
 		disabled = true;
+
+		HyperTrace.disable();
 
 		if (!partDisabled) {
 			beforeDisable();

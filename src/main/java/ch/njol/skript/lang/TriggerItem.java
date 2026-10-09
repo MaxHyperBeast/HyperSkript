@@ -3,8 +3,11 @@ package ch.njol.skript.lang;
 import ch.njol.skript.Skript;
 import ch.njol.util.StringUtils;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.bukkit.text.TextComponentParser;
+import org.skriptlang.skript.hypertrace.Capture;
+import org.skriptlang.skript.hypertrace.HyperTrace;
 import org.skriptlang.skript.lang.script.Script;
 
 import java.io.File;
@@ -61,6 +64,8 @@ public abstract class TriggerItem implements Debuggable {
 	 * @return false if an exception occurred
 	 */
 	public static boolean walk(TriggerItem start, Event event) {
+		if (HyperTrace.active)
+			return walkTraced(start, event);
 		TriggerItem triggerItem = start;
 		try {
 			while (triggerItem != null)
@@ -90,6 +95,77 @@ public abstract class TriggerItem implements Debuggable {
 			throw throwable;
 		}
 		return false;
+	}
+
+	/**
+	 * {@link #walk(TriggerItem, Event)} while a HyperTrace capture runs: the same execution and error handling,
+	 * with every item timed when this is the captured thread.
+	 */
+	private static boolean walkTraced(TriggerItem start, Event event) {
+		TriggerItem triggerItem = start;
+		Capture capture = HyperTrace.captureForThread();
+		try {
+			if (capture == null) {
+				HyperTrace.untracedRun();
+				while (triggerItem != null)
+					triggerItem = triggerItem.walk(event);
+				return true;
+			}
+			int frame = capture.enterFrame();
+			try {
+				if (capture.lineTiming) {
+					while (triggerItem != null) {
+						TriggerItem item = triggerItem;
+						long childMark = capture.beginItem(item);
+						long started = System.nanoTime();
+						triggerItem = item.walk(event);
+						capture.endItem(item, event, started, childMark);
+					}
+				} else {
+					while (triggerItem != null)
+						triggerItem = triggerItem.walk(event);
+				}
+			} finally {
+				capture.exitFrame(start, frame);
+			}
+			return true;
+		} catch (StackOverflowError err) {
+			Trigger trigger = start.getTrigger();
+			String scriptName = "<unknown>";
+			if (trigger != null) {
+				Script script = trigger.getScript();
+				if (script != null) {
+					File scriptFile = script.getConfig().getFile();
+					if (scriptFile != null)
+						scriptName = scriptFile.getName();
+				}
+			}
+			Skript.adminBroadcast("<red>The script '<gold>" + scriptName + "<red>' infinitely (or excessively) repeated itself!");
+			if (Skript.debug())
+				err.printStackTrace();
+		} catch (Exception ex) {
+			if (ex.getStackTrace().length != 0) // empty exceptions have already been printed
+				Skript.exception(ex, triggerItem);
+		} catch (Throwable throwable) {
+			Skript.markErrored();
+			throw throwable;
+		}
+		return false;
+	}
+
+	private int hyperTraceLine = -1;
+
+	/**
+	 * @return The script line this item was loaded from, or -1 if unknown. Used by HyperTrace.
+	 */
+	@ApiStatus.Internal
+	public int getHyperTraceLine() {
+		return hyperTraceLine;
+	}
+
+	@ApiStatus.Internal
+	public void setHyperTraceLine(int line) {
+		this.hyperTraceLine = line;
 	}
 
 	/**

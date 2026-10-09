@@ -98,6 +98,14 @@ public abstract class LoopSection extends Section implements SyntaxElement, Debu
 	}
 
 	/**
+	 * @return The iteration counters of the currently running executions of this loop (a copy). Used by HyperTrace.
+	 */
+	@ApiStatus.Internal
+	public List<Long> getRunningLoopCounters() {
+		return new ArrayList<>(currentLoopCounter.values());
+	}
+
+	/**
 	 * @return The next {@link TriggerItem} after the loop
 	 */
 	public abstract TriggerItem getActualNext();

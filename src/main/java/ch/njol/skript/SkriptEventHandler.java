@@ -13,6 +13,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.RegisteredListener;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.hypertrace.Capture;
+import org.skriptlang.skript.hypertrace.HyperTrace;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -126,6 +128,22 @@ public final class SkriptEventHandler {
 		if (triggers.length == 0)
 			return;
 
+		if (HyperTrace.active) {
+			Capture capture = HyperTrace.captureForThread();
+			if (capture != null) {
+				int frame = capture.enterDispatch();
+				try {
+					dispatch(event, priority, triggers);
+				} finally {
+					capture.exitDispatch(event, frame);
+				}
+				return;
+			}
+		}
+		dispatch(event, priority, triggers);
+	}
+
+	private static void dispatch(Event event, EventPriority priority, Trigger[] triggers) {
 		// Check if this event should be treated as cancelled
 		boolean isCancelled = isCancelled(event);
 
@@ -202,7 +220,7 @@ public final class SkriptEventHandler {
 				run(trigger, event);
 		} else if (Bukkit.isPrimaryThread()) { // already on the main thread, no task needed
 			try {
-				if (triggerEvent.check(event))
+				if (HyperTrace.active ? HyperTrace.checkEvent(trigger, triggerEvent, event) : triggerEvent.check(event))
 					run(trigger, event);
 			} catch (Exception e) {
 				Skript.exception(e);
