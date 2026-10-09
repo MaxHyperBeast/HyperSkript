@@ -19,7 +19,8 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.registration.SyntaxRegistry;
 
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.skriptlang.skript.registration.DefaultSyntaxInfos.Expression.builder;
 
@@ -60,13 +61,15 @@ public class ExprEnchantmentLevel extends SimpleExpression<Long> {
 	@Override
 	protected Long[] get(Event event) {
 		Enchantment[] enchantments = enchants.getArray(event);
-		return Stream.of(items.getArray(event))
-			.map(ItemType::getEnchantmentTypes)
-			.flatMap(Stream::of)
-			.filter(enchantment -> CollectionUtils.contains(enchantments, enchantment.getType()))
-			.map(EnchantmentType::getLevel)
-			.map(i -> (long) i)
-			.toArray(Long[]::new);
+		// same as the previous stream: the level of every matching enchantment of every item, in order
+		List<Long> levels = new ArrayList<>();
+		for (ItemType item : items.getArray(event)) {
+			for (EnchantmentType enchantment : item.getEnchantmentTypes()) {
+				if (CollectionUtils.contains(enchantments, enchantment.getType()))
+					levels.add((long) enchantment.getLevel());
+			}
+		}
+		return levels.toArray(new Long[0]);
 	}
 
 	@Override

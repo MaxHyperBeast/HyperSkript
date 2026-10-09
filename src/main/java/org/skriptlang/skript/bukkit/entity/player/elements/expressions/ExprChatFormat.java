@@ -26,6 +26,7 @@ import org.skriptlang.skript.registration.SyntaxInfo;
 import org.skriptlang.skript.registration.SyntaxRegistry;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 
 @Name("Chat Format")
 @Description("""
@@ -37,6 +38,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Since("2.2-dev31")
 @Events("chat")
 public class ExprChatFormat extends SimpleExpression<Component> implements EventRestrictedSyntax {
+
+	/**
+	 * Compiled once instead of on every chat message (TextReplacementConfig.Builder#match(String) compiles it).
+	 */
+	private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("(?i)\\[(player|sender|message|msg)]");
 
 	public static void register(SyntaxRegistry syntaxRegistry) {
 		syntaxRegistry.register(SyntaxRegistry.EXPRESSION, SyntaxInfo.Expression.builder(ExprChatFormat.class, Component.class)
@@ -95,7 +101,7 @@ public class ExprChatFormat extends SimpleExpression<Component> implements Event
 
 		asyncChatEvent.renderer(ChatRenderer.viewerUnaware((source, sourceDisplayName, message) ->
 			((Component) delta[0]).replaceText(TextReplacementConfig.builder()
-				.match("(?i)\\[(player|sender|message|msg)]")
+				.match(PLACEHOLDER_PATTERN)
 				.replacement((matchResult, builder) -> {
 					containsPlaceholders = true;
 					return matchResult.group(1).startsWith("m") ? message : sourceDisplayName;

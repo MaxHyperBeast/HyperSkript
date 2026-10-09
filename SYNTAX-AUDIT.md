@@ -5,7 +5,7 @@ one section at a time for runtime performance. **Status:** ✅ OK = reviewed, no
 ⚡ Optimized = changed (the note says what was slow and what changed); ⏳ = not reviewed yet.
 Every change keeps the exact behaviour; Skript's test suite must pass after each section.
 
-**Progress:** 882 of 1054 reviewed, 44 optimized.
+**Progress:** 962 of 1054 reviewed, 46 optimized.
 
 | Section | Contents | Reviewed |
 |---|---|---|
@@ -19,7 +19,7 @@ Every change keeps the exact behaviour; Skript's test suite must pass after each
 | [8](#section-8) | expressions | 80/80 |
 | [9](#section-9) | expressions | 80/80 |
 | [10](#section-10) | expressions, hooks.chat.expressions, hooks.economy.expressions, ... | 80/80 |
-| [11](#section-11) | bukkit.enchantments.elements.expressions, bukkit.entity.displays.elements.expressions, bukkit.entity.displays.item.elements.expressions, ... | 0/80 |
+| [11](#section-11) | bukkit.enchantments.elements.expressions, bukkit.entity.displays.elements.expressions, bukkit.entity.displays.item.elements.expressions, ... | 80/80 |
 | [12](#section-12) | bukkit.itemcomponents.equippable.elements.expressions, bukkit.loottables.elements.conditions, bukkit.loottables.elements.effects, ... | 0/80 |
 | [13](#section-13) | common.properties.elements.expressions | 0/12 |
 
@@ -981,86 +981,86 @@ bukkit.enchantments.elements.expressions, bukkit.entity.displays.elements.expres
 
 | Syntax | Kind | Class | Status | Notes |
 |---|---|---|---|---|
-| `[the] enchant[ment] bonus` | Expression | ExprEnchantmentBonus | ⏳ |  |
-| `[the] enchant[ment] hint` | Expression | ExprEnchantmentHint | ⏳ |  |
-| `[the] [enchant[ment]] level[s] of %enchantments% (on\|of) %itemtypes%` | Expression | ExprEnchantmentLevel | ⏳ |  |
-| `[all [[of] the]\|the] enchant[ment] offers` | Expression | ExprEnchantmentOffer | ⏳ |  |
-| `[enchant[ment]] cost` | Expression | ExprEnchantmentOfferCost | ⏳ |  |
-| `enchantments` | Expression | ExprEnchantments | ⏳ |  |
-| `%itemtypes% with[:out] [enchant[ment]] glint` | Expression | ExprItemWithEnchantmentGlint | ⏳ |  |
-| `((:max\|min)[imum]\|starting) enchant[ment] level` | Expression | ExprMinMaxEnchantmentLevel | ⏳ |  |
-| `stored enchant[ment]s` | Expression | ExprStoredEnchantments | ⏳ |  |
-| `bill[ \|-]board[ing] [setting]` | Expression | ExprDisplayBillboard | ⏳ |  |
-| `[:block\|:sky] (light [level]\|brightness) override[s]` | Expression | ExprDisplayBrightness | ⏳ |  |
-| `glow[ing] colo[u]r[s] override[s]` | Expression | ExprDisplayGlowOverride | ⏳ |  |
-| `display (:height\|width)` | Expression | ExprDisplayHeightWidth | ⏳ |  |
-| `interpolation (:delay\|duration)[s]` | Expression | ExprDisplayInterpolation | ⏳ |  |
-| `shadow (:radius\|strength)` | Expression | ExprDisplayShadow | ⏳ |  |
-| `teleport[ation] duration[s]` | Expression | ExprDisplayTeleportDuration | ⏳ |  |
-| `(:left\|right) [transformation] rotation` | Expression | ExprDisplayTransformationRotation | ⏳ |  |
-| `(display\|[display] transformation) (:scale\|translation)` | Expression | ExprDisplayTransformationScaleTranslation | ⏳ |  |
-| `[display] view (range\|radius)` | Expression | ExprDisplayViewRange | ⏳ |  |
-| `item [display] transform` | Expression | ExprItemDisplayTransform | ⏳ |  |
-| `[[the] text of] %displays% (has\|have) [a] (drop\|text) shadow` | Condition | CondTextDisplayHasDropShadow | ⏳ |  |
-| `visible through (blocks\|walls)` | Condition | CondTextDisplaySeeThroughBlocks | ⏳ |  |
-| `(apply\|add) (drop\|text) shadow to [[the] text of] %displays%` | Effect | EffTextDisplayDropShadow | ⏳ |  |
-| `make %displays% visible through (blocks\|walls)` | Effect | EffTextDisplaySeeThroughBlocks | ⏳ |  |
-| `text alignment[s]` | Expression | ExprTextDisplayAlignment | ⏳ |  |
-| `line width` | Expression | ExprTextDisplayLineWidth | ⏳ |  |
-| `[display] [text] opacity` | Expression | ExprTextDisplayOpacity | ⏳ |  |
-| `[the] death( \|-)message` | Expression | ExprDeathMessage | ⏳ |  |
-| `[the] path[ ]finding target location` | Expression | ExprPathfindingLocation | ⏳ |  |
-| `[the] path[ ]finding target [entity]` | Expression | ExprPathfindingTarget | ⏳ |  |
-| `(responsive\|:unresponsive)` | Condition | CondIsResponsive | ⏳ |  |
-| `make %entities% responsive` | Effect | EffMakeResponsive | ⏳ |  |
-| `interaction (height\|:width)[s]` | Expression | ExprInteractionDimensions | ⏳ |  |
-| `[the] last (date\|time)[s] [that\|when] %entities% (were\|was) (att...` | Expression | ExprLastInteractionDate | ⏳ |  |
-| `[the] last player[s] to (attack\|1:interact with\|2:click [on]) %en...` | Expression | ExprLastInteractionPlayer | ⏳ |  |
-| `ban [kick:and kick] %strings/offlineplayers% [(by reason of\|becaus...` | Effect | EffBan | ⏳ |  |
-| `kick %players% [(by reason of\|because [of]\|on account of\|due to)...` | Effect | EffKick | ⏳ |  |
-| `[the] (message\|chat) format[ting]` | Expression | ExprChatFormat | ⏳ |  |
-| `[the] [chat( \|-)]message` | Expression | ExprChatMessage | ⏳ |  |
-| `[the] [chat( \| -)]recipients` | Expression | ExprChatRecipients | ⏳ |  |
-| `[the] (join\|log[ ]in)( \|-)message` | Expression | ExprJoinMessage | ⏳ |  |
-| `[the] kick( \|-)message` | Expression | ExprKickMessage | ⏳ |  |
-| `[the] on-screen kick message` | Expression | ExprOnScreenKickMessage | ⏳ |  |
-| `[the] picked (item\|1:block\|2:entity)` | Expression | ExprPickedItem | ⏳ |  |
-| `(player\|tab)[ ]list (header\|:footer) [text\|message]` | Expression | ExprPlayerListHeaderFooter | ⏳ |  |
-| `(player\|tab)[ ]list name[s]` | Expression | ExprPlayerListName | ⏳ |  |
-| `(player\|tab)[ ]list priority` | Expression | ExprPlayerListPriority | ⏳ |  |
-| `[the] (quit\|leave\|log[ ]out)( \|-)message` | Expression | ExprQuitMessage | ⏳ |  |
-| `[the] respawn location` | Expression | ExprRespawnLocation | ⏳ |  |
-| `lure enchantment bonus is (applied\|active)` | Condition | CondFishingLure | ⏳ |  |
-| `in open water[s]` | Condition | CondIsInOpenWater | ⏳ |  |
-| `apply [the] lure enchantment bonus` | Effect | EffFishingLure | ⏳ |  |
-| `(reel\|pull) in [the] hook[ed] entity` | Effect | EffPullHookedEntity | ⏳ |  |
-| `(min:min[imum]\|max[imum]) fish[ing] approach[ing] angle` | Expression | ExprFishingApproachAngle | ⏳ |  |
-| `fish[ing] bit(e\|ing) [wait] time` | Expression | ExprFishingBiteTime | ⏳ |  |
-| `fish[ing] (hook\|bobber)` | Expression | ExprFishingHook | ⏳ |  |
-| `[the] hook[ed] entity` | Expression | ExprFishingHookEntity | ⏳ |  |
-| `(min:min[imum]\|max[imum]) fish[ing] wait[ing] time` | Expression | ExprFishingWaitTime | ⏳ |  |
-| `%players% (is\|are) pressing %inputkeys%` | Condition | CondIsPressingKey | ⏳ |  |
-| `[current] (inputs\|input keys)` | Expression | ExprCurrentInputKeys | ⏳ |  |
-| `[book] (author\|writer\|publisher)` | Expression | ExprBookAuthor | ⏳ |  |
-| `[all [[of] the]\|the] [book] (pages\|content) of %itemtypes%` | Expression | ExprBookPages | ⏳ |  |
-| `book (name\|title)` | Expression | ExprBookTitle | ⏳ |  |
-| `%itemtype% with [a\|the] lore %textcomponents/strings%` | Expression | ExprItemWithLore | ⏳ |  |
-| `[the\|a[n]] [item] component copy of %itemcomponents%` | Expression | ExprItemCompCopy | ⏳ |  |
-| `%equippablecomponents% will (lose durability\|be damaged) (on [wear...` | Condition | CondEquipCompDamage | ⏳ |  |
-| `be dispensed` | Condition | CondEquipCompDispensable | ⏳ |  |
-| `be (equipped\|put) on[to] entities` | Condition | CondEquipCompInteract | ⏳ |  |
-| `be sheared off [of entities]` | Condition | CondEquipCompShearable | ⏳ |  |
-| `swap equipment [on right click\|when right clicked]` | Condition | CondEquipCompSwapEquipment | ⏳ |  |
-| `(make\|let) %equippablecomponents% (lose durability\|be damaged) (o...` | Effect | EffEquipCompDamageable | ⏳ |  |
-| `allow %equippablecomponents% to be dispensed` | Effect | EffEquipCompDispensable | ⏳ |  |
-| `allow %equippablecomponents% to be equipped on[to] entities` | Effect | EffEquipCompInteract | ⏳ |  |
-| `allow %equippablecomponents% to be sheared off [of entities]` | Effect | EffEquipCompShearable | ⏳ |  |
-| `(allow\|force) %equippablecomponents% to swap equipment [on right c...` | Effect | EffEquipCompSwapEquipment | ⏳ |  |
-| `camera overlay` | Expression | ExprEquipCompCameraOverlay | ⏳ |  |
-| `allowed entities` | Expression | ExprEquipCompEntities | ⏳ |  |
-| `equip sound` | Expression | ExprEquipCompEquipSound | ⏳ |  |
-| `equipped (model\|asset) (key\|id)` | Expression | ExprEquipCompModel | ⏳ |  |
-| `shear[ed [off]] sound` | Expression | ExprEquipCompShearSound | ⏳ |  |
+| `[the] enchant[ment] bonus` | Expression | ExprEnchantmentBonus | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] enchant[ment] hint` | Expression | ExprEnchantmentHint | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [enchant[ment]] level[s] of %enchantments% (on\|of) %itemtypes%` | Expression | ExprEnchantmentLevel | ⚡ Optimized | Read enchantment levels through a 6-stage stream (used by custom enchant scripts on every block break); now a plain loop with the same results. |
+| `[all [[of] the]\|the] enchant[ment] offers` | Expression | ExprEnchantmentOffer | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[enchant[ment]] cost` | Expression | ExprEnchantmentOfferCost | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `enchantments` | Expression | ExprEnchantments | ✅ OK | Item meta read is required. |
+| `%itemtypes% with[:out] [enchant[ment]] glint` | Expression | ExprItemWithEnchantmentGlint | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `((:max\|min)[imum]\|starting) enchant[ment] level` | Expression | ExprMinMaxEnchantmentLevel | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `stored enchant[ment]s` | Expression | ExprStoredEnchantments | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `bill[ \|-]board[ing] [setting]` | Expression | ExprDisplayBillboard | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[:block\|:sky] (light [level]\|brightness) override[s]` | Expression | ExprDisplayBrightness | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `glow[ing] colo[u]r[s] override[s]` | Expression | ExprDisplayGlowOverride | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `display (:height\|width)` | Expression | ExprDisplayHeightWidth | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `interpolation (:delay\|duration)[s]` | Expression | ExprDisplayInterpolation | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `shadow (:radius\|strength)` | Expression | ExprDisplayShadow | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `teleport[ation] duration[s]` | Expression | ExprDisplayTeleportDuration | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(:left\|right) [transformation] rotation` | Expression | ExprDisplayTransformationRotation | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(display\|[display] transformation) (:scale\|translation)` | Expression | ExprDisplayTransformationScaleTranslation | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[display] view (range\|radius)` | Expression | ExprDisplayViewRange | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `item [display] transform` | Expression | ExprItemDisplayTransform | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[[the] text of] %displays% (has\|have) [a] (drop\|text) shadow` | Condition | CondTextDisplayHasDropShadow | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `visible through (blocks\|walls)` | Condition | CondTextDisplaySeeThroughBlocks | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(apply\|add) (drop\|text) shadow to [[the] text of] %displays%` | Effect | EffTextDisplayDropShadow | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `make %displays% visible through (blocks\|walls)` | Effect | EffTextDisplaySeeThroughBlocks | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `text alignment[s]` | Expression | ExprTextDisplayAlignment | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `line width` | Expression | ExprTextDisplayLineWidth | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[display] [text] opacity` | Expression | ExprTextDisplayOpacity | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] death( \|-)message` | Expression | ExprDeathMessage | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] path[ ]finding target location` | Expression | ExprPathfindingLocation | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] path[ ]finding target [entity]` | Expression | ExprPathfindingTarget | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(responsive\|:unresponsive)` | Condition | CondIsResponsive | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `make %entities% responsive` | Effect | EffMakeResponsive | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `interaction (height\|:width)[s]` | Expression | ExprInteractionDimensions | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] last (date\|time)[s] [that\|when] %entities% (were\|was) (att...` | Expression | ExprLastInteractionDate | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] last player[s] to (attack\|1:interact with\|2:click [on]) %en...` | Expression | ExprLastInteractionPlayer | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `ban [kick:and kick] %strings/offlineplayers% [(by reason of\|becaus...` | Effect | EffBan | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `kick %players% [(by reason of\|because [of]\|on account of\|due to)...` | Effect | EffKick | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] (message\|chat) format[ting]` | Expression | ExprChatFormat | ⚡ Optimized | 'set chat format' compiled its [player]/[message] placeholder regex every time a chat message was rendered; now compiled once. |
+| `[the] [chat( \|-)]message` | Expression | ExprChatMessage | ✅ OK | One getter. |
+| `[the] [chat( \| -)]recipients` | Expression | ExprChatRecipients | ✅ OK | Viewer set copy is required. |
+| `[the] (join\|log[ ]in)( \|-)message` | Expression | ExprJoinMessage | ✅ OK | One getter. |
+| `[the] kick( \|-)message` | Expression | ExprKickMessage | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] on-screen kick message` | Expression | ExprOnScreenKickMessage | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] picked (item\|1:block\|2:entity)` | Expression | ExprPickedItem | ✅ OK | Rare event. |
+| `(player\|tab)[ ]list (header\|:footer) [text\|message]` | Expression | ExprPlayerListHeaderFooter | ✅ OK | Packet sending dominates. |
+| `(player\|tab)[ ]list name[s]` | Expression | ExprPlayerListName | ✅ OK | One getter/setter. |
+| `(player\|tab)[ ]list priority` | Expression | ExprPlayerListPriority | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] (quit\|leave\|log[ ]out)( \|-)message` | Expression | ExprQuitMessage | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] respawn location` | Expression | ExprRespawnLocation | ✅ OK | One getter. |
+| `lure enchantment bonus is (applied\|active)` | Condition | CondFishingLure | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `in open water[s]` | Condition | CondIsInOpenWater | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `apply [the] lure enchantment bonus` | Effect | EffFishingLure | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(reel\|pull) in [the] hook[ed] entity` | Effect | EffPullHookedEntity | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(min:min[imum]\|max[imum]) fish[ing] approach[ing] angle` | Expression | ExprFishingApproachAngle | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `fish[ing] bit(e\|ing) [wait] time` | Expression | ExprFishingBiteTime | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `fish[ing] (hook\|bobber)` | Expression | ExprFishingHook | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] hook[ed] entity` | Expression | ExprFishingHookEntity | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(min:min[imum]\|max[imum]) fish[ing] wait[ing] time` | Expression | ExprFishingWaitTime | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `%players% (is\|are) pressing %inputkeys%` | Condition | CondIsPressingKey | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[current] (inputs\|input keys)` | Expression | ExprCurrentInputKeys | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[book] (author\|writer\|publisher)` | Expression | ExprBookAuthor | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[all [[of] the]\|the] [book] (pages\|content) of %itemtypes%` | Expression | ExprBookPages | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `book (name\|title)` | Expression | ExprBookTitle | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `%itemtype% with [a\|the] lore %textcomponents/strings%` | Expression | ExprItemWithLore | ✅ OK | Item clone + meta change is required. |
+| `[the\|a[n]] [item] component copy of %itemcomponents%` | Expression | ExprItemCompCopy | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `%equippablecomponents% will (lose durability\|be damaged) (on [wear...` | Condition | CondEquipCompDamage | ✅ OK | Item component builder edit; streams over a few wrappers, rarely used in hot code. |
+| `be dispensed` | Condition | CondEquipCompDispensable | ✅ OK | Item component builder edit; streams over a few wrappers, rarely used in hot code. |
+| `be (equipped\|put) on[to] entities` | Condition | CondEquipCompInteract | ✅ OK | Item component builder edit; streams over a few wrappers, rarely used in hot code. |
+| `be sheared off [of entities]` | Condition | CondEquipCompShearable | ✅ OK | Item component builder edit; streams over a few wrappers, rarely used in hot code. |
+| `swap equipment [on right click\|when right clicked]` | Condition | CondEquipCompSwapEquipment | ✅ OK | Item component builder edit; streams over a few wrappers, rarely used in hot code. |
+| `(make\|let) %equippablecomponents% (lose durability\|be damaged) (o...` | Effect | EffEquipCompDamageable | ✅ OK | Item component builder edit; streams over a few wrappers, rarely used in hot code. |
+| `allow %equippablecomponents% to be dispensed` | Effect | EffEquipCompDispensable | ✅ OK | Item component builder edit; streams over a few wrappers, rarely used in hot code. |
+| `allow %equippablecomponents% to be equipped on[to] entities` | Effect | EffEquipCompInteract | ✅ OK | Item component builder edit; streams over a few wrappers, rarely used in hot code. |
+| `allow %equippablecomponents% to be sheared off [of entities]` | Effect | EffEquipCompShearable | ✅ OK | Item component builder edit; streams over a few wrappers, rarely used in hot code. |
+| `(allow\|force) %equippablecomponents% to swap equipment [on right c...` | Effect | EffEquipCompSwapEquipment | ✅ OK | Item component builder edit; streams over a few wrappers, rarely used in hot code. |
+| `camera overlay` | Expression | ExprEquipCompCameraOverlay | ✅ OK | Item component builder edit; streams over a few wrappers, rarely used in hot code. |
+| `allowed entities` | Expression | ExprEquipCompEntities | ✅ OK | Rare, item component edits. |
+| `equip sound` | Expression | ExprEquipCompEquipSound | ✅ OK | Item component builder edit; streams over a few wrappers, rarely used in hot code. |
+| `equipped (model\|asset) (key\|id)` | Expression | ExprEquipCompModel | ✅ OK | Item component builder edit; streams over a few wrappers, rarely used in hot code. |
+| `shear[ed [off]] sound` | Expression | ExprEquipCompShearSound | ✅ OK | Item component builder edit; streams over a few wrappers, rarely used in hot code. |
 
 ## Section 12
 
