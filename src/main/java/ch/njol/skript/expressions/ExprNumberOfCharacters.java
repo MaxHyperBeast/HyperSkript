@@ -55,18 +55,12 @@ public class ExprNumberOfCharacters extends SimpleExpression<Long> {
 		if (str == null)
 			return null;
 		long size = 0;
-		if (pattern == 0) {
-			for (int c : (Iterable<Integer>) str.codePoints()::iterator) {
-				if (Character.isUpperCase(c)) size++;
-			}
-		} else if (pattern == 1) {
-			for (int c : (Iterable<Integer>) str.codePoints()::iterator) {
-				if (Character.isLowerCase(c)) size++;
-			}
-		} else {
-			for (int c : (Iterable<Integer>) str.codePoints()::iterator) {
-				if (Character.isDigit(c)) size++;
-			}
+		// same code points as str.codePoints(), without boxing each one through an iterator
+		for (int i = 0; i < str.length(); ) {
+			int c = str.codePointAt(i);
+			i += Character.charCount(c);
+			if (pattern == 0 ? Character.isUpperCase(c) : pattern == 1 ? Character.isLowerCase(c) : Character.isDigit(c))
+				size++;
 		}
 		return new Long[]{size};
 	}

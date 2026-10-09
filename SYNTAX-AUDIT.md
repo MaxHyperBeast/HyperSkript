@@ -5,7 +5,7 @@ one section at a time for runtime performance. **Status:** ✅ OK = reviewed, no
 ⚡ Optimized = changed (the note says what was slow and what changed); ⏳ = not reviewed yet.
 Every change keeps the exact behaviour; Skript's test suite must pass after each section.
 
-**Progress:** 642 of 1054 reviewed, 39 optimized.
+**Progress:** 722 of 1054 reviewed, 41 optimized.
 
 | Section | Contents | Reviewed |
 |---|---|---|
@@ -16,7 +16,7 @@ Every change keeps the exact behaviour; Skript's test suite must pass after each
 | [5](#section-5) | conditions, effects | 80/80 |
 | [6](#section-6) | effects, expressions | 80/80 |
 | [7](#section-7) | expressions | 80/80 |
-| [8](#section-8) | expressions | 0/80 |
+| [8](#section-8) | expressions | 80/80 |
 | [9](#section-9) | expressions | 0/80 |
 | [10](#section-10) | expressions, hooks.chat.expressions, hooks.economy.expressions, ... | 0/80 |
 | [11](#section-11) | bukkit.enchantments.elements.expressions, bukkit.entity.displays.elements.expressions, bukkit.entity.displays.item.elements.expressions, ... | 0/80 |
@@ -720,86 +720,86 @@ expressions
 
 | Syntax | Kind | Class | Status | Notes |
 |---|---|---|---|---|
-| `[the] uuid of [the] [dropped] item thrower [of %itementities%]` | Expression | ExprItemThrower | ⏳ |  |
-| `%itemtype% with [custom] model data %numbers/booleans/strings/colors%` | Expression | ExprItemWithCustomModelData | ⏳ |  |
-| `%itemtypes% with[:out] [entire\|:additional] tool[ ]tip[s]` | Expression | ExprItemWithTooltip | ⏳ |  |
-| `(keyed\|indexed) %~objects%` | Expression | ExprKeyed | ⏳ |  |
-| `[([currently] selected\|current)] [game] (language\|locale) [setting]` | Expression | ExprLanguage | ⏳ |  |
-| `last attacker` | Expression | ExprLastAttacker | ⏳ |  |
-| `last damage` | Expression | ExprLastDamage | ⏳ |  |
-| `last damage (cause\|reason\|type)` | Expression | ExprLastDamageCause | ⏳ |  |
-| `[last] death location[s]` | Expression | ExprLastDeathLocation | ⏳ |  |
-| `[the] [last[ly]] loaded server icon` | Expression | ExprLastLoadedServerIcon | ⏳ |  |
-| `(1¦last\|2¦first) login` | Expression | ExprLastLoginTime | ⏳ |  |
-| `[last] resource pack response[s]` | Expression | ExprLastResourcePackResponse | ⏳ |  |
-| `[the] [last[ly]] (0:spawned\|1:shot) %*entitydata%` | Expression | ExprLastSpawnedEntity | ⏳ |  |
-| `leash holder[s]` | Expression | ExprLeashHolder | ⏳ |  |
-| `[xp\|exp[erience]] level` | Expression | ExprLevel | ⏳ |  |
-| `level progress` | Expression | ExprLevelProgress | ⏳ |  |
-| `[(1¦sky\|1¦sun\|2¦block)[ ]]light[ ]level [(of\|%direction%) %locat...` | Expression | ExprLightLevel | ⏳ |  |
-| `[the] (location\|position) [at] [\\(][x[ ][=[ ]]]%number%, [y[ ][=[...` | Expression | ExprLocationAt | ⏳ |  |
-| `%vector% to location in %world%` | Expression | ExprLocationFromVector | ⏳ |  |
-| `(location\|position) of %location%` | Expression | ExprLocationOf | ⏳ |  |
-| `%location% offset by [[the] vectors] %vectors% [facingrelative:usin...` | Expression | ExprLocationVectorOffset | ⏳ |  |
-| `[the] (highest\|:lowest) [solid] block (at\|of) %locations%` | Expression | ExprLowestHighestSolidBlock | ⏳ |  |
-| `max[imum] (durabilit(y\|ies)\|damage)` | Expression | ExprMaxDurability | ⏳ |  |
-| `max[imum] freeze time` | Expression | ExprMaxFreezeTicks | ⏳ |  |
-| `max[imum] health` | Expression | ExprMaxHealth | ⏳ |  |
-| `max[imum] [item] us(e\|age) (time\|duration)` | Expression | ExprMaxItemUseTime | ⏳ |  |
-| `max[imum] minecart (speed\|velocity)` | Expression | ExprMaxMinecartSpeed | ⏳ |  |
-| `[the] [1:(real\|default)\|2:(fake\|shown\|displayed)] max[imum] pla...` | Expression | ExprMaxPlayers | ⏳ |  |
-| `max[imum] stack[[ ]size]` | Expression | ExprMaxStack | ⏳ |  |
-| `me` | Expression | ExprMe | ⏳ |  |
-| `[the] [server] (:free\|max:max[imum]\|total) (memory\|ram)` | Expression | ExprMemory | ⏳ |  |
-| `[the] [mending] repair amount` | Expression | ExprMendingRepairAmount | ⏳ |  |
-| `(middle\|center) [point]` | Expression | ExprMiddleOfLocation | ⏳ |  |
-| `[the] mid[-]point (of\|between) %object% and %object%` | Expression | ExprMidpoint | ⏳ |  |
-| `[minecart] (1¦derailed\|2¦flying) velocity` | Expression | ExprMinecartDerailedFlyingVelocity | ⏳ |  |
-| `(lunar\|moon) phase[s]` | Expression | ExprMoonPhase | ⏳ |  |
-| `%itemtype/inventorytype% (named\|with name[s]) %textcomponent%` | Expression | ExprNamed | ⏳ |  |
-| `[the] (nearest\|closest) %*entitydatas% [[relative] to %entity/loca...` | Expression | ExprNearestEntity | ⏳ |  |
-| `[a] %bannerpatterntype% colo[u]red %color%` | Expression | ExprNewBannerPattern | ⏳ |  |
-| `(invulnerability\|invincibility\|no damage) tick[s]` | Expression | ExprNoDamageTicks | ⏳ |  |
-| `(invulnerability\|invincibility\|no damage) time[[ ]span]` | Expression | ExprNoDamageTime | ⏳ |  |
-| `[the] node %string% (of\|in) %node%` | Expression | ExprNode | ⏳ |  |
-| `number of upper[ ]case char(acters\|s) in %string%` | Expression | ExprNumberOfCharacters | ⏳ |  |
-| `[(all [[of] the]\|the)] offline[ ]players` | Expression | ExprOfflinePlayers | ⏳ |  |
-| `[the] [(1:(real\|default)\|2:(fake\|shown\|displayed))] [online] pl...` | Expression | ExprOnlinePlayersCount | ⏳ |  |
-| `[the] (current\|open\|top) inventory [of %players%]` | Expression | ExprOpenedInventory | ⏳ |  |
-| `[all [[of] the]\|the] [server] [:non(-\| )]op[erator]s` | Expression | ExprOps | ⏳ |  |
-| `(:main\|hidden) gene[s]` | Expression | ExprPandaGene | ⏳ |  |
-| `[the] [last] [parse] error` | Expression | ExprParseError | ⏳ |  |
-| `[the] passenger[s] of %entities%` | Expression | ExprPassenger | ⏳ |  |
-| `%number%(\\%\| percent) of %numbers%` | Expression | ExprPercent | ⏳ |  |
-| `[(all [[of] the]\|the)] permissions (from\|of) %players%` | Expression | ExprPermissions | ⏳ |  |
-| `pick[ ]up delay` | Expression | ExprPickupDelay | ⏳ |  |
-| `[a[n]] (plain\|unmodified) %itemtype%` | Expression | ExprPlain | ⏳ |  |
-| `[custom] chat completion[s]` | Expression | ExprPlayerChatCompletions | ⏳ |  |
-| `protocol version` | Expression | ExprPlayerProtocolVersion | ⏳ |  |
-| `[(all [[of] the]\|the)] [loaded] plugins` | Expression | ExprPlugins | ⏳ |  |
-| `[the] portal['s] blocks` | Expression | ExprPortal | ⏳ |  |
-| `portal cooldown` | Expression | ExprPortalCooldown | ⏳ |  |
-| `(projectile\|arrow) critical (state\|ability\|mode)` | Expression | ExprProjectileCriticalState | ⏳ |  |
-| `[the] projectile force` | Expression | ExprProjectileForce | ⏳ |  |
-| `[the] [server] [(sent\|required\|fake)] protocol version [number]` | Expression | ExprProtocolVersion | ⏳ |  |
-| `[the] moved blocks` | Expression | ExprPushedBlocks | ⏳ |  |
-| `[a] [new] queue [(of\|with) %-objects%]` | Expression | ExprQueue | ⏳ |  |
-| `(:start\|end)` | Expression | ExprQueueStartEnd | ⏳ |  |
-| `(quit\|disconnect) (cause\|reason)` | Expression | ExprQuitReason | ⏳ |  |
-| `[a\|%-integer%] random [:alphanumeric] character[s] (from\|between)...` | Expression | ExprRandomCharacter | ⏳ |  |
-| `[a] random uuid` | Expression | ExprRandomUUID | ⏳ |  |
-| `(raw\|minecraft\|vanilla) name[s] of %itemtypes%` | Expression | ExprRawName | ⏳ |  |
-| `[the] (readied\|selected\|drawn) (:arrow\|bow)` | Expression | ExprReadiedArrow | ⏳ |  |
-| `recursive %~objects%` | Expression | ExprRecursive | ⏳ |  |
-| `redstone power` | Expression | ExprRedstoneBlockPower | ⏳ |  |
-| `%objects% (reduced\|folded) (to\|with\|by) \\[<.+>\\]` | Expression | ExprReduce | ⏳ |  |
-| `[the] reduced value` | Expression | ExprReducedValue | ⏳ |  |
-| `remaining air` | Expression | ExprRemainingAir | ⏳ |  |
-| `%strings% repeated %integer% time[s]` | Expression | ExprRepeat | ⏳ |  |
-| `resonat(e\|ing) time` | Expression | ExprResonatingTime | ⏳ |  |
-| `respawn[ing] reason` | Expression | ExprRespawnReason | ⏳ |  |
-| `[the] result[plural:s] of [running\|executing] %executable% [argume...` | Expression | ExprResult | ⏳ |  |
-| `reversed %objects%` | Expression | ExprReversedList | ⏳ |  |
+| `[the] uuid of [the] [dropped] item thrower [of %itementities%]` | Expression | ExprItemThrower | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `%itemtype% with [custom] model data %numbers/booleans/strings/colors%` | Expression | ExprItemWithCustomModelData | ✅ OK | Item clone + meta change is required. |
+| `%itemtypes% with[:out] [entire\|:additional] tool[ ]tip[s]` | Expression | ExprItemWithTooltip | ✅ OK | Item clone + meta change is required. |
+| `(keyed\|indexed) %~objects%` | Expression | ExprKeyed | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[([currently] selected\|current)] [game] (language\|locale) [setting]` | Expression | ExprLanguage | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `last attacker` | Expression | ExprLastAttacker | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `last damage` | Expression | ExprLastDamage | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `last damage (cause\|reason\|type)` | Expression | ExprLastDamageCause | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[last] death location[s]` | Expression | ExprLastDeathLocation | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [last[ly]] loaded server icon` | Expression | ExprLastLoadedServerIcon | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(1¦last\|2¦first) login` | Expression | ExprLastLoginTime | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[last] resource pack response[s]` | Expression | ExprLastResourcePackResponse | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [last[ly]] (0:spawned\|1:shot) %*entitydata%` | Expression | ExprLastSpawnedEntity | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `leash holder[s]` | Expression | ExprLeashHolder | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[xp\|exp[erience]] level` | Expression | ExprLevel | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `level progress` | Expression | ExprLevelProgress | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[(1¦sky\|1¦sun\|2¦block)[ ]]light[ ]level [(of\|%direction%) %locat...` | Expression | ExprLightLevel | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] (location\|position) [at] [\\(][x[ ][=[ ]]]%number%, [y[ ][=[...` | Expression | ExprLocationAt | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `%vector% to location in %world%` | Expression | ExprLocationFromVector | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(location\|position) of %location%` | Expression | ExprLocationOf | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `%location% offset by [[the] vectors] %vectors% [facingrelative:usin...` | Expression | ExprLocationVectorOffset | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] (highest\|:lowest) [solid] block (at\|of) %locations%` | Expression | ExprLowestHighestSolidBlock | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `max[imum] (durabilit(y\|ies)\|damage)` | Expression | ExprMaxDurability | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `max[imum] freeze time` | Expression | ExprMaxFreezeTicks | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `max[imum] health` | Expression | ExprMaxHealth | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `max[imum] [item] us(e\|age) (time\|duration)` | Expression | ExprMaxItemUseTime | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `max[imum] minecart (speed\|velocity)` | Expression | ExprMaxMinecartSpeed | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [1:(real\|default)\|2:(fake\|shown\|displayed)] max[imum] pla...` | Expression | ExprMaxPlayers | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `max[imum] stack[[ ]size]` | Expression | ExprMaxStack | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `me` | Expression | ExprMe | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [server] (:free\|max:max[imum]\|total) (memory\|ram)` | Expression | ExprMemory | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [mending] repair amount` | Expression | ExprMendingRepairAmount | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(middle\|center) [point]` | Expression | ExprMiddleOfLocation | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] mid[-]point (of\|between) %object% and %object%` | Expression | ExprMidpoint | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[minecart] (1¦derailed\|2¦flying) velocity` | Expression | ExprMinecartDerailedFlyingVelocity | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(lunar\|moon) phase[s]` | Expression | ExprMoonPhase | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `%itemtype/inventorytype% (named\|with name[s]) %textcomponent%` | Expression | ExprNamed | ✅ OK | Item clone + meta change is required (the name component is already templated). |
+| `[the] (nearest\|closest) %*entitydatas% [[relative] to %entity/loca...` | Expression | ExprNearestEntity | ✅ OK | Entity search in the server. |
+| `[a] %bannerpatterntype% colo[u]red %color%` | Expression | ExprNewBannerPattern | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(invulnerability\|invincibility\|no damage) tick[s]` | Expression | ExprNoDamageTicks | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(invulnerability\|invincibility\|no damage) time[[ ]span]` | Expression | ExprNoDamageTime | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] node %string% (of\|in) %node%` | Expression | ExprNode | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `number of upper[ ]case char(acters\|s) in %string%` | Expression | ExprNumberOfCharacters | ⚡ Optimized | Counted characters through a boxed iterator over code points (an Integer per character); now a plain loop over the same code points. |
+| `[(all [[of] the]\|the)] offline[ ]players` | Expression | ExprOfflinePlayers | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [(1:(real\|default)\|2:(fake\|shown\|displayed))] [online] pl...` | Expression | ExprOnlinePlayersCount | ✅ OK | One getter. |
+| `[the] (current\|open\|top) inventory [of %players%]` | Expression | ExprOpenedInventory | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[all [[of] the]\|the] [server] [:non(-\| )]op[erator]s` | Expression | ExprOps | ✅ OK | Rare. |
+| `(:main\|hidden) gene[s]` | Expression | ExprPandaGene | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [last] [parse] error` | Expression | ExprParseError | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] passenger[s] of %entities%` | Expression | ExprPassenger | ✅ OK | Passenger lookups. |
+| `%number%(\\%\| percent) of %numbers%` | Expression | ExprPercent | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[(all [[of] the]\|the)] permissions (from\|of) %players%` | Expression | ExprPermissions | ✅ OK | Permission collection is the required work. |
+| `pick[ ]up delay` | Expression | ExprPickupDelay | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[a[n]] (plain\|unmodified) %itemtype%` | Expression | ExprPlain | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[custom] chat completion[s]` | Expression | ExprPlayerChatCompletions | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `protocol version` | Expression | ExprPlayerProtocolVersion | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[(all [[of] the]\|the)] [loaded] plugins` | Expression | ExprPlugins | ✅ OK | Rare. |
+| `[the] portal['s] blocks` | Expression | ExprPortal | ✅ OK | Rare event. |
+| `portal cooldown` | Expression | ExprPortalCooldown | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(projectile\|arrow) critical (state\|ability\|mode)` | Expression | ExprProjectileCriticalState | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] projectile force` | Expression | ExprProjectileForce | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [server] [(sent\|required\|fake)] protocol version [number]` | Expression | ExprProtocolVersion | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] moved blocks` | Expression | ExprPushedBlocks | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[a] [new] queue [(of\|with) %-objects%]` | Expression | ExprQueue | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(:start\|end)` | Expression | ExprQueueStartEnd | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(quit\|disconnect) (cause\|reason)` | Expression | ExprQuitReason | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[a\|%-integer%] random [:alphanumeric] character[s] (from\|between)...` | Expression | ExprRandomCharacter | ✅ OK | Uses ThreadLocalRandom. |
+| `[a] random uuid` | Expression | ExprRandomUUID | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `(raw\|minecraft\|vanilla) name[s] of %itemtypes%` | Expression | ExprRawName | ✅ OK | Rare. |
+| `[the] (readied\|selected\|drawn) (:arrow\|bow)` | Expression | ExprReadiedArrow | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `recursive %~objects%` | Expression | ExprRecursive | ✅ OK | Cost is the source expression. |
+| `redstone power` | Expression | ExprRedstoneBlockPower | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `%objects% (reduced\|folded) (to\|with\|by) \\[<.+>\\]` | Expression | ExprReduce | ✅ OK | Cost is the reducing expression. |
+| `[the] reduced value` | Expression | ExprReducedValue | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `remaining air` | Expression | ExprRemainingAir | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `%strings% repeated %integer% time[s]` | Expression | ExprRepeat | ✅ OK | String building is the required work. |
+| `resonat(e\|ing) time` | Expression | ExprResonatingTime | ⚡ Optimized | Took a full block state snapshot just to check the type, then a second state; now one non-snapshot state. |
+| `respawn[ing] reason` | Expression | ExprRespawnReason | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] result[plural:s] of [running\|executing] %executable% [argume...` | Expression | ExprResult | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `reversed %objects%` | Expression | ExprReversedList | ✅ OK | Reversal is the required work. |
 
 ## Section 9
 
