@@ -18,8 +18,10 @@ Skript's own test suite passes.
 - **Every syntax element reviewed:** all 1054 expressions, conditions, effects, sections, events and functions were
   checked for performance. See [SYNTAX-AUDIT.md](SYNTAX-AUDIT.md).
 
-To install it, replace your Skript jar with the HyperSkript jar. Build it yourself with `./gradlew build` (Java 25);
-the jar is `build/libs/Skript-2.16.2.jar`.
+To install it, download the jar from the [releases page](https://github.com/MaxHyperBeast/HyperSkript/releases) and
+replace your Skript jar with it (keep the `plugins/Skript` folder). Each release says which Skript version it is based
+on; HyperSkript 1.0.0 is Skript 2.16.2. You can also build it yourself with `./gradlew build` (Java 25); the jar is
+`build/libs/Skript-2.16.2.jar`.
 
 ## HyperTrace
 
