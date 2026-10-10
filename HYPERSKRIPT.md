@@ -40,6 +40,7 @@ byte-identical to the official build's.
 | Loops (`loop`, `while`) | 4-6 `WeakHashMap` operations per iteration | One state object per running loop plus a one-entry fast path |
 | Type lookups (`Classes.getSuperClassInfo`, comparators, converters, arithmetic) | Global locks and a key allocation per lookup, or unsynchronized maps | Lock-free, allocation-free caches |
 | Converting values to text (`%x%`) | Linear scan over every registered type until one matches | Cached per class |
+| Entity type checks (`victim is a zombie`, `player`, `the zombie`, entity filters) | Compared the entity against every registered entity type (~150 interface checks) to find its closest type | Closest type cached per entity class, cleared when a type is registered (3.3× faster, identical on 22,032 checks over 136 entity types) |
 | Tag checks (`is tagged with`) | Built the tag's complete value set on every check, only to read its element type | CraftBukkit tags check the type through their own cast (verified in their bytecode) |
 | `contains`, property expressions (`length of`, `name of`, ...) | Streams and arrays rebuilt per evaluation | Plain loops, cached target types |
 | List variables | Name evaluated twice, string built per element, 4-5 intermediate arrays | Single pass |
@@ -76,6 +77,7 @@ was found and changed for each element, is in [SYNTAX-AUDIT.md](SYNTAX-AUDIT.md)
 | `set chat format` | Compiled its placeholder regex for every message | Compiled once |
 | `level of <enchantment> of ...`, `filter {_list::*}`, `contains`, `is wearing` | Streams per evaluation | Plain loops |
 | `amount of <item> in <inventory>` | New item type per slot per item checked | Once per slot |
+| `on walk on <block>` | Two block lookups on every player move | None while the player stays in the same block column at the same height (it never fires then) |
 
 Behaviour was kept exactly; a few possible changes were left out on purpose because they would change results
 (for example evaluating random expressions once instead of per player).

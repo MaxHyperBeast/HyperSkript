@@ -5,7 +5,7 @@ one section at a time for runtime performance. **Status:** ✅ OK = reviewed, no
 ⚡ Optimized = changed (the note says what was slow and what changed); ⏳ = not reviewed yet.
 Every change keeps the exact behaviour; Skript's test suite must pass after each section.
 
-**Progress:** 1054 of 1054 reviewed, 58 optimized.
+**Progress:** 1054 of 1054 reviewed, 60 optimized.
 
 | Section | Contents | Reviewed |
 |---|---|---|
@@ -153,7 +153,7 @@ Events
 | `Leash / Unleash` | Event | EvtLeash | ✅ OK | Entity type checks. |
 | `Level Change` | Event | EvtLevel | ✅ OK | Two getters. |
 | `Move / Rotate` | Event | EvtMove | ✅ OK | Four comparisons per move; no allocations. |
-| `Move On` | Event | EvtMoveOn | ✅ OK | Uses its own listener with block lookups per move; required by the semantics. |
+| `Move On` | Event | EvtMoveOn | ⚡ Optimized | Looked up the block under the player twice on every move, even when the player stayed in the same block column at the same height (where it never fires); now returns before the lookups in that case. |
 | `*Periodical` | Event | EvtPeriodical | ✅ OK | Scheduled task, no per-event check. |
 | `Block Growth` | Event | EvtPlantGrowth | ✅ OK | Builds an item type per listed type, but growth events with filters are rare. |
 | `Armor Change` | Event | EvtPlayerArmorChange | ✅ OK | One getter. |
@@ -651,7 +651,7 @@ expressions
 | `[:max[imum]] (dust\|brush)[ed\|ing] (value\|stage\|progress[ion])` | Expression | ExprDustedStage | ✅ OK | Thin wrapper around a server getter/setter or event value. |
 | `[thrown] egg` | Expression | ExprEgg | ✅ OK | Thin wrapper around a server getter/setter or event value. |
 | `ender[ ]chest[s]` | Expression | ExprEnderChest | ✅ OK | Thin wrapper around a server getter/setter or event value. |
-| `[the] [event-]<.+>` | Expression | ExprEntity | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] [event-]<.+>` | Expression | ExprEntity | ⚡ Optimized | Checking the entity type (e.g. `player`, `the zombie`) compared the entity against every registered simple entity type; the closest type is now cached per entity class (general change in SimpleEntityData, 3.3x faster type checks). |
 | `[the] %attributetype% [(1:(total\|final\|modified))] attribute [val...` | Expression | ExprEntityAttribute | ✅ OK | Thin wrapper around a server getter/setter or event value. |
 | `[elapsed\|:remaining] (item\|tool) us[ag]e time` | Expression | ExprEntityItemUseTime | ✅ OK | Thin wrapper around a server getter/setter or event value. |
 | `[the] (owner\|tamer) of %livingentities%` | Expression | ExprEntityOwner | ✅ OK | Thin wrapper around a server getter/setter or event value. |
