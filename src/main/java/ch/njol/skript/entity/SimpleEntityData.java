@@ -11,6 +11,7 @@ import org.bukkit.entity.boat.*;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.util.ClassCache;
 
 import java.io.NotSerializableException;
 import java.io.StreamCorruptedException;
@@ -57,6 +58,34 @@ public class SimpleEntityData extends EntityData<Entity> {
 	
 	private final static List<SimpleEntityDataInfo> types = new ArrayList<>();
 
+	/**
+	 * The closest info of an entity class and its index in {@link #types}.
+	 */
+	private record Closest(SimpleEntityDataInfo info, int index) {}
+
+	/**
+	 * Which info is closest for an entity only depends on its class, but finding it checks every registered info
+	 * (an interface check each). It is therefore computed once per entity class. Cleared when an info is added.
+	 */
+	private static final ClassCache<Closest> CLOSEST = new ClassCache<>(SimpleEntityData::computeClosest);
+
+	private static @Nullable Closest computeClosest(Class<?> entityClass) {
+		// same loop as before, with info.c.isInstance(entity) as info.c.isAssignableFrom(entity.getClass())
+		int i = 0;
+		SimpleEntityDataInfo closestInfo = null;
+		int closestPattern = 0;
+		for (SimpleEntityDataInfo info : types) {
+			if (info.c.isAssignableFrom(entityClass)) {
+				if (closestInfo == null || closestInfo.c.isAssignableFrom(info.c)) {
+					closestInfo = info;
+					closestPattern = i;
+				}
+			}
+			i++;
+		}
+		return closestInfo == null ? null : new Closest(closestInfo, closestPattern);
+	}
+
 	@ApiStatus.Internal
 	public static void addSimpleEntity(String codeName, Class<? extends Entity> entityClass) {
 		addSimpleEntity(codeName, entityClass, Kleenean.UNKNOWN);
@@ -68,6 +97,7 @@ public class SimpleEntityData extends EntityData<Entity> {
 	@ApiStatus.Internal
 	public static void addSimpleEntity(String codeName, Class<? extends Entity> entityClass, Kleenean allowSpawning) {
 		types.add(new SimpleEntityDataInfo(codeName, entityClass, false, allowSpawning));
+		CLOSEST.clear();
 	}
 
 	@ApiStatus.Internal
@@ -78,6 +108,7 @@ public class SimpleEntityData extends EntityData<Entity> {
 	@ApiStatus.Internal
 	public static void addSuperEntity(String codeName, Class<? extends Entity> entityClass, Kleenean allowSpawning) {
 		types.add(new SimpleEntityDataInfo(codeName, entityClass, true, allowSpawning));
+		CLOSEST.clear();
 	}
 
 	static {
@@ -331,24 +362,11 @@ public class SimpleEntityData extends EntityData<Entity> {
 	}
 	
 	public SimpleEntityData(Entity entity) {
-		int i = 0;
-		SimpleEntityDataInfo closestInfo = null;
-		int closestPattern = 0;
-		for (SimpleEntityDataInfo info : types) {
-			if (info.c.isInstance(entity)) {
-				if (closestInfo == null || closestInfo.c.isAssignableFrom(info.c)) {
-					closestInfo = info;
-					closestPattern = i;
-				}
-			}
-			i++;
-		}
-		if (closestInfo != null) {
-			this.simpleInfo = closestInfo;
-			this.codeNameIndex = closestPattern;
-			return;
-		}
-		throw new IllegalStateException();
+		Closest closest = entity == null ? null : CLOSEST.get(entity.getClass());
+		if (closest == null)
+			throw new IllegalStateException();
+		this.simpleInfo = closest.info();
+		this.codeNameIndex = closest.index();
 	}
 
 	@Override
@@ -371,15 +389,9 @@ public class SimpleEntityData extends EntityData<Entity> {
 	public boolean match(Entity entity) {
 		if (simpleInfo.isSupertype)
 			return simpleInfo.c.isInstance(entity);
-		SimpleEntityDataInfo closest = null;
-		for (SimpleEntityDataInfo info : types) {
-			if (info.c.isInstance(entity)) {
-				if (closest == null || closest.c.isAssignableFrom(info.c))
-					closest = info;
-			}
-		}
+		Closest closest = entity == null ? null : CLOSEST.get(entity.getClass());
 		if (closest != null)
-			return this.simpleInfo.c == closest.c;
+			return this.simpleInfo.c == closest.info().c;
 		assert false;
 		return false;
 	}
