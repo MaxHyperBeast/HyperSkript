@@ -58,6 +58,11 @@ public class EvtMoveOn extends SkriptEvent {
 		Location from = event.getFrom(), to = event.getTo();
 
 		if (!ITEM_TYPE_TRIGGERS.isEmpty()) {
+			// Same block column and the exact same height: the block lookups below would find the same block for
+			// 'from' and 'to' and return without firing, so return before looking anything up.
+			if (to.getY() == from.getY() && to.getBlockX() == from.getBlockX() && to.getBlockZ() == from.getBlockZ()
+					&& to.getWorld().equals(from.getWorld()))
+				return;
 			Block block = getOnBlock(to);
 			if (block == null || ItemUtils.isAir(block.getType()))
 				return;
