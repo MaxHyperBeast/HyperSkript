@@ -165,6 +165,8 @@ final class HyperTraceCommand implements TabExecutor {
 			receiver.sendMessage(title("HyperTrace", String.format(Locale.ROOT, "lag spike (%.0f ms tick), clip saved", tickMs)));
 			if (clip != null && !clip.worstTicks.isEmpty()) {
 				Capture.TickSnapshot worst = clip.worstTicks.getFirst();
+				receiver.sendMessage(Component.text(String.format(Locale.ROOT, " Skript used %.1f ms of it%s.", worst.skriptMs,
+					worst.gcMs > 0 ? String.format(Locale.ROOT, "; garbage collection paused the server for %d ms", worst.gcMs) : ""), NamedTextColor.GRAY));
 				if (!worst.lines.isEmpty()) {
 					Capture.TickSnapshot.Entry line = worst.lines.getFirst();
 					receiver.sendMessage(Component.text(String.format(Locale.ROOT, " Slowest line in that tick: %s:%d  %s (%s)",

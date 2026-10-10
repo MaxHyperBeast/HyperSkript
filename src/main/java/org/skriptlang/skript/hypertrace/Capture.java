@@ -19,6 +19,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.lang.script.Script;
 
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
 import java.lang.ref.WeakReference;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -48,6 +50,16 @@ public final class Capture {
 	static final int WORST_TICKS = 10;
 	/** The most ints the per-tick trigger activity of one capture may use (3 per trigger per tick it ran in). */
 	static final int MAX_ACTIVITY_INTS = 9_000_000;
+
+	/** A line run longer than this is checked for a garbage collection pause. */
+	private static final long PAUSE_CHECK_NANOS = 2_000_000;
+	/**
+	 * The collectors whose time is spent with the server stopped. Collectors that mostly run alongside the server
+	 * (the concurrent cycles of G1, ZGC and Shenandoah) are left out.
+	 */
+	private static final List<GarbageCollectorMXBean> PAUSE_COLLECTORS = ManagementFactory.getGarbageCollectorMXBeans().stream()
+		.filter(bean -> !bean.getName().contains("Concurrent") && !bean.getName().contains("Cycles"))
+		.toList();
 
 	final Thread thread;
 	public final boolean lineTiming;
@@ -94,6 +106,12 @@ public final class Capture {
 	/** Variable file saves: {start nanos, end nanos, file size, changes since the last save}. Added by the save thread. */
 	final List<long[]> saves = new ArrayList<>(); // guarded by itself
 
+	// garbage collection
+	private long tickGcMark = gcPauseMillis();
+	private long itemGcMark = tickGcMark;
+	long gcPauseMs;
+	int gcPauseTicks;
+
 	// ticks
 	int tickId;
 	/**
@@ -106,6 +124,7 @@ public final class Capture {
 	int ticks;
 	float[] tickMs = new float[1200];
 	float[] tickSkriptMs = new float[1200];
+	float[] tickGcMs = new float[1200];
 	int[] tickVariableWritesArray = new int[1200];
 	long[] tickEndNanos = new long[1200];
 	long tickSkriptTotalNanos;
@@ -242,8 +261,10 @@ public final class Capture {
 		stats.calls++;
 		stats.total += elapsed;
 		stats.own += own;
-		if (elapsed > stats.max)
+		if (elapsed > stats.max) {
 			stats.max = elapsed;
+			stats.maxPause = elapsed >= PAUSE_CHECK_NANOS ? pauseDuring(elapsed) : 0;
+		}
 		if (stats.tickId != tickId) {
 			stats.tickId = tickId;
 			stats.tickNanos = 0;
@@ -265,6 +286,30 @@ public final class Capture {
 				break;
 			ancestor.block += elapsed;
 		}
+	}
+
+	/**
+	 * @return The garbage collection pause time (in nanoseconds) since the last check, if it fits into an item that
+	 * just took {@code elapsed} nanoseconds; otherwise 0. A pause ends up in whatever was running when it happened.
+	 */
+	private long pauseDuring(long elapsed) {
+		long gc = gcPauseMillis();
+		long pause = (gc - itemGcMark) * 1_000_000;
+		itemGcMark = gc;
+		return pause > 0 && pause <= elapsed + 1_000_000 ? Math.min(pause, elapsed) : 0;
+	}
+
+	/**
+	 * @return The total time all stop-the-world garbage collectors have run, in milliseconds.
+	 */
+	static long gcPauseMillis() {
+		long total = 0;
+		for (GarbageCollectorMXBean bean : PAUSE_COLLECTORS) {
+			long time = bean.getCollectionTime();
+			if (time > 0)
+				total += time;
+		}
+		return total;
 	}
 
 	private boolean isRunning(LineStats stats, int belowDepth) {
@@ -354,6 +399,19 @@ public final class Capture {
 		return TriggerKind.EVENT;
 	}
 
+	/**
+	 * @return The line a trigger starts at, or the line of its first statement if it has none (e.g. triggers that
+	 * sections create), or -1.
+	 */
+	static int lineOf(@Nullable Trigger trigger) {
+		if (trigger == null)
+			return -1;
+		if (trigger.getLineNumber() > 0)
+			return trigger.getLineNumber();
+		TriggerItem first = trigger.getHyperTraceFirstItem();
+		return first == null ? -1 : first.getHyperTraceLine();
+	}
+
 	static String triggerKey(String script, int line, String name) {
 		return script + ':' + line + ':' + name;
 	}
@@ -363,7 +421,7 @@ public final class Capture {
 		if (stats != null)
 			return stats;
 		String script = trigger == null ? "(no script)" : scriptName(trigger);
-		int line = trigger == null ? -1 : trigger.getLineNumber();
+		int line = lineOf(trigger);
 		String name = trigger == null ? "(effect command)" : trigger.getName();
 		String key = triggerKey(script, line, name);
 		stats = triggers.get(key);
@@ -471,16 +529,26 @@ public final class Capture {
 		lastProgressNanos = now;
 		durationMs = Math.max(durationMs, tickSkriptNanos / 1_000_000.0);
 		float skriptMs = tickSkriptNanos / 1_000_000f;
+		long gc = gcPauseMillis();
+		long gcMs = Math.max(0, gc - tickGcMark);
+		tickGcMark = gc;
+		itemGcMark = gc;
+		if (gcMs > 0) {
+			gcPauseMs += gcMs;
+			gcPauseTicks++;
+		}
 		if (ticks < MAX_TICKS) {
 			if (ticks == tickMs.length) {
 				int size = Math.min(MAX_TICKS, ticks * 2);
 				tickMs = Arrays.copyOf(tickMs, size);
 				tickSkriptMs = Arrays.copyOf(tickSkriptMs, size);
+				tickGcMs = Arrays.copyOf(tickGcMs, size);
 				tickVariableWritesArray = Arrays.copyOf(tickVariableWritesArray, size);
 				tickEndNanos = Arrays.copyOf(tickEndNanos, size);
 			}
 			tickMs[ticks] = (float) durationMs;
 			tickSkriptMs[ticks] = skriptMs;
+			tickGcMs[ticks] = gcMs;
 			tickVariableWritesArray[ticks] = tickVariableWrites;
 			tickEndNanos[ticks] = now;
 		}
@@ -509,7 +577,7 @@ public final class Capture {
 		}
 		ticks++;
 		if (qualifies(worstTicks, (float) durationMs, false) || qualifies(worstSkriptTicks, skriptMs, true)) {
-			TickSnapshot snapshot = snapshot((float) durationMs, skriptMs);
+			TickSnapshot snapshot = snapshot((float) durationMs, skriptMs, gcMs);
 			insert(worstTicks, snapshot, false);
 			insert(worstSkriptTicks, snapshot, true);
 		}
@@ -562,8 +630,8 @@ public final class Capture {
 			list.removeLast();
 	}
 
-	private TickSnapshot snapshot(float ms, float skriptMs) {
-		TickSnapshot snapshot = new TickSnapshot(ticks, ms, skriptMs,
+	private TickSnapshot snapshot(float ms, float skriptMs, long gcMs) {
+		TickSnapshot snapshot = new TickSnapshot(ticks, ms, skriptMs, gcMs,
 			(System.currentTimeMillis() - startedMillis) / 1000.0);
 		touchedTriggers.stream()
 			.sorted(Comparator.comparingLong((TriggerStats t) -> t.tickNanos).reversed())
@@ -683,10 +751,12 @@ public final class Capture {
 			merged.tickSkriptTotalNanos += part.tickSkriptTotalNanos;
 			merged.tickTotalMs += part.tickTotalMs;
 			merged.lagTicks += part.lagTicks;
+			merged.gcPauseMs += part.gcPauseMs;
+			merged.gcPauseTicks += part.gcPauseTicks;
 			merged.activityCapped |= part.activityCapped;
 			int count = Math.min(part.ticks, MAX_TICKS);
 			for (int i = 0; i < count && merged.ticks < MAX_TICKS; i++) {
-				merged.appendTick(part.tickMs[i], part.tickSkriptMs[i], part.tickVariableWritesArray[i], part.tickEndNanos[i]);
+				merged.appendTick(part.tickMs[i], part.tickSkriptMs[i], part.tickGcMs[i], part.tickVariableWritesArray[i], part.tickEndNanos[i]);
 			}
 			for (TickSnapshot snapshot : part.worstTicks)
 				insert(merged.worstTicks, snapshot.shifted(tickOffset, secondOffset), false);
@@ -702,16 +772,18 @@ public final class Capture {
 		return merged;
 	}
 
-	private void appendTick(float ms, float skriptMs, int variableWrites, long endNanos) {
+	private void appendTick(float ms, float skriptMs, float gcMs, int variableWrites, long endNanos) {
 		if (ticks == tickMs.length) {
 			int size = Math.min(MAX_TICKS, ticks * 2);
 			tickMs = Arrays.copyOf(tickMs, size);
 			tickSkriptMs = Arrays.copyOf(tickSkriptMs, size);
+			tickGcMs = Arrays.copyOf(tickGcMs, size);
 			tickVariableWritesArray = Arrays.copyOf(tickVariableWritesArray, size);
 			tickEndNanos = Arrays.copyOf(tickEndNanos, size);
 		}
 		tickMs[ticks] = ms;
 		tickSkriptMs[ticks] = skriptMs;
+		tickGcMs[ticks] = gcMs;
 		tickVariableWritesArray[ticks] = variableWrites;
 		tickEndNanos[ticks] = endNanos;
 		ticks++;
@@ -736,6 +808,8 @@ public final class Capture {
 		@Nullable WeakReference<LoopSection> loopRef;
 
 		long calls, total, own, max, block, maxIterations, globalWrites;
+		/** Garbage collection pause time inside the slowest run. */
+		long maxPause;
 		int tickId = -1;
 		long tickNanos, maxTick;
 		int ticksActive;
@@ -761,7 +835,10 @@ public final class Capture {
 			calls += other.calls;
 			total += other.total;
 			own += other.own;
-			max = Math.max(max, other.max);
+			if (other.max > max) {
+				max = other.max;
+				maxPause = other.maxPause;
+			}
 			block += other.block;
 			maxIterations = Math.max(maxIterations, other.maxIterations);
 			globalWrites += other.globalWrites;
@@ -888,19 +965,22 @@ public final class Capture {
 
 		final int tick;
 		final float ms, skriptMs;
+		/** Garbage collection pause time in the tick, in milliseconds. */
+		final long gcMs;
 		final double second;
 		final List<Entry> triggers = new ArrayList<>();
 		final List<Entry> lines = new ArrayList<>();
 
-		TickSnapshot(int tick, float ms, float skriptMs, double second) {
+		TickSnapshot(int tick, float ms, float skriptMs, long gcMs, double second) {
 			this.tick = tick;
 			this.ms = ms;
 			this.skriptMs = skriptMs;
+			this.gcMs = gcMs;
 			this.second = second;
 		}
 
 		TickSnapshot shifted(int tickOffset, double secondOffset) {
-			TickSnapshot copy = new TickSnapshot(tick + tickOffset, ms, skriptMs, second + secondOffset);
+			TickSnapshot copy = new TickSnapshot(tick + tickOffset, ms, skriptMs, gcMs, second + secondOffset);
 			copy.triggers.addAll(triggers);
 			copy.lines.addAll(lines);
 			return copy;

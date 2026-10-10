@@ -9,21 +9,21 @@
 :root{
 	--bg:#f4f4f6;--panel:#ffffff;--panel-2:#f0f0f4;--text:#1b1c22;--text-2:#4a4c57;--muted:#6e7080;--line:#e2e2e8;--line-2:#d2d2da;
 	--accent:#2f6fde;--accent-soft:rgba(47,111,222,.12);--hot:#e0533c;--hot-soft:rgba(224,83,60,.12);--warn:#c98a12;--good:#2e9e5b;
-	--skript:#e8912d;--save:#7b6cf2;--code:#f6f6f9;--shadow:0 1px 2px rgba(20,20,40,.05),0 6px 20px -12px rgba(20,20,40,.25);
+	--skript:#e8912d;--save:#7b6cf2;--gc:#0f9488;--code:#f6f6f9;--shadow:0 1px 2px rgba(20,20,40,.05),0 6px 20px -12px rgba(20,20,40,.25);
 	--tok-kw:#b4400f;--tok-str:#3f7d10;--tok-num:#9a5d00;--tok-com:#9196a0;--tok-var:#0c7a72;--tok-fn:#2f6fde;
 	--seg-1:#2f6fde;--seg-2:#e0533c;--seg-3:#e8912d;--seg-4:#2e9e5b;--seg-5:#7b6cf2;--seg-6:#8a8d99;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
 	--bg:#131418;--panel:#1c1d23;--panel-2:#22232b;--text:#e8e8ee;--text-2:#b7b8c3;--muted:#8d8f9c;--line:#2c2d36;--line-2:#3a3b46;
 	--accent:#6f9cf0;--accent-soft:rgba(111,156,240,.14);--hot:#f0705c;--hot-soft:rgba(240,112,92,.14);--warn:#f0b54a;--good:#5cc98a;
-	--skript:#f0a54a;--save:#9d91ff;--code:#17181d;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -14px rgba(0,0,0,.7);
+	--skript:#f0a54a;--save:#9d91ff;--gc:#3fcfbf;--code:#17181d;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -14px rgba(0,0,0,.7);
 	--tok-kw:#ffab70;--tok-str:#b5d98a;--tok-num:#ffc66b;--tok-com:#6b6f7a;--tok-var:#7fd3da;--tok-fn:#8fb4ff;
 	--seg-1:#6f9cf0;--seg-2:#f0705c;--seg-3:#f0a54a;--seg-4:#5cc98a;--seg-5:#9d91ff;--seg-6:#8d8f9c;
 }}
 :root[data-theme="dark"]{
 	--bg:#131418;--panel:#1c1d23;--panel-2:#22232b;--text:#e8e8ee;--text-2:#b7b8c3;--muted:#8d8f9c;--line:#2c2d36;--line-2:#3a3b46;
 	--accent:#6f9cf0;--accent-soft:rgba(111,156,240,.14);--hot:#f0705c;--hot-soft:rgba(240,112,92,.14);--warn:#f0b54a;--good:#5cc98a;
-	--skript:#f0a54a;--save:#9d91ff;--code:#17181d;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -14px rgba(0,0,0,.7);
+	--skript:#f0a54a;--save:#9d91ff;--gc:#3fcfbf;--code:#17181d;--shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -14px rgba(0,0,0,.7);
 	--tok-kw:#ffab70;--tok-str:#b5d98a;--tok-num:#ffc66b;--tok-com:#6b6f7a;--tok-var:#7fd3da;--tok-fn:#8fb4ff;
 	--seg-1:#6f9cf0;--seg-2:#f0705c;--seg-3:#f0a54a;--seg-4:#5cc98a;--seg-5:#9d91ff;--seg-6:#8d8f9c;
 }
@@ -249,7 +249,7 @@ kbd{border:1px solid var(--line-2);border-bottom-width:2px;border-radius:4px;pad
 	functions.forEach(function (f) { fnByName[f.name.replace(/^function /, '').toLowerCase()] = f; });
 	var linesByScript = {};
 	lines.forEach(function (l) { (linesByScript[l.script] = linesByScript[l.script] || {})[l.line] = l; });
-	var tickMs = D.tickMs || [], tickSk = D.tickSkriptMs || [], tickVars = D.tickVariableWrites || [];
+	var tickMs = D.tickMs || [], tickSk = D.tickSkriptMs || [], tickVars = D.tickVariableWrites || [], tickGc = D.tickGcMs || [];
 	var stored = tickMs.length;
 
 	// activity: flat [tick, units of 100 ns, runs, ...], sorted by tick
@@ -311,7 +311,7 @@ kbd{border:1px solid var(--line-2);border-bottom-width:2px;border-radius:4px;pad
 	card('Average tick', avgTick.toFixed(2), 'ms', 'whole server tick · 50 ms = lag', avgTick > 50 ? 'crit' : '');
 	card('Skript per tick', skPerTick.toFixed(2), 'ms', (avgTick ? pct(100 * skPerTick / avgTick) : '0%') + ' of the average tick');
 	card('Ticks over 50 ms', fmtInt(D.lagTicks || 0), '', ticks ? pct(100 * (D.lagTicks || 0) / ticks) + ' of all ticks' : 'no ticks', D.lagTicks > 0 ? 'crit' : 'good');
-	card('Slowest tick', worstTick ? worstTick.ms.toFixed(1) : '0', 'ms', worstTick ? 'at ' + worstTick.second.toFixed(0) + ' s' + (worstTick.triggers[0] ? ' · ' + esc(worstTick.triggers[0].label) : '') : 'no ticks', worstTick && worstTick.ms > 50 ? 'crit' : '');
+	card('Slowest tick', worstTick ? worstTick.ms.toFixed(1) : '0', 'ms', worstTick ? 'at ' + worstTick.second.toFixed(0) + ' s' + (worstTick.gcMs >= worstTick.ms * 0.5 ? ' · mostly a garbage collection pause (' + worstTick.gcMs + ' ms)' : worstTick.triggers[0] ? ' · ' + esc(worstTick.triggers[0].label) : '') : 'no ticks', worstTick && worstTick.ms > 50 ? 'crit' : '');
 	card('Triggers that ran', fmtInt(ranCount), silent.loaded ? '/ ' + fmtInt(silent.loaded) : '', silent.list.length + ' loaded but never ran');
 	html.push('</div>');
 
@@ -329,7 +329,7 @@ kbd{border:1px solid var(--line-2);border-bottom-width:2px;border-radius:4px;pad
 
 	// ---------- chart ----------
 	section('ticks', 'Tick activity', 'Every tick of the capture. <b>Drag across the chart</b> to zoom into a time range and see what ran in it; hover for a single tick.');
-	html.push('<div class="panel chart-panel"><div class="chart-head"><div class="chart-legend"><span><i style="background:var(--accent)"></i>Whole tick</span><span><i style="background:var(--skript)"></i>Skript</span><span><i style="background:var(--hot)"></i>50 ms limit</span>' + ((D.saves || []).length ? '<span><i style="background:var(--save)"></i>Variables file saved</span>' : '') + '</div><span class="spacer" style="flex:1"></span><button class="iconbtn" id="resetZoom" style="display:none">Reset zoom</button></div>'
+	html.push('<div class="panel chart-panel"><div class="chart-head"><div class="chart-legend"><span><i style="background:var(--accent)"></i>Whole tick</span><span><i style="background:var(--skript)"></i>Skript</span><span><i style="background:var(--hot)"></i>50 ms limit</span>' + (D.gcPauseMs ? '<span><i style="background:var(--gc)"></i>Garbage collection pause</span>' : '') + ((D.saves || []).length ? '<span><i style="background:var(--save)"></i>Variables file saved</span>' : '') + '</div><span class="spacer" style="flex:1"></span><button class="iconbtn" id="resetZoom" style="display:none">Reset zoom</button></div>'
 		+ '<svg id="chart" role="img" aria-label="Tick times"></svg><div class="stats" id="viewStats"></div></div>'
 		+ '<div class="panel table-box" id="rangeBox" style="margin-top:12px"></div>');
 
@@ -477,7 +477,7 @@ kbd{border:1px solid var(--line-2);border-bottom-width:2px;border-radius:4px;pad
 			COL.perTick('total', 'Total / tick', function (r) { return r.totalNs; }),
 			{key: 'runs', label: 'Runs / tick', num: true, val: function (r) { return r.calls; }, html: function (r) { return num(ticks ? r.calls / ticks : r.calls); }},
 			{key: 'avg', label: 'Avg run', num: true, val: function (r) { return r.totalNs / r.calls; }, html: function (r) { return us(r.totalNs / r.calls); }},
-			{key: 'max', label: 'Slowest run', num: true, val: function (r) { return r.maxNs; }, html: function (r) { return ms(r.maxNs); }},
+			{key: 'max', label: 'Slowest run', num: true, val: function (r) { return r.maxNs; }, html: function (r) { return ms(r.maxNs) + (r.maxPauseNs && r.maxPauseNs * 2 >= r.maxNs ? '<div class="dim" title="Garbage collection paused the whole server during this run">GC ' + ms(r.maxPauseNs) + '</div>' : ''); }},
 			{key: 'maxTick', label: 'Worst tick', num: true, title: 'The most own time this line used in a single tick', val: function (r) { return r.maxTickNs; }, html: function (r) { return ms(r.maxTickNs); }},
 			{key: 'why', label: 'Why', val: function (r) { return r.why || ''; }, html: function (r) { return r.why ? '<span class="why">' + esc(r.why) + '</span>' : ''; }}
 		]});
@@ -550,6 +550,7 @@ kbd{border:1px solid var(--line-2);border-bottom-width:2px;border-radius:4px;pad
 		{key: 'at', label: 'At', num: true, val: function (r) { return r.second; }, html: function (r) { return r.second.toFixed(1) + ' s'; }},
 		{key: 'ms', label: 'Tick time', num: true, val: function (r) { return r.ms; }, html: function (r) { return msv(r.ms); }},
 		{key: 'sk', label: 'Skript', num: true, val: function (r) { return r.skriptMs; }, html: function (r) { return msv(r.skriptMs); }},
+		{key: 'gc', label: 'GC pause', num: true, title: 'Garbage collection: Java stopped the whole server to free memory', val: function (r) { return r.gcMs || 0; }, html: function (r) { return r.gcMs ? '<b style="color:var(--gc)">' + r.gcMs + ' ms</b>' : ''; }},
 		{key: 'trig', label: 'Triggers', val: function (r) { return r.triggers.length; }, html: function (r) { return entryList(r.triggers); }},
 		{key: 'lines', label: 'Lines (own time)', val: function (r) { return r.lines.length; }, html: function (r) { return entryList(r.lines); }}
 	]});
@@ -658,8 +659,9 @@ kbd{border:1px solid var(--line-2);border-bottom-width:2px;border-radius:4px;pad
 			var w = list[idx];
 			document.getElementById('wIdx').textContent = (idx + 1) + ' / ' + list.length;
 			var h = '<div class="worst-hero"><span class="big">' + w.ms.toFixed(1) + '<small class="dim" style="font-size:14px"> ms</small></span><span class="budget">' + (w.ms / 50 * 100).toFixed(0) + '% of the 50 ms budget</span></div>'
-				+ '<div class="dim" style="font-size:12.5px">tick #' + fmtInt(w.tick + 1) + ' · ' + w.second.toFixed(1) + ' s into the capture · Skript ' + msv(w.skriptMs) + (w.ms ? ' (' + pct(100 * w.skriptMs / w.ms) + ')' : '') + ' · <a data-zoom="' + w.tick + '">show in chart</a></div><div class="worst-list">';
-			if (!w.triggers.length) h += '<div class="dim" style="font-size:12.5px;margin-top:6px">No Skript triggers ran in this tick: the cause is outside of Skript.</div>';
+				+ '<div class="dim" style="font-size:12.5px">tick #' + fmtInt(w.tick + 1) + ' · ' + w.second.toFixed(1) + ' s into the capture · Skript ' + msv(w.skriptMs) + (w.ms ? ' (' + pct(100 * w.skriptMs / w.ms) + ')' : '') + (w.gcMs ? ' · <b style="color:var(--gc)">GC pause ' + w.gcMs + ' ms</b>' : '') + ' · <a data-zoom="' + w.tick + '">show in chart</a></div><div class="worst-list">';
+			if (w.gcMs >= w.ms * 0.5) h += '<div style="font-size:12.5px;margin-top:6px">Most of this tick was a <b>garbage collection pause</b>: Java stopped the whole server to free memory. The scripts below just happened to be running.</div>';
+			if (!w.triggers.length) h += '<div class="dim" style="font-size:12.5px;margin-top:6px">No Skript triggers ran in this tick: the cause is outside of Skript' + (w.gcMs ? ' (garbage collection took ' + w.gcMs + ' ms of it)' : '') + '.</div>';
 			w.triggers.forEach(function (t, i) { h += '<div class="worst-row"><span class="r">' + (i + 1) + '</span><span class="w">' + (t.line > 0 ? loc(t.script, t.line) + ' ' : '') + '<span class="dim">' + esc(t.label.replace(/ \([^)]*\)$/, '')) + '</span></span><span class="v">' + ms(t.ns) + '</span></div>'; });
 			if (w.lines.length) h += '<div class="dim" style="font-size:12px;margin-top:6px">Slowest line: ' + loc(w.lines[0].script, w.lines[0].line) + ' <code>' + esc(w.lines[0].label.slice(0, 60)) + '</code> (' + ms(w.lines[0].ns) + ')</div>';
 			box.innerHTML = h + '</div>';
@@ -709,6 +711,17 @@ kbd{border:1px solid var(--line-2);border-bottom-width:2px;border-radius:4px;pad
 			area.push(x.toFixed(1) + ',' + y(mt).toFixed(1)); tl.push(x.toFixed(1) + ',' + y(mt).toFixed(1)); sl.push(x.toFixed(1) + ',' + y(ms2).toFixed(1));
 		}
 		area.push((PX + cw()) + ',' + (PT + ch()));
+		if (D.gcPauseMs) {
+			var gcColor = cssVar('--gc'), bw = Math.max(1, cw() / n);
+			for (var q = 0; q < n; q++) {
+				var glo = viewLo + Math.floor(q * span / n), ghi = Math.max(glo, viewLo + Math.floor((q + 1) * span / n) - 1), gmax = 0;
+				for (var gk = glo; gk <= ghi; gk++) if (tickGc[gk] > gmax) gmax = tickGc[gk];
+				if (gmax > 0) {
+					var gx = n === 1 ? PX + cw() / 2 : PX + q / (n - 1) * cw(), gy = y(gmax);
+					s.push('<rect x="' + (gx - bw / 2).toFixed(1) + '" y="' + gy.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + (PT + ch() - gy).toFixed(1) + '" fill="' + gcColor + '" fill-opacity=".55"/>');
+				}
+			}
+		}
 		s.push('<polygon points="' + area.join(' ') + '" fill="' + cssVar('--accent') + '" fill-opacity=".14"/>');
 		s.push('<polyline points="' + tl.join(' ') + '" fill="none" stroke="' + cssVar('--accent') + '" stroke-width="1.4" stroke-linejoin="round"/>');
 		s.push('<polyline points="' + sl.join(' ') + '" fill="none" stroke="' + cssVar('--skript') + '" stroke-width="1.6" stroke-linejoin="round"/>');
@@ -724,12 +737,14 @@ kbd{border:1px solid var(--line-2);border-bottom-width:2px;border-radius:4px;pad
 	}
 	function viewStats() {
 		var n = 0, sum = 0, worst = 0, sk = 0, skWorst = 0, over = 0;
-		for (var i = viewLo; i <= viewHi && i < stored; i++) { n++; sum += tickMs[i]; sk += tickSk[i]; if (tickMs[i] > worst) worst = tickMs[i]; if (tickSk[i] > skWorst) skWorst = tickSk[i]; if (tickMs[i] > 50) over++; }
+		var gcSum = 0;
+		for (var i = viewLo; i <= viewHi && i < stored; i++) { n++; sum += tickMs[i]; sk += tickSk[i]; gcSum += tickGc[i] || 0; if (tickMs[i] > worst) worst = tickMs[i]; if (tickSk[i] > skWorst) skWorst = tickSk[i]; if (tickMs[i] > 50) over++; }
 		var avg = n ? sum / n : 0, full = viewLo === 0 && viewHi === stored - 1;
 		statsEl.innerHTML = '<span><b>View</b><div>' + (full ? 'whole capture' : 'ticks ' + fmtInt(viewLo + 1) + '–' + fmtInt(viewHi + 1) + ' (' + (n / 20).toFixed(1) + ' s)') + '</div></span>'
 			+ '<span><b>Average tick</b><div>' + msv(avg) + '</div></span><span><b>Slowest tick</b><div>' + msv(worst) + '</div></span>'
 			+ '<span><b>Skript per tick</b><div>' + msv(n ? sk / n : 0) + '</div></span><span><b>Skript, worst tick</b><div>' + msv(skWorst) + '</div></span>'
 			+ '<span><b>Skript share</b><div>' + (sum ? pct(100 * sk / sum) : '0%') + '</div></span><span><b>Over 50 ms</b><div>' + fmtInt(over) + (n ? ' (' + pct(100 * over / n) + ')' : '') + '</div></span>'
+			+ (D.gcPauseMs ? '<span><b>GC pauses</b><div>' + fmtInt(gcSum) + ' ms (' + (sum ? pct(100 * gcSum / sum) : '0%') + ')</div></span>' : '')
 			+ '<span><b>≈ TPS</b><div>' + (avg <= 50 ? '20.0' : (1000 / avg).toFixed(1)) + '</div></span>'
 			+ (D.lineTiming && ticks ? '<span><b>HyperTrace overhead</b><div>' + ms(perTick(D.overheadNs)) + '/tick</div></span>' : '');
 	}
@@ -784,6 +799,7 @@ kbd{border:1px solid var(--line-2);border-bottom-width:2px;border-radius:4px;pad
 		triggers.forEach(function (tr) { var act = tr.activity || [], i = activityFrom(act, t); if (i < act.length && act[i] === t) top.push([tr, act[i + 1] * 100, act[i + 2]]); });
 		top.sort(function (a, b) { return b[1] - a[1]; });
 		var h = '<div class="t">Tick #' + fmtInt(t + 1) + ' · ' + (t / 20).toFixed(2) + ' s</div><div class="r"><span>Whole tick</span><span>' + msv(tickMs[t] || 0) + '</span></div><div class="r"><span>Skript</span><span>' + msv(tickSk[t] || 0) + '</span></div>';
+		if (tickGc[t]) h += '<div class="r"><span>Garbage collection pause</span><span>' + msv(tickGc[t]) + '</span></div>';
 		if (tickVars[t]) h += '<div class="r"><span>Variable writes</span><span>' + fmtInt(tickVars[t]) + '</span></div>';
 		top.slice(0, 4).forEach(function (x) { h += '<div class="r"><span class="dim">' + esc(x[0].name.slice(0, 40)) + (x[2] > 1 ? ' ×' + x[2] : '') + '</span><span>' + ms(x[1]) + '</span></div>'; });
 		if (top.length > 4) h += '<div class="dim">+ ' + (top.length - 4) + ' more</div>';

@@ -58,18 +58,18 @@ script, trigger or piece of code, and a light/dark switch.
 | Section | What it shows |
 |---|---|
 | At a glance | Capture length and TPS, average tick, Skript's share of the tick, ticks over 50 ms, the slowest tick and what caused it, and how many loaded triggers ran. |
-| Findings | Plain sentences about what stands out most: the most expensive lines and why (runs very often, slow every time, causes spikes, loops a lot, spends its time in a function it calls), the biggest loop, event filters that are checked far more often than they run, the slowest tick and what ran in it, loops that are still running, saved variables that are written very often, freezes, and triggers that never ran. |
+| Findings | Plain sentences about what stands out most: the most expensive lines and why (runs very often, slow every time, causes spikes, loops a lot, spends its time in a function it calls), the biggest loop, event filters that are checked far more often than they run, the slowest tick and what ran in it (or that it was a garbage collection pause), loops that are still running, saved variables that are written very often, freezes, and triggers that never ran. |
 | Time by script | Which scripts use the most time. Click one to open it. |
 | Tick spread | How many ticks fell into each time band, for Skript's time or the whole tick, with the typical, worst 5% and worst 1% tick. |
 | Slowest ticks card | The 10 slowest ticks one by one: how much of the 50 ms budget they used, Skript's part, the triggers and the slowest line in each. |
-| Tick activity | A chart of every tick (whole tick and Skript's part, the 50 ms limit, saves of the variables file, the slowest ticks). Hover for one tick and what ran in it; drag across it to zoom into a moment. Below it, **what ran in the selected range**: every trigger and function with its time, runs and an activity graph for exactly that range. |
-| Slowest lines | Every line that ran: own time and total time per tick, share of all Skript time, runs per tick, average and slowest run, worst single tick, and why it is expensive. |
+| Tick activity | A chart of every tick (whole tick and Skript's part, the 50 ms limit, garbage collection pauses, saves of the variables file, the slowest ticks). Hover for one tick and what ran in it; drag across it to zoom into a moment. Below it, **what ran in the selected range**: every trigger and function with its time, runs and an activity graph for exactly that range. |
+| Slowest lines | Every line that ran: own time and total time per tick, share of all Skript time, runs per tick, average and slowest run (and whether a garbage collection pause was part of it), worst single tick, and why it is expensive. A line that is normally fast but had one very slow run is marked as such, so a pause of the whole server isn't blamed on it. |
 | Slowest blocks | Loops, `if`s and other sections with the time of everything inside them. |
 | Triggers / Functions | Every trigger and function with an activity graph: runs (and parts that ran after a `wait`), total time, event filter time and how often the filter let it through, own lines, average and slowest run, worst tick. |
 | Events | The Bukkit events Skript handled, how often they fired and what all their triggers cost. |
 | Loops | Iterations, the most iterations in one run, the most copies running at once, and whether each loop is still running (with its current iteration and iterations per second). |
 | Global variables | Writes over time; created, updated and deleted counts and the net growth per variable or list (`{stats::*}`); whether it is saved to disk; how many different names; the last value's type; the line that writes it most; and every save of the variables file with how long it took and the file size. |
-| Slowest ticks | The 10 slowest ticks (and the 10 where Skript used the most time) with their triggers and lines. Click a tick to see it in the chart. |
+| Slowest ticks | The 10 slowest ticks (and the 10 where Skript used the most time) with their garbage collection pause, triggers and lines. Click a tick to see it in the chart. |
 | Never ran | Loaded triggers, commands and functions that didn't run during the capture, and how often their event fired but the filter said no. |
 | Freezes | If the server stopped ticking during the capture: the script line that was running, the sections around it and its trigger. |
 | Scripts | Every script that ran, with its time. |
@@ -140,6 +140,10 @@ change how they run, and it's safe to use on a live server.
 
 Limits:
 
+- Lag that isn't Skript (other plugins, chunk loading, world saves) only shows as tick time Skript didn't use. Garbage
+  collection pauses are shown separately: they stop the whole server, so whatever script line was running at that
+  moment looks slow. For everything else, use a general profiler such as spark
+  (`/spark profiler start --only-ticks-over 50`).
 - Only the server thread is measured. Scripts running on other threads (async events) are counted but not timed; the
   report says how many there were.
 - Code that addons run outside of Skript's triggers isn't measured. Addon effects and conditions used inside your

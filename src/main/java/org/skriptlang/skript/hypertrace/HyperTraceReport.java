@@ -88,15 +88,26 @@ final class HyperTraceReport {
 		if (line.calls == 0)
 			return null;
 		double callsPerTick = data.ticks == 0 ? 0 : (double) line.calls / data.ticks;
-		double avgMicros = line.total / 1000.0 / line.calls;
+		double averageNanos = (double) line.total / line.calls;
 		double typicalTickNanos = line.ticksActive == 0 ? 0 : (double) line.own / line.ticksActive;
 		List<String> reasons = new ArrayList<>();
 		if (callsPerTick >= 50)
 			reasons.add("runs very often (" + number(callsPerTick) + "× per tick)");
-		if (avgMicros >= 500)
-			reasons.add("is slow every time it runs (" + micros((double) line.total / line.calls) + " each)");
-		if (line.maxTick >= 5_000_000 && line.maxTick > 10 * typicalTickNanos)
+		if (averageNanos >= 500_000)
+			reasons.add("is slow every time it runs (" + micros(averageNanos) + " each)");
+		// a line that is normally fast but had one very slow run was usually caught by a server-wide pause
+		boolean oneOff = line.max >= 5_000_000 && line.calls >= 20 && line.max > 50 * averageNanos;
+		if (oneOff) {
+			if (line.maxPause * 2 >= line.max) {
+				reasons.add("had one slow run (" + ms(line.max) + ", of which " + ms(line.maxPause)
+					+ " was a garbage collection pause of the whole server); it normally takes " + micros(averageNanos));
+			} else {
+				reasons.add("had one unusually slow run (" + ms(line.max) + "; it normally takes " + micros(averageNanos)
+					+ "), probably a pause of the whole server rather than the line itself");
+			}
+		} else if (line.maxTick >= 5_000_000 && line.maxTick > 10 * typicalTickNanos) {
 			reasons.add("causes lag spikes (up to " + ms(line.maxTick) + " in one tick)");
+		}
 		if (line.loop && line.maxIterations >= 100)
 			reasons.add("loops up to " + String.format(Locale.ROOT, "%,d", line.maxIterations) + " times per run");
 		if (line.total > 2 * line.own && line.total - line.own > 1_000_000)
@@ -143,11 +154,25 @@ final class HyperTraceReport {
 		}
 		if (!data.worstTicks.isEmpty()) {
 			TickSnapshot worst = data.worstTicks.getFirst();
-			String cause = worst.skriptMs >= worst.ms * 0.5
-				? (worst.triggers.isEmpty() ? "" : ", mostly in " + worst.triggers.getFirst().label() + " (" + ms(worst.triggers.getFirst().nanos()) + ")")
-				: "; Skript was not the main cause of that tick";
+			String cause;
+			if (worst.gcMs >= worst.ms * 0.5) {
+				cause = "; most of the tick was a garbage collection pause (" + worst.gcMs + " ms), which stops the whole server";
+			} else if (worst.skriptMs >= worst.ms * 0.5) {
+				cause = worst.triggers.isEmpty() ? "" : ", mostly in " + worst.triggers.getFirst().label() + " (" + ms(worst.triggers.getFirst().nanos()) + ")";
+			} else {
+				cause = "; Skript was not the main cause of that tick" + (worst.gcMs > 0 ? " (it included a " + worst.gcMs + " ms garbage collection pause)" : "");
+			}
 			findings.add(String.format(Locale.ROOT, "The slowest tick took %.1f ms (%.0f s into the capture). Skript used %.1f ms of it%s.",
 				worst.ms, worst.second, worst.skriptMs, cause));
+		}
+		if (data.gcPauseMs > 0 && data.ticks > 0) {
+			long gcTicks = data.worstTicks.stream().filter(tick -> tick.gcMs >= tick.ms * 0.5).count();
+			double share = data.tickTotalMs <= 0 ? 0 : 100.0 * data.gcPauseMs / data.tickTotalMs;
+			if (gcTicks > 0 || share >= 5) {
+				findings.add(String.format(Locale.ROOT, "Garbage collection paused the server for %,d ms in total (%.0f%% of all tick time, in %,d ticks)%s. Those pauses stop every plugin, not just Skript; fewer and smaller objects, or a larger heap, make them shorter.",
+					data.gcPauseMs, share, data.gcPauseTicks,
+					gcTicks > 0 ? "; " + gcTicks + " of the " + data.worstTicks.size() + " slowest ticks were mostly a pause" : ""));
+			}
 		}
 		for (LineStats loop : data.loops) {
 			if (loop.runningNow > 0 && loop.currentIteration >= 1000) {
@@ -241,6 +266,8 @@ final class HyperTraceReport {
 		json.field("linesTimed").value(data.itemsTimed);
 		json.field("otherThreadRuns").value(data.otherThreadRuns.get());
 		json.field("activityCapped").value(data.activityCapped);
+		json.field("gcPauseMs").value(data.gcPauseMs);
+		json.field("gcPauseTicks").value(data.gcPauseTicks);
 
 		int storedTicks = Math.min(data.ticks, Capture.MAX_TICKS);
 		json.field("tickMs").array();
@@ -250,6 +277,10 @@ final class HyperTraceReport {
 		json.field("tickSkriptMs").array();
 		for (int i = 0; i < storedTicks; i++)
 			json.value(data.tickSkriptMs[i], 3);
+		json.end();
+		json.field("tickGcMs").array();
+		for (int i = 0; i < storedTicks; i++)
+			json.value(data.tickGcMs[i], 0);
 		json.end();
 		json.field("tickVariableWrites").array();
 		for (int i = 0; i < storedTicks; i++)
@@ -301,6 +332,7 @@ final class HyperTraceReport {
 			json.field("totalNs").value(line.total);
 			json.field("ownNs").value(line.own);
 			json.field("maxNs").value(line.max);
+			json.field("maxPauseNs").value(line.maxPause);
 			json.field("blockNs").value(line.block);
 			json.field("maxTickNs").value(line.maxTick);
 			json.field("ticksActive").value(line.ticksActive);
@@ -440,6 +472,7 @@ final class HyperTraceReport {
 			json.field("second").value(tick.second, 1);
 			json.field("ms").value(tick.ms, 2);
 			json.field("skriptMs").value(tick.skriptMs, 3);
+			json.field("gcMs").value(tick.gcMs);
 			entries(json.field("triggers"), tick.triggers);
 			entries(json.field("lines"), tick.lines);
 			json.end();

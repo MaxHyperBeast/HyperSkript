@@ -4,6 +4,7 @@ import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.config.SectionNode;
 import ch.njol.skript.lang.parser.ParserInstance;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -15,6 +16,14 @@ import java.util.List;
 public abstract class TriggerSection extends TriggerItem {
 
 	protected @Nullable TriggerItem first, last;
+
+	/**
+	 * @return The first item of this section, or null if it is empty. Used by HyperTrace to locate triggers without a line.
+	 */
+	@ApiStatus.Internal
+	public @Nullable TriggerItem getHyperTraceFirstItem() {
+		return first;
+	}
 
 	/**
 	 * Reserved for new Trigger(...)

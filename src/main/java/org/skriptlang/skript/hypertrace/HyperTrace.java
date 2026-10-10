@@ -489,9 +489,9 @@ public final class HyperTrace {
 				continue;
 			total++;
 			String scriptName = Capture.displayName(script);
-			TriggerStats stats = data.triggers.get(Capture.triggerKey(scriptName, trigger.getLineNumber(), trigger.getName()));
+			TriggerStats stats = data.triggers.get(Capture.triggerKey(scriptName, Capture.lineOf(trigger), trigger.getName()));
 			if (stats == null || stats.calls + stats.resumes == 0)
-				silent.add(new SilentTrigger(kind, trigger.getName(), scriptName, trigger.getLineNumber(), stats == null ? 0 : stats.checks));
+				silent.add(new SilentTrigger(kind, trigger.getName(), scriptName, Capture.lineOf(trigger), stats == null ? 0 : stats.checks));
 		}
 		silent.sort((a, b) -> a.script.equals(b.script) ? Integer.compare(a.line, b.line) : a.script.compareTo(b.script));
 		return new SilentTriggers(total, silent);
