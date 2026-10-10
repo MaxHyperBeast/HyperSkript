@@ -1,4 +1,4 @@
-![Skript Language](.github/assets/Cover.jpg)
+![HyperSkript](.github/assets/HyperSkript-Cover.png)
 
 ---
 
