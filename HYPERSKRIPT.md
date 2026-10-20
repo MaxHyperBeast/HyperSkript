@@ -1,8 +1,9 @@
 # HyperSkript
 
 A performance build of Skript 2.16.2. Scripts, addons and saved variables work unchanged: the plugin is still
-called `Skript`, reports version `2.16.2` (flavor `selfbuilt-hyperskript`), and every change keeps the exact
-behaviour of the original code. Skript's own regression suite (799 test scripts) passes.
+called `Skript`, reports version `2.16.2` (flavor `selfbuilt-hyperskript`), and every optimization keeps the exact
+behaviour of the original code (the only differences are the [bug fixes](#bug-fixes) listed below). Skript's own
+regression suite (799 test scripts) passes.
 
 ## Results
 
@@ -81,6 +82,12 @@ was found and changed for each element, is in [SYNTAX-AUDIT.md](SYNTAX-AUDIT.md)
 
 Behaviour was kept exactly; a few possible changes were left out on purpose because they would change results
 (for example evaluating random expressions once instead of per player).
+
+## Bug fixes
+
+| Problem in Skript 2.10 – 2.16.2 | Fix |
+|---|---|
+| `/sk reload all` loaded the aliases on a background thread and then unloaded and loaded every script on that thread, while the server kept running (players could use half-loaded scripts). A second `/sk reload all` sent before the first finished ran at the same time: one of them could fail without a message, and the other left orphaned copies of the scripts' triggers that ran on every event (twice, three times, ...) until a restart. `/sk reload aliases` had the same overlap. | Both load the aliases on the server thread again, as Skript did before 2.10 and as startup does: the server waits for the reload like it does for `/sk reload scripts`, and a second reload starts only after the first is done. `on load` triggers now run during `/sk reload all`, like in every other reload, instead of one tick later. |
 
 ## HyperTrace (built-in profiler)
 

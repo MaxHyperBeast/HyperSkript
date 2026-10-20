@@ -142,16 +142,18 @@ public class SkriptCommand implements CommandExecutor {
 				if (args[1].equalsIgnoreCase("all")) {
 					reloading(sender, "config, aliases and scripts", logHandler);
 					SkriptConfig.load();
+					// Synchronous: continuing after an async load reloaded the scripts on a pool thread while the
+					// server kept running, and let a second reload overlap this one
 					Aliases.clear();
-					Aliases.loadAsync().thenRun(() -> {
-						ScriptLoader.unloadScripts(ScriptLoader.getLoadedScripts());
-						ScriptLoader.loadScripts(Skript.getInstance().getScriptsFolder(), OpenCloseable.combine(logHandler, timingLogHandler))
-							.thenAccept(info -> {
-								if (info.files == 0)
-									Skript.warning(Skript.m_no_scripts.toString());
-								reloaded(sender, logHandler, timingLogHandler, "config, aliases and scripts");
-							});
-					});
+					Aliases.load();
+
+					ScriptLoader.unloadScripts(ScriptLoader.getLoadedScripts());
+					ScriptLoader.loadScripts(Skript.getInstance().getScriptsFolder(), OpenCloseable.combine(logHandler, timingLogHandler))
+						.thenAccept(info -> {
+							if (info.files == 0)
+								Skript.warning(Skript.m_no_scripts.toString());
+							reloaded(sender, logHandler, timingLogHandler, "config, aliases and scripts");
+						});
 				} else if (args[1].equalsIgnoreCase("scripts")) {
 					reloading(sender, "scripts", logHandler);
 
@@ -169,7 +171,8 @@ public class SkriptCommand implements CommandExecutor {
 				} else if (args[1].equalsIgnoreCase("aliases")) {
 					reloading(sender, "aliases", logHandler);
 					Aliases.clear();
-					Aliases.loadAsync().thenRun(() -> reloaded(sender, logHandler, timingLogHandler, "aliases"));
+					Aliases.load();
+					reloaded(sender, logHandler, timingLogHandler, "aliases");
 				} else { // Reloading an individual Script or folder
 					File scriptFile = getScriptFromArgs(sender, args);
 					if (scriptFile == null)
