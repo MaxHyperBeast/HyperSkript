@@ -1,5 +1,6 @@
 package ch.njol.skript.conditions;
 
+import ch.njol.skript.classes.Changer.ChangeMode;
 import ch.njol.skript.conditions.base.PropertyCondition;
 import ch.njol.skript.doc.Description;
 import ch.njol.skript.doc.Example;
@@ -49,6 +50,20 @@ public class CondIsSaddled extends PropertyCondition<LivingEntity> {
 			return properly ? (saddle != null && saddle.equals(SADDLE)) : (saddle != null);
 		}
 		return false;
+	}
+
+	@Override
+	public boolean acceptChange(ChangeMode mode) {
+		return mode == ChangeMode.SET;
+	}
+
+	@Override
+	protected void change(LivingEntity entity, boolean saddled, ChangeMode mode) {
+		if (entity instanceof Steerable steerable) {
+			steerable.setSaddle(saddled);
+		} else if (entity instanceof AbstractHorse horse) {
+			horse.getInventory().setSaddle(saddled ? ItemStack.of(Material.SADDLE) : null);
+		}
 	}
 
 	@Override
