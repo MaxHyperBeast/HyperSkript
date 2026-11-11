@@ -1,33 +1,39 @@
 # HyperSkript
 
-A performance build of Skript 2.16.2. Scripts, addons and saved variables work unchanged: the plugin is still
-called `Skript`, reports version `2.16.2` (flavor `selfbuilt-hyperskript`), and every optimization keeps the exact
+A performance build of Skript 2.17.1. Scripts, addons and saved variables work unchanged: the plugin is still
+called `Skript`, reports version `2.17.1` (flavor `selfbuilt-hyperskript`), and every optimization keeps the exact
 behaviour of the original code (the only differences are the [bug fixes](#bug-fixes) listed below). Skript's own
-regression suite (799 test scripts) passes.
+regression suite (856 test scripts) passes.
 
 ## Results
 
-Measured on Purpur 26.3 (Java 25) against the official Skript 2.16.2 jar. Best of 3 alternating server runs per build;
+Measured on Purpur 26.3 (Java 25) against the official Skript 2.17.1 jar. Best of 3 alternating server runs per build;
 both builds produced identical results in every case.
 
-| | Skript 2.16.2 | HyperSkript | |
+| | Skript 2.17.1 | HyperSkript | |
 |---|---|---|---|
-| One tick of typical script work for 50 simulated players | 1.17 ms | 0.19 ms | **6.0×** |
-| `send "<red>Hello <bold>%x%</bold> world"` | 10.72 µs | 0.31 µs | **34.8×** |
-| `formatted` / `colored` text with expressions | 6.19 / 10.35 µs | 0.13 / 0.12 µs | **49× / 85×** |
-| `is tagged with` | 0.88 µs | 0.29 µs | **3.0×** |
-| Looping a list variable | | | **2.4×** |
-| Event dispatch, with ~300 other triggers loaded | 1.77 µs | 0.92 µs | **1.9×** |
-| Geometric mean of 60 micro-benchmarks | | | **1.81×** |
-| Loading 40 scripts (12,960 lines): startup / `/sk reload` | 3.35 s / ~2.3 s | 2.44 s / ~1.3 s | **1.37× / 1.73×** |
+| One tick of typical script work for 50 simulated players | 1.08 ms | 0.19 ms | **5.6×** |
+| `send "<red>Hello <bold>%x%</bold> world"` | 10.04 µs | 0.31 µs | **32×** |
+| `formatted` / `colored` text with expressions | 6.42 / 9.83 µs | 0.13 / 0.12 µs | **48× / 80×** |
+| `all armor stands` with 2,000 of them loaded | 154 µs | 6.0 µs | **26×** |
+| `{_entity} is an armor stand` | 0.78 µs | 0.18 µs | **4.4×** |
+| `is tagged with` | 0.82 µs | 0.28 µs | **3.0×** |
+| Looping a list variable | | | **2.9×** |
+| Event dispatch, with ~300 other triggers loaded | 1.86 µs | 0.95 µs | **1.9×** |
+| Geometric mean of 60 micro-benchmarks | | | **1.77×** |
+| Loading 40 scripts (12,960 lines): startup / `/sk reload` | 3.51 s / ~2.5 s | 2.53 s / ~1.5 s | **1.39× / 1.7×** |
 
-After the [syntax audit](#syntax-audit), a shorter check of the final build (26 of the micro-benchmarks: blocks,
-conditions, lists, strings and the workload; one run per build) found every case faster with identical results, and
-the 50-player workload at 1.17 ms → 0.18 ms (**6.6×**).
+The micro-benchmark times are per operation, after subtracting the cost of an empty loop of the same build. Two more
+cases (`all pigs` and `nearest pig` among 2,000 other entities) are left out of the mean: their time depends on
+what earlier cases left in the test world, and a run in a cleared world measured both builds the same (6.6 and 6.4 µs).
+The numbers for Skript 2.16.2 (HyperSkript 1.0.0) are in the
+[1.0.0 release notes](https://github.com/MaxHyperBeast/HyperSkript/releases/tag/1.0.0).
 
-Correctness: Skript's test suite passes (799/799 script tests, 123/123 JUnit tests, same as the unmodified source);
-870 templated text components were compared with a full parse with no differences; saved variable files are
-byte-identical to the official build's.
+Correctness: Skript's test suite passes (856/856 script tests and 122/122 JUnit tests on Paper 26.3, and the script
+tests on Paper 1.21.11 and 1.21.5 with Java 21, same as the unmodified source); 870 templated text components were
+compared with a full parse with no differences; a variables file with 134 saved values of 24 types is byte-identical to
+the one the official build saves; every entity type name gives the same result for every entity type that can be
+spawned.
 
 ## What was changed
 
@@ -41,7 +47,7 @@ byte-identical to the official build's.
 | Loops (`loop`, `while`) | 4-6 `WeakHashMap` operations per iteration | One state object per running loop plus a one-entry fast path |
 | Type lookups (`Classes.getSuperClassInfo`, comparators, converters, arithmetic) | Global locks and a key allocation per lookup, or unsynchronized maps | Lock-free, allocation-free caches |
 | Converting values to text (`%x%`) | Linear scan over every registered type until one matches | Cached per class |
-| Entity type checks (`victim is a zombie`, `player`, `the zombie`, entity filters) | Compared the entity against every registered entity type (~150 interface checks) to find its closest type | Closest type cached per entity class, cleared when a type is registered (3.3× faster, identical on 22,032 checks over 136 entity types) |
+| Entity type checks (`victim is a zombie`, `player`, `the zombie`, entity filters, `all zombies`) | Compared the entity against every registered entity type (~200 interface checks since Skript 2.17) to find its closest type | Closest type cached per entity class, cleared when a type is registered (4× faster checks, identical for all 163 entity type names on every entity type that can be spawned) |
 | Tag checks (`is tagged with`) | Built the tag's complete value set on every check, only to read its element type | CraftBukkit tags check the type through their own cast (verified in their bytecode) |
 | `contains`, property expressions (`length of`, `name of`, ...) | Streams and arrays rebuilt per evaluation | Plain loops, cached target types |
 | List variables | Name evaluated twice, string built per element, 4-5 intermediate arrays | Single pass |
@@ -62,9 +68,10 @@ byte-identical to the official build's.
 
 ### Syntax audit
 
-After the general changes above, every one of the 1054 syntax elements (expressions, conditions, effects, sections,
-events, structures, literals and default functions) was reviewed for its own runtime cost. The full list, with what
-was found and changed for each element, is in [SYNTAX-AUDIT.md](SYNTAX-AUDIT.md). Highlights:
+After the general changes above, every one of the 1066 syntax elements (expressions, conditions, effects, sections,
+events, structures, literals and default functions) was reviewed for its own runtime cost, including the ones added
+or rewritten in Skript 2.17. The full list, with what was found and changed for each element, is in
+[SYNTAX-AUDIT.md](SYNTAX-AUDIT.md). Highlights:
 
 | Syntax | Before | After |
 |---|---|---|
@@ -85,7 +92,7 @@ Behaviour was kept exactly; a few possible changes were left out on purpose beca
 
 ## Bug fixes
 
-| Problem in Skript 2.10 – 2.16.2 | Fix |
+| Problem in Skript 2.10 – 2.17.1 | Fix |
 |---|---|
 | `/sk reload all` loaded the aliases on a background thread and then unloaded and loaded every script on that thread, while the server kept running (players could use half-loaded scripts). A second `/sk reload all` sent before the first finished ran at the same time: one of them could fail without a message, and the other left orphaned copies of the scripts' triggers that ran on every event (twice, three times, ...) until a restart. `/sk reload aliases` had the same overlap. | Both load the aliases on the server thread again, as Skript did before 2.10 and as startup does: the server waits for the reload like it does for `/sk reload scripts`, and a second reload starts only after the first is done. `on load` triggers now run during `/sk reload all`, like in every other reload, instead of one tick later. |
 
@@ -115,4 +122,4 @@ parse; differences are logged as `[HyperSkript] Template mismatch`.
 
 ## Building
 
-`./gradlew build` with Java 25 produces `build/libs/Skript-2.16.2.jar`.
+`./gradlew build` with Java 25 produces `build/libs/Skript-2.17.1.jar`.

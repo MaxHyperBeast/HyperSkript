@@ -5,23 +5,24 @@ one section at a time for runtime performance. **Status:** ✅ OK = reviewed, no
 ⚡ Optimized = changed (the note says what was slow and what changed); ⏳ = not reviewed yet.
 Every change keeps the exact behaviour; Skript's test suite must pass after each section.
 
-**Progress:** 1054 of 1054 reviewed, 60 optimized.
+**Progress:** 1066 of 1066 reviewed, 59 optimized.
 
 | Section | Contents | Reviewed |
 |---|---|---|
 | [1](#section-1) | Most used syntax | 91/91 |
 | [2](#section-2) | Events | 151/151 |
 | [3](#section-3) | Default functions | 80/80 |
-| [4](#section-4) | conditions | 80/80 |
-| [5](#section-5) | conditions, effects | 80/80 |
-| [6](#section-6) | effects, expressions | 80/80 |
+| [4](#section-4) | conditions | 79/79 |
+| [5](#section-5) | conditions, effects, bukkit.block.sign.elements.effects, ... | 80/80 |
+| [6](#section-6) | effects, expressions, bukkit.command.elements.expressions | 78/78 |
 | [7](#section-7) | expressions | 80/80 |
 | [8](#section-8) | expressions | 80/80 |
-| [9](#section-9) | expressions | 80/80 |
+| [9](#section-9) | expressions, common.elements.expressions | 80/80 |
 | [10](#section-10) | expressions, hooks.chat.expressions, hooks.economy.expressions, ... | 80/80 |
 | [11](#section-11) | bukkit.enchantments.elements.expressions, bukkit.entity.displays.elements.expressions, bukkit.entity.displays.item.elements.expressions, ... | 80/80 |
 | [12](#section-12) | bukkit.itemcomponents.equippable.elements.expressions, bukkit.loottables.elements.conditions, bukkit.loottables.elements.effects, ... | 80/80 |
 | [13](#section-13) | common.properties.elements.expressions | 12/12 |
+| [14](#section-14) | New in Skript 2.17 | 15/15 |
 
 ## Section 1
 
@@ -44,7 +45,6 @@ Most used syntax
 | `%commandsenders% (has\|have) [the] permission[s] %strings%` | Condition | CondPermission | ✅ OK | Permission checks in Bukkit dominate. |
 | `cancel [the] event` | Effect | EffCancelEvent | ✅ OK | A few instanceof checks. |
 | ` can't have anything added to it` | Effect | EffChange | ⚡ Optimized | Value cloning looked up the class info through an unsynchronized map with a slow fallback; now a lock-free cache (general change). |
-| `[execute] [the] [bungee:bungee[cord]] command[s] %strings% [by %-co...` | Effect | EffCommand | ✅ OK | Command dispatch in Bukkit dominates. |
 | `continue [this loop\|[the] [current] loop]` | Effect | EffContinue | ✅ OK | Benefits from the new loop state objects (exit is cheaper). |
 | `drop %itemtypes/experiences% [%directions% %locations%] [(1¦without...` | Effect | EffDrop | ✅ OK | Entity spawning dominates. |
 | `(exit\|stop) [trigger]` | Effect | EffExit | ✅ OK | Benefits from the new loop state objects. |
@@ -55,10 +55,8 @@ Most used syntax
 | `return %objects%` | Effect | EffReturn | ✅ OK | Benefits from the function call changes. |
 | `\\(%object%\\)[ ]` | Expression | ExprArithmetic | ⚡ Optimized | Operation lookups took two synchronized-map locks and allocated a key per calculation; now lock-free (general change). |
 | `[the] (amount\|number\|size) of %numbered%` | Expression | ExprAmount | ✅ OK | List size reads the map size directly. |
-| `[the] last arg[ument]` | Expression | ExprArgument | ✅ OK | Simple array access. |
 | `[the] (attacker\|damager)` | Expression | ExprAttacker | ✅ OK | Simple event access. |
 | `[the] [event-]block` | Expression | ExprBlock | ✅ OK | Event value (see EventValueExpression). |
-| `[the] (full\|complete\|whole) command` | Expression | ExprCommand | ✅ OK | Simple string work. |
 | `(0¦x\|1¦y\|2¦z)(-\| )(coord[inate]\|pos[ition]\|loc[ation])[s]` | Expression | ExprCoordinate | ✅ OK | One getter. |
 | `%timespan% (ago\|in the past\|before [the] [date] %-date%)` | Expression | ExprDateAgoLater | ✅ OK | Simple date arithmetic. |
 | `%objects% (otherwise\|?) %objects%` | Expression | ExprDefaultValue | ✅ OK | Evaluates the fallback only when needed. |
@@ -101,11 +99,14 @@ Most used syntax
 | `(for [each]\|loop) [value] %~object% in %objects%` | Section | SecFor | ⚡ Optimized | Uses the loop state objects of SecLoop (no WeakHashMap operations per iteration). |
 | `loop %objects%` | Section | SecLoop | ⚡ Optimized | 4-6 WeakHashMap operations per iteration; now one state object per running loop plus a fast path (2.4x faster list loops). |
 | `[:do] while <.+>` | Section | SecWhile | ⚡ Optimized | Loop counter and do-while flag were WeakHashMap operations per iteration; now a state object (2.5x faster). |
-| `usage` | Structure | StructCommand | ✅ OK | Load time only. |
 | `[on] [:uncancelled\|:cancelled\|any:(any\|all)] <.+> [priority:with...` | Structure | StructEvent | ⚡ Optimized | Event dispatch scanned every trigger on the server per event; now cached per event class and priority (1.9x faster dispatch). |
 | `[:local] function <.+>` | Structure | StructFunction | ⚡ Optimized | Function calls re-registered themselves with their signature on every call; now once. |
 | `options` | Structure | StructOptions | ✅ OK | Load time only. |
 | `variables` | Structure | StructVariables | ⚡ Optimized | Every variable access in a script with this structure pushed a new HashMap on a synchronized deque; now only when default variables exist. |
+| `execute [the] [bungee:bungee[cord]] command[s] %strings% [by %-comm...` | Effect | EffCommand | ✅ OK | Command dispatch in the server dominates. |
+| `[the] last arg[ument]` | Expression | ExprArgument | ✅ OK | Reads the parsed argument from the command event; in other command events a string split of the command line. |
+| `[the] (full\|complete\|whole) command` | Expression | ExprCommand | ✅ OK | Simple string work. |
+| `command <.+>` | Structure | StructCommand | ✅ OK | Load time only. |
 | `[:force] teleport %entities% (to\|%direction%) %location% [[while] ...` | Effect | EffTeleport | ✅ OK | Teleport in the server dominates. |
 | `game[ ]mode` | Expression | ExprGameMode | ✅ OK | One getter. |
 | `[the] lore of %itemtype%` | Expression | ExprLore | ✅ OK | Item meta copy in Bukkit dominates. |
@@ -135,7 +136,6 @@ Events
 | `Book Edit` | Event | EvtBookEdit | ✅ OK | One getter. |
 | `Book Sign` | Event | EvtBookSign | ✅ OK | One getter. |
 | `Click` | Event | EvtClick | ✅ OK | Interaction tracking and type checks are required by the semantics. |
-| `Command` | Event | EvtCommand | ⚡ Optimized | Matched the command against the listed commands with a stream on every command; now a loop. |
 | `Damage` | Event | EvtDamage | ✅ OK | Entity type checks. |
 | `Death` | Event | EvtEntity | ✅ OK | Entity type checks. |
 | `Enderman/Sheep/Silverfish/Falling Block` | Event | EvtEntityBlockChange | ✅ OK | Entity type checks. |
@@ -176,6 +176,7 @@ Events
 | `Brewing Complete` | Event | EvtBrewingComplete | ✅ OK | Simple loops. |
 | `Brewing Fuel` | Event | EvtBrewingFuel | ✅ OK | Simple loop. |
 | `Brewing Start` | Event | EvtBrewingStart | ✅ OK | One instanceof check. |
+| `Command` | Event | EvtCommand | ⚡ Optimized | Matched the command against the listed commands with a stream on every command; now a loop. |
 | `Player GameMode Change` | Event | EvtPlayerGameModeChange | ✅ OK | One comparison. |
 | `Player Pick Item` | Event | EvtPlayerPickItem | ✅ OK | Type checks. |
 | `Bucket Catch Entity` | Event | EvtBucketEntity | ✅ OK | Stream per event, but bucket events are rare. |
@@ -224,7 +225,6 @@ Events
 | `projectile hit` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
 | `projectile collide` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
 | `[projectile] (shoot\|launch)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
-| `sign (chang[e]\|edit)[ing]` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
 | `[world] spawn change` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
 | `vehicle create` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
 | `vehicle damage` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
@@ -278,6 +278,7 @@ Events
 | `bat toggle sleep` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
 | `vault display[ing] item` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
 | `villager career chang(e[d]\|ing)` | Event | SimpleEvents | ✅ OK | Shared SimpleEvent: the check always passes, so the only cost is dispatch (cached per event class). |
+| `sign (chang[e]\|edit)[ing]` | Event | SimpleEvents | ✅ OK | Simple event (registered by the sign module since Skript 2.17): the check always passes, so the only cost is dispatch (cached per event class). |
 
 ## Section 3
 
@@ -304,7 +305,6 @@ Default functions
 | `[the] entity storage of %blocks% (is\|are) full` | Condition | CondEntityStorageIsFull | ✅ OK | Block state snapshot is required to read the storage. |
 | `despawn (on chunk unload\|when far away)` | Condition | CondEntityUnload | ✅ OK | One Bukkit getter. |
 | `%entities% (is\|are) from a [mob] spawner` | Condition | CondFromMobSpawner | ✅ OK | One Bukkit getter. |
-| `glowing text` | Condition | CondGlowingText | ✅ OK | Block state snapshot is required to read the sign. |
 | `((any\|a) horn\|left:[a] left horn[s]\|right:[a] right horn[s]\|bot...` | Condition | CondGoatHasHorns | ✅ OK | One Bukkit getter. |
 | `[a] (client\|custom) weather [set]` | Condition | CondHasClientWeather | ✅ OK | One Bukkit getter. |
 | `[custom] model data [1:floats\|2:flags\|3:strings\|4:colo[u]rs]` | Condition | CondHasCustomModelData | ✅ OK | Item meta read is required. |
@@ -321,6 +321,7 @@ Default functions
 | `%blocks% (is\|are) redstone powered` | Condition | CondIsBlockRedstonePowered | ✅ OK | Redstone power check in the server. |
 | `(burning\|ignited\|on fire)` | Condition | CondIsBurning | ✅ OK | One Bukkit getter. |
 | `(charged\|powered)` | Condition | CondIsCharged | ✅ OK | One Bukkit getter. |
+| `glowing text` | Condition | CondGlowingText | ✅ OK | Block state snapshot is required to read the sign. |
 | `abs(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
 | `acos(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
 | `asin(...)` | Function | Function | ✅ OK | Simple math/lookup body; the call overhead is shared by all functions and was reduced earlier (function reference fast path). |
@@ -413,7 +414,6 @@ conditions
 | `sedated` | Condition | CondIsSedated | ✅ OK | One or two Bukkit getters / type checks. |
 | `(sheared\|shorn)` | Condition | CondIsSheared | ✅ OK | One or two Bukkit getters / type checks. |
 | `silent` | Condition | CondIsSilent | ✅ OK | One or two Bukkit getters / type checks. |
-| `[a] s(k\|c)ript (command\|cmd)` | Condition | CondIsSkriptCommand | ✅ OK | One or two Bukkit getters / type checks. |
 | `sleeping` | Condition | CondIsSleeping | ✅ OK | One or two Bukkit getters / type checks. |
 | `([a] slime chunk\|slime chunks\|slimey)` | Condition | CondIsSlimeChunk | ✅ OK | One or two Bukkit getters / type checks. |
 | `sneaking` | Condition | CondIsSneaking | ✅ OK | One or two Bukkit getters / type checks. |
@@ -455,7 +455,7 @@ conditions
 
 ## Section 5
 
-conditions, effects
+conditions, effects, bukkit.block.sign.elements.effects, ...
 
 | Syntax | Kind | Class | Status | Notes |
 |---|---|---|---|---|
@@ -465,7 +465,6 @@ conditions, effects
 | `apply [%-number%] bone[ ]meal[s] [to %blocks%]` | Effect | EffApplyBoneMeal | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
 | `update %blocks% (as\|to be) %blockdata% [physics:without [neighbo[u...` | Effect | EffBlockUpdate | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
 | `break %blocks% [naturally] [using %-itemtype%]` | Effect | EffBreakNaturally | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
-| `(cancel\|ignore) [the] [current] [command] cooldown` | Effect | EffCancelCooldown | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
 | `(cancel\|clear\|delete) [the] drops [of (items:items\|xp:[e]xp[erie...` | Effect | EffCancelDrops | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
 | `(cancel\|interrupt) [the] us[ag]e of %livingentities%'[s] [active\|...` | Effect | EffCancelItemUse | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
 | `make %entities% [un:(un\|not \|non[-\| ])](charged\|powered)` | Effect | EffCharge | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
@@ -493,7 +492,6 @@ conditions, effects
 | `make %itemtypes% [:not] (fire resistant\|resistant to fire)` | Effect | EffFireResistant | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
 | `(launch\|deploy) [[a] firework [with effect[s]]] %fireworkeffects% ...` | Effect | EffFireworkLaunch | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
 | `make %livingentities% attack %entities%` | Effect | EffForceAttack | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
-| `make %blocks/itemtypes% have glowing text` | Effect | EffGlowingText | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
 | `remove [the] (left horn[s]\|right:right horn[s]\|both:both horns) o...` | Effect | EffGoatHorns | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
 | `make %livingentities% ram %livingentity%` | Effect | EffGoatRam | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
 | `make %livingentities% (:left\|right)( \|-)handed` | Effect | EffHandedness | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
@@ -539,18 +537,18 @@ conditions, effects
 | `silence %entities%` | Effect | EffSilence | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
 | `sort %~objects% [in (:descending\|ascending) order] [(by\|based on)...` | Effect | EffSort | ✅ OK | Sorting is the required work; comparator lookups were made lock-free earlier. |
 | `make %players% (start sprinting\|sprint)` | Effect | EffSprinting | ✅ OK | Thin wrapper around a server call (entity/block/player action); the server work dominates. |
+| `make [[the] (front\|:back) [side[s]] of] %blocks/itemtypes% have gl...` | Effect | EffGlowingText | ✅ OK | Block state snapshot and update are required to change the sign. |
+| `[:un](cancel\|ignore) [the] [current] [command] cooldown` | Effect | EffCancelCooldown | ✅ OK | Sets a flag on the command event. |
 
 ## Section 6
 
-effects, expressions
+effects, expressions, bukkit.command.elements.expressions
 
 | Syntax | Kind | Class | Status | Notes |
 |---|---|---|---|---|
 | `(stop\|shut[ ]down) [the] server` | Effect | EffStopServer | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `stop (all:all sound[s]\|sound[s] %-strings%) [(in [the]\|from) %-so...` | Effect | EffStopSound | ✅ OK | Sound lookup per name. |
 | `make %livingentities% start shivering` | Effect | EffStriderShivering | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
-| `[stop:un]suppress [local variable] type hints` | Effect | EffSuppressTypeHints | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
-| `[local[ly]] suppress [the] (` | Effect | EffSuppressWarnings | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `make %livingentities% swing [their] [main] hand` | Effect | EffSwingHand | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `[:un](tame\|domesticate) %entities%` | Effect | EffTame | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `Cannot toggle '` | Effect | EffToggle | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
@@ -558,7 +556,7 @@ effects, expressions
 | `(allow\|enable) (fly\|flight) (for\|to) %players%` | Effect | EffToggleFlight | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `(show\|reveal\|:hide) %itemtypes%'[s] [entire\|:additional] tool[ ]tip` | Effect | EffTooltip | ✅ OK | Item meta update is required. |
 | `(transform\|map) %~objects% (using\|with) <.+>` | Effect | EffTransform | ✅ OK | Mapping is the required work. |
-| `(grow\|create\|generate) tree [of type %treetype%] %directions% %lo...` | Effect | EffTree | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `(grow\|create\|generate) [a] tree [of type %treetype%] %directions%...` | Effect | EffTree | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `(make\|let\|force) %entities% [to] (ride\|mount) [(in\|on)] %entity...` | Effect | EffVehicle | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `make %livingentities% (start sleeping\|[go to] sleep) [%-direction%...` | Effect | EffWakeupSleep | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `make %livingentities% sense [a] disturbance %direction% %location%` | Effect | EffWardenDisturbance | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
@@ -572,7 +570,6 @@ effects, expressions
 | `(ai\|artificial intelligence)` | Expression | ExprAI | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `target jukebox` | Expression | ExprAllayJukebox | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `[all [[of] the]\|the] banned (players\|ips:(ips\|ip addresses))` | Expression | ExprAllBannedEntries | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
-| `[(all\|the\|all [of] the)] [registered] [(1¦script)] commands` | Expression | ExprAllCommands | ⚡ Optimized | 'all commands' collected the labels with a parallel stream (shared thread pool) per call; now a plain loop with the same order. |
 | `alphabetically sorted %strings%` | Expression | ExprAlphabetList | ✅ OK | Sorting is the required work. |
 | `altitude[s]` | Expression | ExprAltitude | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `[the] (amount\|number) of %itemtypes% (in\|of) %inventories%` | Expression | ExprAmountOfItems | ⚡ Optimized | 'amount of <items> in <inventory>' built a new item type for every stack once per item type checked; now once per stack. |
@@ -617,15 +614,16 @@ effects, expressions
 | `[(all [[of] the]\|the)] chunk[s] (of\|%-directions%) %locations%` | Expression | ExprChunk | ✅ OK | Chunk lookups in the server. |
 | `[the] (` | Expression | ExprClicked | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `client view distance[s]` | Expression | ExprClientViewDistance | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
-| `[the] remaining [time] [of [the] (cooldown\|wait) [(of\|for) [the] ...` | Expression | ExprCmdCooldownInfo | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `[unicode\|character] code([ ]point\| position)` | Expression | ExprCodepoint | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `[command[ ]block] command` | Expression | ExprCommandBlockCommand | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
-| `[the] main command [label\|name] [of [[the] command[s] %-strings%]]` | Expression | ExprCommandInfo | ✅ OK | Rare. |
-| `[command['s]] (sender\|executor)` | Expression | ExprCommandSender | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `compass target` | Expression | ExprCompassTarget | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `[the] [skript] config` | Expression | ExprConfig | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `[the] consumed item` | Expression | ExprConsumedItem | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
 | `[creeper] max[imum] fuse tick[s]` | Expression | ExprCreeperMaxFuseTicks | ✅ OK | Thin wrapper around a server getter/setter (block state, entity or item meta access dominates). |
+| `[all [[of] the]\|the] [registered] [:script] commands` | Expression | ExprAllCommands | ✅ OK | Skript 2.17 rewrote it (the command map keys copied to an array), so the earlier parallel stream is gone. |
+| `[the] ((cooldown\|wait) time\|[wait] time of [the] (cooldown\|wait)...` | Expression | ExprCmdCooldownInfo | ✅ OK | Reads the cooldown state of the executed command. |
+| `There's no command in ` | Expression | ExprCommandInfo | ✅ OK | Rare. |
+| `[command['s]] sender` | Expression | ExprCommandSender | ✅ OK | Event value. |
 
 ## Section 7
 
@@ -753,7 +751,7 @@ expressions
 | `[the] [server] (:free\|max:max[imum]\|total) (memory\|ram)` | Expression | ExprMemory | ✅ OK | Thin wrapper around a server getter/setter or event value. |
 | `[the] [mending] repair amount` | Expression | ExprMendingRepairAmount | ✅ OK | Thin wrapper around a server getter/setter or event value. |
 | `(middle\|center) [point]` | Expression | ExprMiddleOfLocation | ✅ OK | Thin wrapper around a server getter/setter or event value. |
-| `[the] mid[-]point (of\|between) %object% and %object%` | Expression | ExprMidpoint | ✅ OK | Thin wrapper around a server getter/setter or event value. |
+| `[the] mid[-]point (of\|between) %location/vector% and %location/vec...` | Expression | ExprMidpoint | ✅ OK | Thin wrapper around a server getter/setter or event value. |
 | `[minecart] (1¦derailed\|2¦flying) velocity` | Expression | ExprMinecartDerailedFlyingVelocity | ✅ OK | Thin wrapper around a server getter/setter or event value. |
 | `(lunar\|moon) phase[s]` | Expression | ExprMoonPhase | ✅ OK | Thin wrapper around a server getter/setter or event value. |
 | `%itemtype/inventorytype% (named\|with name[s]) %textcomponent%` | Expression | ExprNamed | ✅ OK | Item clone + meta change is required (the name component is already templated). |
@@ -803,7 +801,7 @@ expressions
 
 ## Section 9
 
-expressions
+expressions, common.elements.expressions
 
 | Syntax | Kind | Class | Status | Notes |
 |---|---|---|---|---|
@@ -880,13 +878,13 @@ expressions
 | `most angered entity` | Expression | ExprWardenAngryAt | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
 | `[the] anger level [of] %livingentities% towards %livingentities%` | Expression | ExprWardenEntityAnger | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
 | `[the] weather [(in\|of) %players/worlds%]` | Expression | ExprWeather | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
-| `whether <.+>` | Expression | ExprWhether | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
 | `[the] white[ ]list` | Expression | ExprWhitelist | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
 | `%itemtype% with[:out] fire[ ]resistance` | Expression | ExprWithFireResistance | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
 | `%itemtypes% with [the] item flag[s] %itemflags%` | Expression | ExprWithItemFlags | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
 | `[world] environment` | Expression | ExprWorldEnvironment | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
 | `[the] world [(named\|with name)] %string%` | Expression | ExprWorldFromName | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
 | `[(all [[of] the]\|the)] worlds` | Expression | ExprWorlds | ✅ OK | One server call. |
+| `whether <.+>` | Expression | ExprWhether | ✅ OK | Thin wrapper around a server getter/setter, event value or simple vector/time math. |
 
 ## Section 10
 
@@ -934,7 +932,7 @@ expressions, hooks.chat.expressions, hooks.economy.expressions, ...
 | `` | Expression | ExprFurnaceEventItems | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
 | `[the] ` | Expression | ExprFurnaceSlot | ✅ OK | Block state read is required. |
 | `[the] [furnace] ` | Expression | ExprFurnaceTime | ✅ OK | Block state read is required. |
-| `line %integer% [of %block%]` | Expression | ExprSignText | ✅ OK | Block state read is required. |
+| `line %integer% [of [the] (:front\|:back) [side]] [of %block%]` | Expression | ExprSignText | ✅ OK | Block state read is required. |
 | `unchecked` | Condition | CondHasBossBarFlag | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
 | `remove` | Effect | EffBossBarFlags | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
 | `boss[ ]bar` | Expression | ExprBossBarFromEntity | ✅ OK | Thin wrapper around a server getter/setter, event value or simple math. |
@@ -1167,3 +1165,25 @@ common.properties.elements.expressions
 | `[%-*classinfo%] value` | Expression | PropExprValueOf | ✅ OK | The untyped form uses the faster shared property path; the typed form ('value of x as type') still streams but is rarely used. |
 | `viewer[s]` | Expression | PropExprViewers | ⚡ Optimized | Built on PropertyBaseExpression, which created a Stream per evaluation; now a plain loop (general change). Nothing else to change. |
 | `(:x\|:y\|:z\|:w)( \|-)[component[s]\|coord[inate][s]\|dep:(pos[itio...` | Expression | PropExprWXYZ | ⚡ Optimized | Built on PropertyBaseExpression, which created a Stream per evaluation; now a plain loop (general change). Nothing else to change. |
+
+## Section 14
+
+New in Skript 2.17
+
+| Syntax | Kind | Class | Status | Notes |
+|---|---|---|---|---|
+| `[the] (front\|:back) [side] (is\|was) changed` | Condition | CondChangedSide | ✅ OK | One comparison on the sign change event. |
+| `[a] s(c\|k)ript (command\|cmd)` | Condition | CondIsScriptCommand | ✅ OK | Searches the registered script commands by name; only used in command events, a few hundred commands at most. |
+| `fail [the] command execution with [the] error [message] %textcompon...` | Effect | EffFailExecution | ✅ OK | Sets the failure message on the command event. |
+| `(use no\|disable) filtering (for\|with) %objects%` | Effect | EffSuggestionFilteringMode | ✅ OK | Sets a field on the suggestion event; only runs while a player types a command. |
+| `Unknown Command Execution` | Event | EvtUnknownCommand | ✅ OK | No filter; only fires for unknown commands. |
+| `[the] choice arg[ument] <(\\d+)>` | Expression | ExprChoiceArgument | ✅ OK | Walks the parsed nodes of the executed command (a handful). |
+| `[the] [command['s]] executor` | Expression | ExprCommandExecutor | ✅ OK | Reads the executor from the command event. |
+| `[the] [command] [suggestion\|tab completion] (full\|complete) input` | Expression | ExprCommandInput | ✅ OK | Reads fields of the suggestion event. |
+| `[the] [command] (suggestions\|tab completions) (of\|for) %objects%` | Expression | ExprCommandSuggestions | ✅ OK | Only runs while a player types a command; short lists. |
+| `[the] (unknown\|non-existent) command message` | Expression | ExprUnknownCommandMessage | ✅ OK | Reads or sets the message of the event. |
+| `item model` | Expression | ExprItemModel | ✅ OK | Item meta copies in Bukkit dominate. |
+| `item rarity` | Expression | ExprItemRarity | ✅ OK | Item meta and data component access in Bukkit dominate. |
+| `%itemtype% with [the] [item] model %string%` | Expression | ExprItemWithModel | ✅ OK | Cloning the item and its meta is required for the result. |
+| `[stop:un]suppress [local variable] type hints` | Effect | EffSecSuppressTypeHints | ✅ OK | Load time only; at runtime it only runs its section. |
+| `[local[ly]] [stop:un]suppress [the] (` | Effect | EffSecSuppressWarnings | ✅ OK | Load time only; at runtime it only runs its section. |

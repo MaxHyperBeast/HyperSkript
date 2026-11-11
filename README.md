@@ -4,24 +4,24 @@
 
 # HyperSkript
 
-**HyperSkript** is a performance build of Skript 2.16.2. Your scripts, addons and saved variables work unchanged: the
-plugin is still called `Skript` and reports version `2.16.2`, and every change keeps Skript's exact behaviour.
+**HyperSkript** is a performance build of Skript 2.17.1. Your scripts, addons and saved variables work unchanged: the
+plugin is still called `Skript` and reports version `2.17.1`, and every change keeps Skript's exact behaviour.
 Skript's own test suite passes.
 
-- **Faster:** about 6× less tick time for a typical 50-player script workload, 35–85× faster text formatting
+- **Faster:** about 5.6× less tick time for a typical 50-player script workload, 32–80× faster text formatting
   (`send`, `formatted`, `colored`), 1.9× faster event handling and 1.7× faster `/sk reload`.
   See [HYPERSKRIPT.md](HYPERSKRIPT.md) for every change and the benchmarks.
 - **HyperTrace, a built-in profiler:** finds exactly which script lines slow your server down. See below.
 - **Works with your addons:** SkBee, skript-reflect, skript-worldguard, oopsk, SkCheese, skript-gui, DiSky,
   skript-placeholders and SkTrace are verified to give the same results as on official Skript.
   See [ADDONS.md](ADDONS.md).
-- **Every syntax element reviewed:** all 1054 expressions, conditions, effects, sections, events and functions were
+- **Every syntax element reviewed:** all 1066 expressions, conditions, effects, sections, events and functions were
   checked for performance. See [SYNTAX-AUDIT.md](SYNTAX-AUDIT.md).
 
 To install it, download the jar from the [releases page](https://github.com/MaxHyperBeast/HyperSkript/releases) and
 replace your Skript jar with it (keep the `plugins/Skript` folder). Each release says which Skript version it is based
-on; HyperSkript 1.0.0 is Skript 2.16.2. You can also build it yourself with `./gradlew build` (Java 25); the jar is
-`build/libs/Skript-2.16.2.jar`.
+on: HyperSkript 1.1.0 is Skript 2.17.1, HyperSkript 1.0.0 is Skript 2.16.2. You can also build it yourself with
+`./gradlew build` (Java 25); the jar is `build/libs/Skript-2.17.1.jar`.
 
 ## HyperTrace
 

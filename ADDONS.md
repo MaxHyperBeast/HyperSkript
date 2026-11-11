@@ -4,7 +4,7 @@ Addons verified to work with HyperSkript. An addon is listed as verified when it
 [addon test script](addon-tests/addontest.sk) gives exactly the same results on HyperSkript as on the official
 Skript release of the same version.
 
-**Last verified:** 2026-10-09 · HyperSkript 2.16.2 (compared with official Skript 2.16.2) · Purpur 26.3 build 2645 · Java 25
+**Last verified:** 2026-11-11 · HyperSkript 1.1.0 (compared with official Skript 2.17.1) · Purpur 26.3 build 2645 · Java 25
 
 | Addon | Version | Status | What was checked |
 |---|---|---|---|
@@ -20,13 +20,13 @@ Skript release of the same version.
 
 ¹ oopsk registers types at runtime by changing Skript's registries through reflection. HyperSkript's lookup caches
 are cleared whenever that happens, and the converter/comparator caches are still reachable as the maps oopsk expects
-(fixed during this check: oopsk failed to load struct templates before).
+(fixed in HyperSkript 1.0.0: oopsk failed to load struct templates before).
 
 ² Tested without a connected bot (no bot token on the test server), so only syntax that works offline was run.
 
 ³ SkTrace reads loop counters and rewires triggers through reflection. HyperSkript keeps a live view of its loop
 counters in the field SkTrace reads, and does not cache jumps through `if`/`else` chains, which SkTrace rewires in
-line-level mode (fixed during this check). SkTrace's per-event trigger hooks are unavailable on Skript 2.16.2 itself
+line-level mode (fixed in HyperSkript 1.0.0). SkTrace's per-event trigger hooks are unavailable on Skript 2.17.1 itself
 ("No Trigger objects found inside SkriptEventHandler"); HyperSkript behaves the same.
 
 ## How addons are checked
@@ -40,7 +40,7 @@ line-level mode (fixed during this check). SkTrace's per-event trigger hooks are
 5. Everything is repeated with the official Skript jar of the same version. Results, script errors, placeholder
    output and the SkTrace report structure must be identical.
 
-Skript's own test suite (799 script tests, 123 JUnit tests) passes as well.
+Skript's own test suite (856 script tests, 122 JUnit tests) passes as well.
 
 ## Adding an addon
 
