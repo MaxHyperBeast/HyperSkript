@@ -3,6 +3,9 @@ package org.skriptlang.skript.bukkit.command.elements.structures.util;
 import ch.njol.skript.ScriptLoader;
 import ch.njol.skript.config.Node;
 import ch.njol.skript.config.SectionNode;
+import ch.njol.skript.lang.Trigger;
+import org.jetbrains.annotations.Nullable;
+import org.skriptlang.skript.hypertrace.HyperTrace;
 import org.skriptlang.skript.lang.entry.util.TriggerEntryData;
 
 /**
@@ -13,6 +16,13 @@ class SuggestionsEntryData extends TriggerEntryData {
 
 	public SuggestionsEntryData() {
 		super("suggestions", null, true);
+	}
+
+	@Override
+	public @Nullable Trigger getValue(Node node) {
+		Trigger trigger = super.getValue(node);
+		HyperTrace.nameCommandTrigger(trigger, node, "(suggestions)");
+		return trigger;
 	}
 
 	@Override

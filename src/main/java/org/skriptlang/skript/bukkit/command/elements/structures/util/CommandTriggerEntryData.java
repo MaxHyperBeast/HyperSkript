@@ -9,6 +9,7 @@ import ch.njol.skript.lang.util.SimpleEvent;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.bukkit.command.custom.ScriptCommandExecutionEvent;
+import org.skriptlang.skript.hypertrace.HyperTrace;
 import org.skriptlang.skript.lang.entry.util.TriggerEntryData;
 
 /**
@@ -24,7 +25,9 @@ class CommandTriggerEntryData extends TriggerEntryData implements ReturnHandler<
 	@Override
 	public @Nullable Trigger getValue(Node node) {
 		assert node instanceof SectionNode;
-		return loadReturnableTrigger((SectionNode) node, "command trigger entry", new SimpleEvent());
+		Trigger trigger = loadReturnableTrigger((SectionNode) node, "command trigger entry", new SimpleEvent());
+		HyperTrace.nameCommandTrigger(trigger, node, null);
+		return trigger;
 	}
 
 	@Override

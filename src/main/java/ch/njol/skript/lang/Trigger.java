@@ -2,6 +2,7 @@ package ch.njol.skript.lang;
 
 import ch.njol.skript.variables.Variables;
 import org.bukkit.event.Event;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.skriptlang.skript.hypertrace.HyperTrace;
 import org.skriptlang.skript.lang.script.Script;
@@ -67,6 +68,23 @@ public class Trigger extends TriggerSection {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	private @Nullable String hyperTraceName;
+
+	/**
+	 * @return The name HyperTrace shows for this trigger: {@link #getName()}, unless a clearer one was set
+	 *  (the triggers of script commands all share one name).
+	 */
+	@ApiStatus.Internal
+	public String getHyperTraceName() {
+		String hyperTraceName = this.hyperTraceName;
+		return hyperTraceName == null ? name : hyperTraceName;
+	}
+
+	@ApiStatus.Internal
+	public void setHyperTraceName(String name) {
+		this.hyperTraceName = name;
 	}
 
 	public SkriptEvent getEvent() {

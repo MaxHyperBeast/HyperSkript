@@ -388,7 +388,7 @@ public final class Capture {
 	static TriggerKind kindOf(@Nullable Trigger trigger) {
 		if (trigger == null)
 			return TriggerKind.OTHER;
-		String name = trigger.getName();
+		String name = trigger.getHyperTraceName();
 		if (name.startsWith("function "))
 			return TriggerKind.FUNCTION;
 		if (name.startsWith("command "))
@@ -422,7 +422,7 @@ public final class Capture {
 			return stats;
 		String script = trigger == null ? "(no script)" : scriptName(trigger);
 		int line = lineOf(trigger);
-		String name = trigger == null ? "(effect command)" : trigger.getName();
+		String name = trigger == null ? "(effect command)" : trigger.getHyperTraceName();
 		String key = triggerKey(script, line, name);
 		stats = triggers.get(key);
 		if (stats == null)

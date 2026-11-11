@@ -2,6 +2,7 @@ package org.skriptlang.skript.hypertrace;
 
 import ch.njol.skript.Skript;
 import ch.njol.skript.ScriptLoader;
+import ch.njol.skript.config.Node;
 import ch.njol.skript.lang.SkriptEvent;
 import ch.njol.skript.lang.Trigger;
 import com.destroystokyo.paper.event.server.ServerTickEndEvent;
@@ -143,6 +144,51 @@ public final class HyperTrace {
 	public static void registerTrigger(Trigger trigger) {
 		synchronized (TRIGGERS) {
 			TRIGGERS.add(trigger);
+		}
+	}
+
+	private static final int MAX_COMMAND_NAME_LENGTH = 60;
+
+	/**
+	 * Names the trigger of a script command after its command, e.g. {@code command /home set <name: text>} for the
+	 * trigger of {@code subcommand set <name: text>} in {@code command /home}. Since Skript 2.17 these triggers all
+	 * have the same name, which would make them indistinguishable in a report. Only changes what HyperTrace shows.
+	 * @param trigger The trigger of a command entry, or null if it failed to load.
+	 * @param entryNode The node of the entry the trigger was loaded from (e.g. {@code trigger:}).
+	 * @param suffix Text to append to the name, or null.
+	 */
+	public static void nameCommandTrigger(@Nullable Trigger trigger, Node entryNode, @Nullable String suffix) {
+		if (trigger == null)
+			return;
+		try {
+			String command = null;
+			StringBuilder subcommands = new StringBuilder();
+			for (Node node = entryNode.getParent(); node != null; node = node.getParent()) {
+				String key = node.getKey();
+				if (key == null)
+					continue;
+				key = ScriptLoader.replaceOptions(key).trim();
+				String lowerKey = key.toLowerCase(Locale.ENGLISH);
+				if (lowerKey.startsWith("subcommand ")) {
+					subcommands.insert(0, ' ' + key.substring("subcommand ".length()).trim());
+				} else if (lowerKey.startsWith("command ")) {
+					// only the label, like the trigger name before Skript 2.17 ("command /home")
+					String label = key.substring("command ".length()).trim();
+					int end = label.indexOf(' ');
+					if (end != -1)
+						label = label.substring(0, end);
+					command = label.startsWith("/") ? label : '/' + label;
+					break;
+				}
+			}
+			if (command == null)
+				return;
+			String name = "command " + command + subcommands;
+			if (name.length() > MAX_COMMAND_NAME_LENGTH)
+				name = name.substring(0, MAX_COMMAND_NAME_LENGTH - 3) + "...";
+			trigger.setHyperTraceName(suffix == null ? name : name + ' ' + suffix);
+		} catch (RuntimeException ignored) {
+			// naming is cosmetic, the trigger keeps its own name
 		}
 	}
 
@@ -489,9 +535,10 @@ public final class HyperTrace {
 				continue;
 			total++;
 			String scriptName = Capture.displayName(script);
-			TriggerStats stats = data.triggers.get(Capture.triggerKey(scriptName, Capture.lineOf(trigger), trigger.getName()));
+			String name = trigger.getHyperTraceName();
+			TriggerStats stats = data.triggers.get(Capture.triggerKey(scriptName, Capture.lineOf(trigger), name));
 			if (stats == null || stats.calls + stats.resumes == 0)
-				silent.add(new SilentTrigger(kind, trigger.getName(), scriptName, Capture.lineOf(trigger), stats == null ? 0 : stats.checks));
+				silent.add(new SilentTrigger(kind, name, scriptName, Capture.lineOf(trigger), stats == null ? 0 : stats.checks));
 		}
 		silent.sort((a, b) -> a.script.equals(b.script) ? Integer.compare(a.line, b.line) : a.script.compareTo(b.script));
 		return new SilentTriggers(total, silent);
